@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA A-level CS 7517 – Examiner Error Analysis 2022–2024</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1f2436;
+    --border: #2a3050;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --high: #f25c5c;
+    --medium: #f0a832;
+    --text: #d6ddf5;
+    --muted: #6b7aa3;
+    --green: #39c98a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #141828 0%, #1a1e35 50%, #111626 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 52px 40px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(79,142,247,0.08) 0%, transparent 65%),
+                radial-gradient(ellipse at 20% 80%, rgba(124,92,252,0.06) 0%, transparent 60%);
+  }
+  .header-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+  .badge {
+    display: inline-block;
+    background: rgba(79,142,247,0.15);
+    border: 1px solid rgba(79,142,247,0.35);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.15;
+    color: #eef1ff;
+    max-width: 680px;
+    margin-bottom: 12px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+  .subtitle strong { color: #8a97c8; font-weight: 500; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  nav a {
+    display: block;
+    padding: 14px 18px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  nav a:hover { color: var(--text); border-color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  section { margin-bottom: 64px; }
+
+  /* ── SECTION HEADINGS ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: #eef1ff;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #c8d0f0;
+    margin: 28px 0 12px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent2);
+  }
+
+  /* ── HOW TO USE ── */
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+  }
+  .intro-card p { color: #9aa5cc; margin-bottom: 18px; font-size: 14px; }
+
+  .severity-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .sev-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  .sev-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sev-dot.high { background: var(--high); box-shadow: 0 0 8px rgba(242,92,92,0.4); }
+  .sev-dot.medium { background: var(--medium); box-shadow: 0 0 8px rgba(240,168,50,0.4); }
+  .sev-label { font-weight: 600; }
+  .sev-label.high { color: var(--high); }
+  .sev-label.medium { color: var(--medium); }
+  .sev-desc { color: var(--muted); }
+
+  /* ── FREQUENCY BADGE ── */
+  .freq {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .freq.high { background: rgba(242,92,92,0.15); color: var(--high); border: 1px solid rgba(242,92,92,0.3); }
+  .freq.medium { background: rgba(240,168,50,0.15); color: var(--medium); border: 1px solid rgba(240,168,50,0.3); }
+
+  /* ── ERRORS TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(42,48,80,0.6);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(79,142,247,0.04); }
+  tbody td {
+    padding: 11px 16px;
+    vertical-align: top;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .td-paper {
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .td-topic { font-weight: 500; color: #c8d0f0; }
+  .td-spec {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  /* ── TOPIC SECTIONS ── */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 20px;
+    margin-bottom: 12px;
+  }
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+  }
+  .topic-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .topic-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .topic-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #d0d8f8;
+    line-height: 1.3;
+  }
+  .topic-spec {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .topic-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .topic-card ul li {
+    padding-left: 16px;
+    position: relative;
+    font-size: 13px;
+    color: #9aa5cc;
+    line-height: 1.5;
+  }
+  .topic-card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+    top: 1px;
+  }
+
+  /* ── TIPS SECTION ── */
+  .tips-group { margin-bottom: 28px; }
+  .tips-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+    padding: 12px 18px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #c8d0f0;
+  }
+  .tips-emoji { font-size: 16px; }
+  .tips-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+  }
+  .tip-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 18px;
+    border-bottom: 1px solid rgba(42,48,80,0.5);
+    font-size: 13px;
+    color: #9aa5cc;
+    transition: background 0.15s;
+  }
+  .tip-row:last-child { border-bottom: none; }
+  .tip-row:hover { background: rgba(79,142,247,0.03); }
+  .tip-row::before {
+    content: '✓';
+    color: var(--green);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-weight: 700;
+  }
+  .tip-row strong { color: #c8d0f0; }
+
+  /* ── PRIORITY TABLE ── */
+  .priority-table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .priority-table tbody td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .priority-table tbody td:nth-child(3) {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .priority-table tbody td:nth-child(2) { font-size: 13px; color: var(--text); }
+  .paper-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .paper-badge.p1 { background: rgba(57,201,138,0.15); color: var(--green); border: 1px solid rgba(57,201,138,0.3); }
+  .paper-badge.p2 { background: rgba(124,92,252,0.15); color: #a78bf7; border: 1px solid rgba(124,92,252,0.3); }
+  .paper-badge.both { background: rgba(79,142,247,0.15); color: var(--accent); border: 1px solid rgba(79,142,247,0.3); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── UTILITY ── */
+  code {
+    font-family: 'DM Mono', monospace;
+    background: rgba(79,142,247,0.1);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 700px) {
+    header { padding: 36px 20px 32px; }
+    nav { padding: 0 20px; }
+    .container { padding: 32px 20px; }
+    .topic-grid { grid-template-columns: 1fr; }
+    .severity-legend { flex-direction: column; }
+  }
+</style>
+<style>
+  .site-nav {
+    background: #0e0c09;
+    border-bottom: 1px solid #3a3328;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 42px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .site-nav a.home {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #e8a045;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    opacity: .85;
+    transition: opacity .15s;
+  }
+  .site-nav a.home:hover { opacity: 1; }
+  .site-nav .sep { color: #3a3328; font-size: .9rem; }
+  .site-nav .current {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .07em;
+    color: #7a7060;
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="home" href="index.html">← Revision Hub</a>
+  <span class="sep">/</span>
+  <span class="current">Examiner Error Analysis</span>
+</nav>
+
+<header>
+  <div class="header-inner">
+    <div class="badge">AQA · Specification 7517</div>
+    <h1>A-level Computer Science<br>Examiner Error Analysis</h1>
+    <p class="subtitle">Common errors, omissions &amp; exam tips based on <strong>June 2022, 2023 &amp; 2024</strong> examiner reports — Paper 1 &amp; Paper 2</p>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#how-to-use">How to Use</a>
+    <a href="#errors">Error Table</a>
+    <a href="#paper1">Paper 1 Findings</a>
+    <a href="#paper2">Paper 2 Findings</a>
+    <a href="#tips">Exam Tips</a>
+    <a href="#priority">Priority Areas</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HOW TO USE -->
+  <section id="how-to-use">
+    <div class="section-label">Overview</div>
+    <h2>How to Use This Document</h2>
+    <div class="intro-card">
+      <p>This document summarises the most common errors and omissions identified by AQA examiners across three exam series (2022–2024) for both Paper 1 and Paper 2 of the AQA A-level Computer Science specification (7517). Each finding is cross-referenced with the relevant specification section.</p>
+      <div class="severity-legend">
+        <div class="sev-item">
+          <div class="sev-dot high"></div>
+          <span class="sev-label high">High</span>
+          <span class="sev-desc">Very frequently seen across multiple years; likely to cost marks if not addressed</span>
+        </div>
+        <div class="sev-item">
+          <div class="sev-dot medium"></div>
+          <span class="sev-label medium">Medium</span>
+          <span class="sev-desc">Commonly seen; represents a knowledge gap or imprecise exam technique</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERRORS TABLE -->
+  <section id="errors">
+    <div class="section-label">Section 1</div>
+    <h2>Common Errors &amp; Omissions by Topic</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Paper</th>
+            <th>Topic Area</th>
+            <th>Spec Ref</th>
+            <th>Error / Omission</th>
+            <th>Freq.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Paper 2 2024 -->
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Image representation</td><td class="td-spec">4.6.1</td><td>Calculating colour depth incorrectly – taking the square root of the number of colours instead of log₂</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Memory addressing</td><td class="td-spec">4.6.2</td><td>Using 2¹⁶ instead of 2³⁶ when calculating addressable memory from a 36-wire address bus</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Memory addressing</td><td class="td-spec">4.6.2</td><td>Dividing by 1000 instead of 1024 when converting bytes to kibibytes/gibibytes</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Floating point numbers</td><td class="td-spec">4.6.3</td><td>Shifting the binary point in the wrong direction when converting floating-point to decimal</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Floating point numbers</td><td class="td-spec">4.6.3</td><td>Failing to deal with negative mantissa correctly during floating-point conversions</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Floating point numbers</td><td class="td-spec">4.6.3</td><td>Errors in normalising – not moving the binary point the correct number of places</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Data transmission</td><td class="td-spec">4.5.3</td><td>Confusing synchronous transmission with parallel or bi-directional transmission</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">I/O controller</td><td class="td-spec">4.7.3</td><td>Describing the I/O controller only as an 'interface' without explaining signal translation between CPU and peripherals</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Control bus</td><td class="td-spec">4.7.1</td><td>Confusing the control bus with the control unit</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Logic circuits – operator precedence</td><td class="td-spec">4.3.2</td><td>Misapplying operator precedence: OR-ing B and C before AND-ing with D, instead of AND-ing C and D first</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Flip-flops</td><td class="td-spec">4.3.4</td><td>Thinking a D-type flip-flop simply toggles its output on a clock pulse, rather than capturing the data input</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Internet / DNS / NAT</td><td class="td-spec">4.9.2</td><td>Describing DNS rather than domain name organisation; missing that NAT uses port numbers and a translation table</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Internet / NAT / Port Forwarding</td><td class="td-spec">4.9.2</td><td>Fewer than 10% could describe port forwarding fully; omitting that router changes IP addresses</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">SQL – INSERT/UPDATE</td><td class="td-spec">4.9.3</td><td>Using invalid SQL commands; omitting date delimiters; putting field name instead of table name after UPDATE</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Database normalisation</td><td class="td-spec">4.9.3</td><td>Naming problems (e.g. 'data inconsistency') without describing them or explaining why they are a problem</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Database – timestamp ordering</td><td class="td-spec">4.9.3</td><td>Topic poorly understood; few knew about read/write timestamps on records or their role in concurrency control</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Functional programming</td><td class="td-spec">4.9.5</td><td>Stating features (e.g. 'immutable') as single words without explaining what immutability or statelessness actually means</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Assembly language trace</td><td class="td-spec">4.9.4</td><td>Shifting register in the wrong direction; missing the value 4 in R4; not setting the parity bit at the end</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Imperative programming</td><td class="td-spec">4.9.5</td><td>Describing what a problem is rather than how to solve it – reversing the definition of imperative</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2024</td><td class="td-topic">Virus threat measures</td><td class="td-spec">4.8.1</td><td>Naming a measure without describing it in sufficient detail; repeating measures given in the question</td><td><span class="freq medium">Medium</span></td></tr>
+          <!-- Paper 2 2023 -->
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Sound / images</td><td class="td-spec">4.6.1</td><td>Dividing by 1000 instead of 1024 when converting to mebibytes; forgetting to divide by 8 (bits→bytes)</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Sound – ADC/DAC</td><td class="td-spec">4.6.1</td><td>Confusing analogue-to-digital converter with digital-to-analogue converter for playback</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Packet switching</td><td class="td-spec">4.5.4</td><td>Vague descriptions of routers ('sends to destination') instead of hop-by-hop routing decisions</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Packet switching</td><td class="td-spec">4.5.4</td><td>Naming only one packet field; fewer than 25% named two correct fields</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Checksum</td><td class="td-spec">4.5.4</td><td>Saying a checksum checks if data is 'correct' (it checks if data has changed); omitting that a hash is applied to the payload</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Encryption</td><td class="td-spec">4.8.2</td><td>Common weakness of substitution ciphers confused with brute-force; not recognising frequency analysis applies to both</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Vernam cipher</td><td class="td-spec">4.8.2</td><td>Writing 'it must only be used once' instead of 'the key must only be used once'</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Fetch-execute cycle &amp; performance</td><td class="td-spec">4.7.2</td><td>Describing the fetch stage in detail but omitting or being very vague about decode and execute stages</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Fetch-execute cycle &amp; performance</td><td class="td-spec">4.7.2</td><td>Suggesting multi-core improves performance without saying it allows simultaneous instruction execution</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Interrupts</td><td class="td-spec">4.7.2</td><td>Stating interrupts stop the FE cycle rather than pausing it; confusing priority with interruption of lower-priority processes</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Database design</td><td class="td-spec">4.9.3</td><td>Putting redundant attributes into relations; trying to represent bookings in one relation instead of two</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">SQL DELETE query errors</td><td class="td-spec">4.9.3</td><td>Including tables that were not needed; missing quotation marks around date values</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">CRUD / REST</td><td class="td-spec">4.9.3</td><td>Both topics were poorly known; many students did not know CRUD operations or REST HTTP verb mapping</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Floating point conversion</td><td class="td-spec">4.6.3</td><td>Moving the binary point in the wrong direction; representing -23.25 as -23 + (+0.25) = -22.75</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Floating point error types</td><td class="td-spec">4.6.3</td><td>Could not name overflow or underflow; confused overflow with stack overflow</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Transport layer</td><td class="td-spec">4.9.2</td><td>Describing the network layer instead of the transport layer; rarely mentioning port numbers or end-to-end connection</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Gateway</td><td class="td-spec">4.9.2</td><td>Not knowing that a gateway repackages data when bridging networks with different protocols</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Parity / synchronous transmission</td><td class="td-spec">4.5.3</td><td>Saying multi-bit errors can never be detected; not recognising clocks are continuously synchronised in synchronous TX</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Asymmetric encryption &amp; digital signatures</td><td class="td-spec">4.8.2</td><td>Not recognising both sender AND receiver have their own public/private key pairs; mixing up which key is used at each step</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Big Data – velocity</td><td class="td-spec">4.9.6</td><td>Describing velocity in timeframes manageable by a relational DB rather than near-real-time/very high speed</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2023</td><td class="td-topic">Functional programming – distributed computing</td><td class="td-spec">4.9.5</td><td>Vague answers not relating specifically to functional programming; single-word answers like 'immutable'</td><td><span class="freq medium">Medium</span></td></tr>
+          <!-- Paper 2 2022 -->
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Start / stop bits</td><td class="td-spec">4.5.3</td><td>Saying start bit 'identifies the start of transmission' – not linking it to clock synchronisation of receiver</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Start / stop bits</td><td class="td-spec">4.5.3</td><td>Saying stop bit 'identifies the end' – not explaining it lets the receiver prepare for the next start bit</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Boolean algebra</td><td class="td-spec">4.3.1</td><td>Incorrect use of operator precedence: simplifying A + Ā to 1 when A is part of an AND expression</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Boolean algebra / De Morgan's law</td><td class="td-spec">4.3.1</td><td>Applying De Morgan's law across mixed AND/OR operators simultaneously – only valid when all operators are the same type</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Operating system functions</td><td class="td-spec">4.7.4</td><td>Naming OS functions (e.g. 'memory management') without describing what the function actually does</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Floating point normalisation</td><td class="td-spec">4.6.3</td><td>Vague explanations: 'increased accuracy' – not stating it maximises precision and gives unique representation</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Floating point conversion</td><td class="td-spec">4.6.3</td><td>Treating the most-significant bit as +32 instead of -32 in two's complement fixed-point; confusing sign handling for negatives</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">DNS</td><td class="td-spec">4.9.2</td><td>Saying DNS converts 'addresses' rather than IP addresses; not explaining hierarchical structure or delegation</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">SQL – CREATE TABLE</td><td class="td-spec">4.9.3</td><td>Placing data type before field name; missing commas between field definitions; choosing Boolean for a sex field</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">SQL – complex SELECT / dates</td><td class="td-spec">4.9.3</td><td>Inability to write date-range conditions to correctly identify all matching records over a time period</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Bar code reading</td><td class="td-spec">4.6.4</td><td>Thinking bar colour (black/white) represents a bit value; bar width encodes data, not colour</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Thin/thick client</td><td class="td-spec">4.9.1</td><td>Vague hardware terminology: 'powerful server', 'cheap computer' – not specifying RAM, cores, or role</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Assembly language trace</td><td class="td-spec">4.9.4</td><td>Shifting register left instead of right; storing decimal values in an integer register; not writing final result to memory</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Functional programming – map/recursion</td><td class="td-spec">4.9.5</td><td>Could not apply recursive functions correctly to trace; omitting brackets around list results</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Assembly language advantages</td><td class="td-spec">4.9.4</td><td>Stating assembly does not need translation (it does – by an assembler); confusing speed advantage source</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P2 · 2022</td><td class="td-topic">Client-server misconceptions</td><td class="td-spec">4.9.1</td><td>Believing all network traffic must pass through the server; believing server failure brings down all computers</td><td><span class="freq medium">Medium</span></td></tr>
+          <!-- Paper 1 2024 -->
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Queues – circular queue</td><td class="td-spec">4.2.1</td><td>Not checking whether the queue is empty before attempting deletion</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Trees / graph properties</td><td class="td-spec">4.2.3</td><td>Giving properties of trees in general rather than properties specific to binary trees; repeating 'no cycles' given in the question</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">In-order traversal / stacks</td><td class="td-spec">4.2.3</td><td>Only one-third identified that the traversal algorithm uses a stack; few could explain how to reverse output order</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Halting problem</td><td class="td-spec">4.4.2</td><td>Fewer than half had any knowledge; confusing intractable with non-computable</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Sets – subsets</td><td class="td-spec">4.4.1</td><td>Forgetting the empty set is always a subset; confusing subset with proper subset; thinking set order matters</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Regular expressions</td><td class="td-spec">4.4.1</td><td>Omitting brackets from (bb)* – thinking bb* and (bb)* are equivalent (they are not)</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Reverse Polish Notation</td><td class="td-spec">4.2.4</td><td>Changing the order of operands when converting infix to RPN; confusing Polish Notation with RPN</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Subroutines – explaining advantages</td><td class="td-spec">4.1</td><td>Stating an advantage without explaining how it is achieved – 'code reuse' without saying how reuse is enabled</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">OOP – encapsulation</td><td class="td-spec">4.3.3</td><td>Confusing concatenation and encapsulation; describing private instead of the correct access specifier</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2024</td><td class="td-topic">Exception handling</td><td class="td-spec">4.1</td><td>Superficial explanations; not being precise about what causes an exception or how it is caught</td><td><span class="freq medium">Medium</span></td></tr>
+          <!-- Paper 1 2023 -->
+          <tr><td class="td-paper">P1 · 2023</td><td class="td-topic">Binary trees – characteristics</td><td class="td-spec">4.2.3</td><td>Giving general tree properties not specific to binary trees (e.g. a tree has one root) to differentiate them</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2023</td><td class="td-topic">Time complexity – heuristics</td><td class="td-spec">4.4.2</td><td>Describing decomposition instead of heuristics; answers too vague for 2 marks</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2023</td><td class="td-topic">Time complexity – constant time</td><td class="td-spec">4.4.2</td><td>Stating constant time means the time complexity (not the execution time) does not change – wrong definition</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2023</td><td class="td-topic">Regular languages / Turing machines</td><td class="td-spec">4.4.1</td><td>Not knowing that the Universal Turing Machine description was required; describing non-computable only vaguely</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2023</td><td class="td-topic">Sets – cardinality</td><td class="td-spec">4.4.1</td><td>Stating infinite sets cannot have a cardinality – countably infinite sets do have a cardinality</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2023</td><td class="td-topic">Regular expression – alternation</td><td class="td-spec">4.4.1</td><td>Not using the | symbol for alternation when converting set union to a regular expression</td><td><span class="freq medium">Medium</span></td></tr>
+          <!-- Paper 1 2022 -->
+          <tr><td class="td-paper">P1 · 2022</td><td class="td-topic">Circular queue deletion</td><td class="td-spec">4.2.1</td><td>Describing removal from rear; describing linear queue shuffling; omitting empty-queue check</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2022</td><td class="td-topic">Protected access specifier</td><td class="td-spec">4.3.3</td><td>Describing private instead of protected; describing permissions to modify code rather than inheritance visibility</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2022</td><td class="td-topic">Method overriding</td><td class="td-spec">4.3.3</td><td>Answers about overriding lacked the link to inheritance – a subclass overriding a superclass method</td><td><span class="freq high">High</span></td></tr>
+          <tr><td class="td-paper">P1 · 2022</td><td class="td-topic">Hash tables</td><td class="td-spec">4.2.5</td><td>Most common mark only – stating hash result is the storage location; not explaining collision handling or why the key must be unique</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2022</td><td class="td-topic">Dijkstra's algorithm trace</td><td class="td-spec">4.2.6</td><td>Multiple values returned at once; incorrect tracking of the Count variable during trace</td><td><span class="freq medium">Medium</span></td></tr>
+          <tr><td class="td-paper">P1 · 2022</td><td class="td-topic">Regular expressions – symbol usage</td><td class="td-spec">4.4.1</td><td>Not using | for alternation; writing answers in BNF or set notation instead of regular expression syntax</td><td><span class="freq high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 2: TOPIC BY TOPIC -->
+  <section id="paper1">
+    <div class="section-label">Section 2 · Paper 1</div>
+    <h2>Paper 1 – Topic Findings</h2>
+    <div class="topic-grid">
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🗃️</div>
+          <div>
+            <div class="topic-title">Data Structures</div>
+            <div class="topic-spec">Spec 4.2</div>
+          </div>
+        </div>
+        <ul>
+          <li>The circular queue deletion algorithm is asked regularly and the empty-queue check is frequently omitted. This has appeared in every exam series reviewed.</li>
+          <li>Binary tree properties must be <strong>specific to binary trees</strong> (≤2 children per node); generic tree properties earn no marks.</li>
+          <li>In-order traversal uses a <strong>stack</strong> — only one-third of students knew this.</li>
+          <li>Hash tables: explain the hash function, uniqueness of key, <em>and</em> collision handling — all three.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🧠</div>
+          <div>
+            <div class="topic-title">Algorithms, Complexity &amp; Computability</div>
+            <div class="topic-spec">Spec 4.4</div>
+          </div>
+        </div>
+        <ul>
+          <li>The <strong>Halting problem</strong> was not known by more than half the cohort. It is non-computable — distinct from intractable (solvable but not in polynomial time).</li>
+          <li>Heuristics ≠ decomposition. Heuristics find a good-enough solution in reasonable time.</li>
+          <li>Constant time O(1) means the number of <em>steps</em> does not change with input size — not that execution time is constant.</li>
+          <li>Regular expressions: the alternation symbol <code>|</code> was unknown; <code>(bb)*</code> and <code>bb*</code> are not equivalent.</li>
+          <li>Set theory: the empty set ∅ is always a subset of every set; sets are unordered.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🔧</div>
+          <div>
+            <div class="topic-title">Object-Oriented Programming</div>
+            <div class="topic-spec">Spec 4.3.3</div>
+          </div>
+        </div>
+        <ul>
+          <li><strong>Protected</strong> is the most misunderstood access specifier — it is not private; it is accessible in subclasses.</li>
+          <li>Method overriding answers must link the concept to <strong>inheritance</strong>.</li>
+          <li>Abstract methods <em>must</em> be overridden; virtual methods <em>can</em> be overridden — know the distinction.</li>
+          <li>Encapsulation is the bundling of data and methods, not the same as concatenation.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="paper2">
+    <div class="section-label">Section 2 · Paper 2</div>
+    <h2>Paper 2 – Topic Findings</h2>
+    <div class="topic-grid">
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🔢</div>
+          <div>
+            <div class="topic-title">Data Representation</div>
+            <div class="topic-spec">Spec 4.5 &amp; 4.6</div>
+          </div>
+        </div>
+        <ul>
+          <li>Colour depth = <code>log₂(number of colours)</code> — not the square root.</li>
+          <li>File size: divide by 8 (bits→bytes), divide by 1024 (not 1000) for binary prefixes.</li>
+          <li>Floating-point negatives: never write -N + (+fraction). Convert the positive value first, then negate.</li>
+          <li>Binary point shift direction: a negative exponent shifts the point <strong>LEFT</strong>.</li>
+          <li>Normalisation maximises precision <em>and</em> gives a unique representation — state both points.</li>
+          <li>Overflow = too large; underflow = too close to zero. Do not confuse with stack overflow.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">⚙️</div>
+          <div>
+            <div class="topic-title">Hardware &amp; Processor Architecture</div>
+            <div class="topic-spec">Spec 4.7</div>
+          </div>
+        </div>
+        <ul>
+          <li>I/O controller: say it <strong>translates signals</strong> between CPU and peripherals — not just 'interface'.</li>
+          <li>OS functions: naming 'memory management' is not enough — describe that the OS allocates memory regions to processes.</li>
+          <li>Fetch-execute cycle: describe all three stages — Fetch, Decode, AND Execute. Execute is most often omitted.</li>
+          <li>Interrupts <strong>pause</strong> (not stop) the FEC; the processor saves state.</li>
+          <li>Control bus ≠ control unit. Different things.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🌐</div>
+          <div>
+            <div class="topic-title">Networks, Internet &amp; Security</div>
+            <div class="topic-spec">Spec 4.8 &amp; 4.9</div>
+          </div>
+        </div>
+        <ul>
+          <li>Start bit: synchronises receiver's clock — not just 'marks the start'.</li>
+          <li>Stop bit: lets receiver prepare for the next start bit — not just 'marks the end'.</li>
+          <li>Transport layer: segmentation, port numbers, end-to-end connection. Routing is the network layer.</li>
+          <li>Gateway repackages data between incompatible network protocols — a router cannot do this.</li>
+          <li>NAT uses a translation table with <strong>both IP addresses and port numbers</strong>. Fewer than 10% could fully describe port forwarding.</li>
+          <li>Asymmetric encryption: both sender AND receiver each have their own key pair. Know which key is used when.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🗃️</div>
+          <div>
+            <div class="topic-title">Databases &amp; SQL</div>
+            <div class="topic-spec">Spec 4.9.3</div>
+          </div>
+        </div>
+        <ul>
+          <li>CREATE TABLE: <code>field_name data_type</code> — not <code>data_type field_name</code>. Commas between field definitions.</li>
+          <li>UPDATE syntax: <code>UPDATE table_name SET …</code> — table name, not field name, follows UPDATE.</li>
+          <li>Date values require single quotation marks in INSERT/DELETE.</li>
+          <li>CRUD/REST: GET→SELECT, POST→INSERT, PUT→UPDATE, DELETE→DELETE.</li>
+          <li>Normalisation: describe the problem in practice — not just the label (e.g. 'data inconsistency').</li>
+          <li>Timestamp ordering: each record holds read/write timestamps used for concurrency control — very poorly understood.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🔣</div>
+          <div>
+            <div class="topic-title">Boolean Algebra &amp; Logic</div>
+            <div class="topic-spec">Spec 4.3</div>
+          </div>
+        </div>
+        <ul>
+          <li>AND (∙) has higher precedence than OR (+). Do not simplify A + Ā to 1 if A is part of an AND expression.</li>
+          <li>De Morgan's law is only valid when all operators in a group are the same type (all AND or all OR).</li>
+          <li>D-type flip-flop: output is set to the DATA input at the clock edge — it does not toggle.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">💻</div>
+          <div>
+            <div class="topic-title">Assembly Language</div>
+            <div class="topic-spec">Spec 4.9.4</div>
+          </div>
+        </div>
+        <ul>
+          <li>LSR shifts bits to the RIGHT — read the mnemonic carefully in traces.</li>
+          <li>Assembly language does need translation — by an assembler. It is not directly executable.</li>
+          <li>Immediate addressing: use <code>#</code> before a literal value. Omitting <code>#</code> uses direct addressing.</li>
+          <li>Do not store fractional values in a register unless the ISA explicitly supports it.</li>
+        </ul>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-card-header">
+          <div class="topic-icon">🧮</div>
+          <div>
+            <div class="topic-title">Functional Programming</div>
+            <div class="topic-spec">Spec 4.9.5</div>
+          </div>
+        </div>
+        <ul>
+          <li>Single-word answers like 'immutable' earn no marks — explain what immutability means.</li>
+          <li>Statelessness: functions produce the same output for the same inputs and do not modify external state.</li>
+          <li>Distributed computing link: if data cannot change and functions have no side-effects, multiple servers can process simultaneously without synchronisation errors.</li>
+          <li>Map always returns a list. Include brackets in written output.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: EXAM TIPS -->
+  <section id="tips">
+    <div class="section-label">Section 3</div>
+    <h2>Exam Tips to Address Common Issues</h2>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">📌</span> General Exam Technique – Across All Papers</div>
+      <div class="tips-body">
+        <div class="tip-row">Read the question carefully – answer what is asked, not a general description of the topic.</div>
+        <div class="tip-row">Address the context: if a scenario is given (e.g. file server, student house), tailor your answer to that context.</div>
+        <div class="tip-row">Do not repeat information already given in the question – it will not earn marks.</div>
+        <div class="tip-row">Show all working clearly for numerical questions so that method marks can be awarded even if the final answer is wrong.</div>
+        <div class="tip-row">Use precise technical vocabulary at A-level standard (e.g. <strong>'RAM'</strong> not 'memory'; <strong>'IP address'</strong> not 'address').</div>
+        <div class="tip-row">Attempt all questions – especially the longer programming tasks on Paper 1. Marks are available for simple, partial solutions.</div>
+        <div class="tip-row">Match the depth of your answer to the marks available. A 1-mark question needs one clear point; a 3-mark question needs three distinct points.</div>
+        <div class="tip-row">Explain <em>why</em>, not just <em>what</em> – naming a function or feature without describing what it does will rarely earn marks.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🔢</span> Data Representation (Paper 2 – Spec 4.5 &amp; 4.6)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Colour depth:</strong> colour depth = log₂(number of colours). Do not take the square root.</div>
+        <div class="tip-row"><strong>File size conversions:</strong> remember to divide by 8 to convert bits to bytes, and by 1024 (not 1000) for kibibytes/mebibytes/gibibytes.</div>
+        <div class="tip-row"><strong>Memory addressing:</strong> the number of addressable locations is 2^(number of address bus lines) – use the bus width, not the word size.</div>
+        <div class="tip-row"><strong>Floating point – direction:</strong> when the exponent is negative, shift the binary point to the LEFT.</div>
+        <div class="tip-row"><strong>Floating point – negative numbers:</strong> convert the positive value to binary first, then negate using two's complement. Never write -23 then +0.25.</div>
+        <div class="tip-row"><strong>Normalisation:</strong> a normalised floating-point number maximises precision and ensures a unique representation. State both points in exam answers.</div>
+        <div class="tip-row"><strong>Floating point error types:</strong> know overflow (too large) and underflow (too close to zero) by name. Do not confuse with stack overflow.</div>
+        <div class="tip-row">Show every step of binary conversion working – partial credit is awarded for correct method even if the final answer is wrong.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">⚙️</span> Hardware, Processors &amp; Buses (Paper 2 – Spec 4.7)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Address bus:</strong> the number of wires determines addressable locations (2ⁿ), not the word size.</div>
+        <div class="tip-row"><strong>I/O controller:</strong> it <em>translates signals</em> between the CPU and peripherals – say 'translates', not just 'acts as an interface'.</div>
+        <div class="tip-row"><strong>Control bus vs control unit:</strong> the control bus carries control signals; the control unit manages instruction execution.</div>
+        <div class="tip-row"><strong>Fetch-execute cycle:</strong> describe all three stages – Fetch, Decode, AND Execute. The execute stage is most often omitted.</div>
+        <div class="tip-row"><strong>Performance improvements:</strong> explain the mechanism (e.g. 'multiple cores allow instructions to execute simultaneously').</div>
+        <div class="tip-row"><strong>Interrupts:</strong> an interrupt causes the processor to <em>pause</em> the current task and save state, not stop execution permanently.</div>
+        <div class="tip-row"><strong>Operating system functions:</strong> naming a function is not enough. Describe what the OS does, e.g. 'allocates regions of memory to different processes'.</div>
+        <div class="tip-row"><strong>Synchronous transmission:</strong> the clocks of transmitter and receiver are kept continuously synchronised – usually by a shared clock signal.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🌐</span> Networks, Internet &amp; Security (Paper 2 – Spec 4.8 &amp; 4.9)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Start bit:</strong> its purpose is to synchronise the receiver's clock with the sender's – not just to 'mark the start' of transmission.</div>
+        <div class="tip-row"><strong>Stop bit:</strong> allows the receiver to prepare for the next start bit – not just to 'mark the end'.</div>
+        <div class="tip-row"><strong>Transport layer:</strong> describes segmentation, port numbers, and end-to-end connection establishment – not routing (that is the network layer).</div>
+        <div class="tip-row"><strong>Gateway:</strong> a gateway can repackage data when connecting networks that use different protocols. A router cannot do this.</div>
+        <div class="tip-row"><strong>NAT:</strong> a NAT router uses both IP addresses AND port numbers (stored in a NAT translation table) to route return packets correctly.</div>
+        <div class="tip-row"><strong>Port forwarding:</strong> the router changes the destination IP address so that external packets can reach an internal server.</div>
+        <div class="tip-row"><strong>DNS:</strong> the purpose is to resolve fully qualified domain names to IP addresses. Describe the hierarchical structure and delegation.</div>
+        <div class="tip-row"><strong>Asymmetric encryption:</strong> BOTH the sender and receiver each have their OWN public and private key pair. Know which key is used at each step.</div>
+        <div class="tip-row"><strong>Digital signatures:</strong> signed with sender's PRIVATE key, verified with sender's PUBLIC key.</div>
+        <div class="tip-row"><strong>Vernam cipher:</strong> the KEY (not 'it') must be truly random, at least as long as the message, and used only once.</div>
+        <div class="tip-row"><strong>Parity bits:</strong> can detect an ODD number of changed bits – an even number of changed bits will not be detected.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🗃️</span> Databases &amp; SQL (Paper 2 – Spec 4.9.3)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>SQL CREATE TABLE:</strong> syntax is <code>field_name data_type</code>, not <code>data_type field_name</code>. Use commas between field definitions.</div>
+        <div class="tip-row"><strong>SQL UPDATE:</strong> syntax is <code>UPDATE table_name SET …</code> – the table name comes after UPDATE, not the field name.</div>
+        <div class="tip-row"><strong>SQL INSERT INTO:</strong> enclose date and string values in single quotation marks.</div>
+        <div class="tip-row"><strong>SQL DELETE:</strong> only include tables that are needed. A simple date-based delete does not require joining other tables.</div>
+        <div class="tip-row"><strong>CRUD and REST:</strong> GET→SELECT, POST→INSERT, PUT→UPDATE, DELETE→DELETE.</div>
+        <div class="tip-row"><strong>Normalisation problems:</strong> DESCRIBE the problem in practice, e.g. 'if a supplier address is stored in every product row, updating it requires changing every row, risking inconsistency'.</div>
+        <div class="tip-row"><strong>Timestamp ordering:</strong> each transaction gets a timestamp; each record holds a read-timestamp and write-timestamp used to detect conflicts.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🔣</span> Boolean Algebra &amp; Logic (Paper 2 – Spec 4.3)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Operator precedence:</strong> AND (∙) has HIGHER precedence than OR (+). Do NOT simplify A + Ā to 1 if A is part of an AND expression.</div>
+        <div class="tip-row"><strong>De Morgan's law:</strong> can only be applied to a group of operators if they are ALL the same type (all AND or all OR). Do not mix.</div>
+        <div class="tip-row"><strong>De Morgan's forms:</strong> NOT(A AND B) = NOT A OR NOT B; NOT(A OR B) = NOT A AND NOT B.</div>
+        <div class="tip-row"><strong>Edge-triggered D-type flip-flop:</strong> the output is set to the value of the DATA input at the moment of the clock edge – it does not toggle.</div>
+        <div class="tip-row"><strong>Boolean simplification:</strong> show every step clearly. Marks are awarded for valid intermediate steps even if the final answer is wrong.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">💻</span> Assembly Language (Paper 2 – Spec 4.9.4)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Shift direction:</strong> LSR (Logical Shift Right) shifts bits to the RIGHT – read the mnemonic carefully in traces.</div>
+        <div class="tip-row"><strong>Immediate addressing:</strong> use <code>#</code> before a literal value (e.g. <code>ADD R0, R0, #48</code>) – omitting <code>#</code> uses direct addressing.</div>
+        <div class="tip-row"><strong>Branch behaviour:</strong> code after a label executes sequentially – a branch to a label does NOT skip the code after that label automatically.</div>
+        <div class="tip-row"><strong>Assembly vs high-level:</strong> assembly language DOES need translation (by an assembler). Advantages are faster/smaller object code and direct hardware access.</div>
+        <div class="tip-row"><strong>Registers are integers:</strong> do not store fractional values in a register during a trace unless the ISA explicitly supports it.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🧮</span> Functional Programming (Paper 2 – Spec 4.9.5)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Immutability:</strong> means once a data structure is assigned a value, that value CANNOT be changed. State this clearly.</div>
+        <div class="tip-row"><strong>Statelessness:</strong> functions produce the same output for the same inputs and do not depend on or modify external state.</div>
+        <div class="tip-row"><strong>Distributed computing:</strong> if data cannot change and functions have no side-effects, multiple servers can process data simultaneously without synchronisation errors.</div>
+        <div class="tip-row"><strong>Map function:</strong> the result of map on a list is always another list. Include brackets when writing list output.</div>
+        <div class="tip-row"><strong>Recursive trace:</strong> follow the call stack carefully – work out what each recursive call returns before combining with the accumulated result.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🌲</span> Data Structures (Paper 1 – Spec 4.2)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Circular queue deletion:</strong> ALWAYS check if the queue is empty before removing an item. This check is frequently omitted.</div>
+        <div class="tip-row"><strong>Circular queue vs linear queue:</strong> in a circular queue, the front/rear pointers wrap around; no items are shuffled and there are no unused inaccessible locations.</div>
+        <div class="tip-row"><strong>Binary tree properties:</strong> a binary tree has at most TWO children per node – state this explicitly to distinguish it from a general tree.</div>
+        <div class="tip-row"><strong>Stack in traversal:</strong> in-order traversal of a binary tree uses a stack to track the current position. Know this and be able to describe it.</div>
+        <div class="tip-row"><strong>Hash tables:</strong> explain (1) the hash function produces the storage location, (2) the key must be unique, and (3) how collisions are handled.</div>
+        <div class="tip-row"><strong>Reverse Polish Notation:</strong> operands stay in their original order – do not change the order of A, B, C when converting. Only operators move.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🧠</span> Algorithms &amp; Complexity (Paper 1 – Spec 4.4)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Halting problem:</strong> a non-computable problem for which no algorithm can ever be written, for any possible input. It is NOT the same as an intractable problem.</div>
+        <div class="tip-row"><strong>Intractable vs non-computable:</strong> intractable problems CAN be solved algorithmically but not in reasonable time. Non-computable problems CANNOT be solved at all.</div>
+        <div class="tip-row"><strong>Constant time complexity O(1):</strong> the NUMBER OF STEPS does not change with input size – not that the time taken is always the same.</div>
+        <div class="tip-row"><strong>Heuristics:</strong> an approach that finds a good-enough solution in reasonable time when an optimal algorithm is too slow. Not the same as decomposition.</div>
+        <div class="tip-row"><strong>Sets – subsets:</strong> the empty set ∅ is ALWAYS a subset of every set. Order does not matter in sets: {a, b} = {b, a}.</div>
+        <div class="tip-row"><strong>Regular expressions:</strong> | is the alternation (OR) symbol. * means zero or more. Brackets matter: (bb)* ≠ bb*.</div>
+      </div>
+    </div>
+
+    <div class="tips-group">
+      <div class="tips-header"><span class="tips-emoji">🔧</span> Object-Oriented Programming (Paper 1 – Spec 4.3.3)</div>
+      <div class="tips-body">
+        <div class="tip-row"><strong>Protected access:</strong> a protected attribute/method is accessible within the class AND in subclasses. It is not the same as private.</div>
+        <div class="tip-row"><strong>Method overriding:</strong> a subclass provides its own implementation of a method defined in the superclass. Always link overriding to inheritance.</div>
+        <div class="tip-row"><strong>Abstract methods:</strong> MUST be overridden in any concrete subclass. A virtual method CAN be overridden but does not have to be.</div>
+        <div class="tip-row"><strong>Encapsulation:</strong> the bundling of data and methods into a class, and hiding the internal state from outside. Not the same as concatenation.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- PRIORITY AREAS -->
+  <section id="priority">
+    <div class="section-label">Section 4</div>
+    <h2>Priority Revision Areas</h2>
+    <div class="priority-table-wrap">
+      <table class="priority-table">
+        <thead>
+          <tr>
+            <th>Paper</th>
+            <th>Topic / Skill</th>
+            <th>Spec Ref</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>Floating-point numbers – conversion (both directions), normalisation, negative numbers, error types</td><td>4.6.3</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>Networks – start/stop bits, transport layer, NAT, port forwarding, DNS</td><td>4.9.2 / 4.5.3</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>SQL – CREATE TABLE syntax, UPDATE syntax, INSERT syntax, date delimiters</td><td>4.9.3</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>Boolean algebra – operator precedence, De Morgan's law application rules</td><td>4.3.1</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>Fetch-execute cycle – all three stages; interrupts; OS functions with descriptions</td><td>4.7.2 / 4.7.4</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>Asymmetric encryption &amp; digital signatures – who has which key, which key used when</td><td>4.8.2</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>Assembly language traces – shift direction, addressing modes, branch behaviour</td><td>4.9.4</td></tr>
+          <tr><td><span class="paper-badge p2">Paper 2</span></td><td>CRUD / REST – know the four operations and HTTP verb mapping</td><td>4.9.3</td></tr>
+          <tr><td><span class="paper-badge p1">Paper 1</span></td><td>Circular queue – deletion algorithm including empty-queue check</td><td>4.2.1</td></tr>
+          <tr><td><span class="paper-badge p1">Paper 1</span></td><td>Halting problem, intractability, heuristics – precise definitions required</td><td>4.4.2</td></tr>
+          <tr><td><span class="paper-badge p1">Paper 1</span></td><td>Regular expressions – | symbol, * and +, bracket grouping significance</td><td>4.4.1</td></tr>
+          <tr><td><span class="paper-badge p1">Paper 1</span></td><td>OOP – protected vs private; overriding; abstract vs virtual methods</td><td>4.3.3</td></tr>
+          <tr><td><span class="paper-badge both">Both</span></td><td>Answering technique – explain, don't just name; apply context; show working</td><td>General</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Compiled from AQA Examiner Reports for June 2022, June 2023 and June 2024 (Paper 1 &amp; Paper 2, Specification 7517).
+  Always cross-reference with the full AQA specification and mark schemes when revising.
+</footer>
+
+</body>
+</html>
