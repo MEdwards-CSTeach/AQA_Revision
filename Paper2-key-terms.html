@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA CS Key Terms & Definitions — Paper 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #21262d;
+    --accent: #00c9a7;
+    --accent2: #005f73;
+    --accent3: #94e2d5;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --tag-bg: #0a3a32;
+    --code: #f0883e;
+    --highlight: #1f3d2e;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #005f73 0%, #0a3d2e 60%, #0d1117 100%);
+    border-bottom: 1px solid var(--accent);
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,201,167,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-inner { max-width: 1100px; margin: 0 auto; }
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.2rem 0.7rem;
+    border-radius: 3px;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+  header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--accent3);
+    font-size: 0.95rem;
+    max-width: 520px;
+    margin-bottom: 1.5rem;
+  }
+
+  .how-to {
+    background: rgba(0,201,167,0.07);
+    border: 1px solid rgba(0,201,167,0.25);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.85rem;
+    color: var(--accent3);
+    max-width: 680px;
+  }
+  .how-to strong { color: var(--accent); }
+
+  /* NAV */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 0 1rem;
+  }
+  nav a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* SECTION */
+  .section-block {
+    margin-bottom: 3rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    background: var(--accent2);
+    color: var(--accent3);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .section-header h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--accent3);
+  }
+
+  .subsection-header {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 1.5rem 0 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* TERM CARDS */
+  .terms-grid {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .term-card {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .term-card:hover { border-color: var(--accent); }
+  .term-label {
+    background: var(--surface2);
+    border-right: 2px solid var(--accent);
+    padding: 0.8rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    line-height: 1.35;
+  }
+  .term-def {
+    padding: 0.8rem 1.1rem;
+    font-size: 0.875rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    line-height: 1.55;
+  }
+
+  /* RESOURCES */
+  .resources {
+    background: var(--highlight);
+    border: 1px solid rgba(0,201,167,0.3);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1.5rem;
+  }
+  .resources h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+  .resources a {
+    display: block;
+    color: var(--accent3);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 0.2rem 0;
+    transition: color 0.2s;
+  }
+  .resources a:hover { color: var(--accent); text-decoration: underline; }
+
+  /* COVER BUTTON */
+  .cover-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    transition: opacity 0.2s;
+  }
+  .cover-toggle:hover { opacity: 0.85; }
+  .cover-mode .term-def { background: var(--bg); color: var(--bg); cursor: pointer; border-radius: 3px; }
+  .cover-mode .term-def:hover { color: var(--text); background: var(--surface2); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+  }
+
+  @media (max-width: 640px) {
+    .term-card { grid-template-columns: 1fr; }
+    .term-label { border-right: none; border-bottom: 2px solid var(--accent); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="badge">AQA 7517 · Paper 2</div>
+    <h1>Key Terms <span>&amp;</span> Definitions</h1>
+    <p>Sections 4.5 – 4.12 · Exam-quality definitions for every key concept</p>
+    <div class="how-to">
+      <strong>HOW TO USE:</strong> Click <strong>"Cover Definitions"</strong> to hide the right column. Test yourself, then click any definition to reveal it. Pay attention to precise wording — AQA mark schemes reward accuracy.
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#s45">4.5 Data Rep</a>
+    <a href="#s46">4.6 Systems</a>
+    <a href="#s47">4.7 Architecture</a>
+    <a href="#s48">4.8 Ethics</a>
+    <a href="#s49">4.9 Networking</a>
+    <a href="#s410">4.10 Databases</a>
+    <a href="#s411">4.11 Big Data</a>
+    <a href="#s412">4.12 Func. Prog</a>
+  </div>
+</nav>
+
+<main>
+
+<button class="cover-toggle" onclick="toggleCover(this)">▶ Cover Definitions</button>
+
+<!-- 4.5 -->
+<div id="s45" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.5</span>
+    <h2>Fundamentals of Data Representation</h2>
+  </div>
+
+  <div class="subsection-header">4.5.1 & 4.5.2 — Number Sets & Number Bases</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Natural numbers (ℕ)</div><div class="term-def">The set of positive integers including zero used for counting: {0, 1, 2, 3, …}</div></div>
+    <div class="term-card"><div class="term-label">Integer (ℤ)</div><div class="term-def">The set of all whole numbers, both positive and negative, including zero: {…, -2, -1, 0, 1, 2, …}</div></div>
+    <div class="term-card"><div class="term-label">Rational number (ℚ)</div><div class="term-def">Any number that can be expressed exactly as a fraction p/q where p and q are integers and q ≠ 0.</div></div>
+    <div class="term-card"><div class="term-label">Irrational number</div><div class="term-def">A number that cannot be expressed as an exact fraction; its decimal expansion is infinite and non-repeating (e.g. π, √2).</div></div>
+    <div class="term-card"><div class="term-label">Real number (ℝ)</div><div class="term-def">The complete set of all numbers on the number line: naturals, integers, rationals and irrationals.</div></div>
+    <div class="term-card"><div class="term-label">Ordinal number</div><div class="term-def">A number used to describe position/order within a set (1st, 2nd, 3rd …).</div></div>
+    <div class="term-card"><div class="term-label">Binary (base 2)</div><div class="term-def">A number system using only the digits 0 and 1. Each digit (bit) represents a power of 2.</div></div>
+    <div class="term-card"><div class="term-label">Hexadecimal (base 16)</div><div class="term-def">A number system using 16 symbols (0–9, A–F). One hex digit represents exactly four binary bits, making it a compact shorthand for binary.</div></div>
+    <div class="term-card"><div class="term-label">Decimal (base 10)</div><div class="term-def">The everyday number system using digits 0–9, where each position represents a power of 10.</div></div>
+  </div>
+
+  <div class="subsection-header">4.5.3 — Units of Information</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Bit</div><div class="term-def">The fundamental unit of information: a single binary digit, either 0 or 1.</div></div>
+    <div class="term-card"><div class="term-label">Byte</div><div class="term-def">A group of 8 bits. The basic unit used to measure memory and storage capacity.</div></div>
+    <div class="term-card"><div class="term-label">Kibibyte (KiB)</div><div class="term-def">2¹⁰ bytes = 1,024 bytes. A binary prefix unit. Note: 1 kilobyte (kB) = 1,000 bytes (decimal prefix).</div></div>
+    <div class="term-card"><div class="term-label">Mebibyte (MiB)</div><div class="term-def">2²⁰ bytes = 1,048,576 bytes.</div></div>
+    <div class="term-card"><div class="term-label">Gibibyte (GiB)</div><div class="term-def">2³⁰ bytes ≈ 1.07 × 10⁹ bytes.</div></div>
+    <div class="term-card"><div class="term-label">Tebibyte (TiB)</div><div class="term-def">2⁴⁰ bytes ≈ 1.10 × 10¹² bytes.</div></div>
+  </div>
+
+  <div class="subsection-header">4.5.4 — Binary Number System</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Unsigned binary</div><div class="term-def">A binary representation of non-negative integers only. With n bits the range is 0 to 2ⁿ – 1.</div></div>
+    <div class="term-card"><div class="term-label">Signed binary (two's complement)</div><div class="term-def">A binary representation that includes negative integers. The MSB has a negative place value. To negate: invert all bits then add 1. With n bits the range is –2ⁿ⁻¹ to 2ⁿ⁻¹ – 1.</div></div>
+    <div class="term-card"><div class="term-label">Fixed-point binary</div><div class="term-def">A binary representation for non-integer values where the binary point is always in the same position. Offers constant precision but limited range.</div></div>
+    <div class="term-card"><div class="term-label">Floating-point binary</div><div class="term-def">A binary representation using a mantissa (significant digits) and an exponent (scale). Allows a wider range of values at the cost of varying precision.</div></div>
+    <div class="term-card"><div class="term-label">Mantissa</div><div class="term-def">The significant-digit part of a floating-point number. Stored in two's complement; the binary point is assumed to follow the MSB.</div></div>
+    <div class="term-card"><div class="term-label">Exponent</div><div class="term-def">The power-of-two scale factor in floating-point representation. Stored in two's complement. Increasing the exponent shifts the binary point right (larger value).</div></div>
+    <div class="term-card"><div class="term-label">Normalisation (floating point)</div><div class="term-def">Adjusting the mantissa and exponent so the mantissa begins 0.1… (positive) or 1.0… (negative) in two's complement. Maximises precision for a given number of bits.</div></div>
+    <div class="term-card"><div class="term-label">Rounding error</div><div class="term-def">The inaccuracy introduced when a value cannot be represented exactly in a fixed number of bits. Some values (e.g. 0.1₁₀) have an infinitely repeating binary expansion.</div></div>
+    <div class="term-card"><div class="term-label">Absolute error</div><div class="term-def">The magnitude of the difference between the true value and the stored approximation: │true – stored│.</div></div>
+    <div class="term-card"><div class="term-label">Relative error</div><div class="term-def">The absolute error expressed as a proportion of the true value: │true – stored│ / │true│. Useful for comparing accuracy across different-sized numbers.</div></div>
+    <div class="term-card"><div class="term-label">Overflow</div><div class="term-def">Occurs when the result of a calculation is too large (positive or negative) to be stored in the available bits. The exponent cannot be increased further.</div></div>
+    <div class="term-card"><div class="term-label">Underflow</div><div class="term-def">Occurs when the result is too small (close to zero) to be represented; the non-zero mantissa would require an exponent smaller than the minimum.</div></div>
+  </div>
+
+  <div class="subsection-header">4.5.5 — Information Coding Systems</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">ASCII</div><div class="term-def">American Standard Code for Information Interchange. A 7-bit character encoding representing 128 characters. Extended ASCII uses 8 bits (256 characters).</div></div>
+    <div class="term-card"><div class="term-label">Unicode</div><div class="term-def">An international character encoding standard (up to 32 bits per character) that can represent over 1 million characters from all world scripts. Overcomes ASCII's limitation to English/Latin.</div></div>
+    <div class="term-card"><div class="term-label">Character code</div><div class="term-def">The numeric binary value assigned to a character in an encoding scheme (e.g. ASCII code for 'A' is 65₁₀ = 0100 0001₂).</div></div>
+    <div class="term-card"><div class="term-label">Parity bit</div><div class="term-def">An extra bit added to a group of bits to make the total number of 1s either always even (even parity) or always odd (odd parity). Used to detect single-bit transmission errors.</div></div>
+    <div class="term-card"><div class="term-label">Majority voting</div><div class="term-def">Each bit is transmitted multiple times (e.g. three). The receiver uses the value that appears in the majority of copies. Can detect and correct single-bit errors.</div></div>
+    <div class="term-card"><div class="term-label">Checksum</div><div class="term-def">A value computed from a block of data and transmitted with it. The receiver recomputes; a mismatch indicates corruption. Used in TCP/IP and file transfers.</div></div>
+    <div class="term-card"><div class="term-label">Check digit</div><div class="term-def">A digit appended to a number (e.g. ISBN, barcode) calculated from the other digits. Detects common data-entry errors such as transpositions.</div></div>
+    <div class="term-card"><div class="term-label">Cipher</div><div class="term-def">An algorithm used to perform encryption or decryption. Operates on plaintext to produce ciphertext.</div></div>
+    <div class="term-card"><div class="term-label">Plaintext</div><div class="term-def">The original, unencrypted data before any encryption algorithm is applied.</div></div>
+    <div class="term-card"><div class="term-label">Ciphertext</div><div class="term-def">The scrambled, unreadable data produced by applying an encryption algorithm to plaintext.</div></div>
+    <div class="term-card"><div class="term-label">Caesar cipher</div><div class="term-def">A simple substitution cipher in which each letter is shifted a fixed number of places in the alphabet. Easily cracked by frequency analysis or brute force (only 25 possible keys).</div></div>
+    <div class="term-card"><div class="term-label">Vernam cipher (one-time pad)</div><div class="term-def">A theoretically unbreakable cipher where the key is a random bit string at least as long as the message, used only once. The ciphertext carries no statistical information about the plaintext.</div></div>
+    <div class="term-card"><div class="term-label">Computational security</div><div class="term-def">Security based on the practical impossibility of cracking a cipher within a useful time frame, rather than mathematical proof of impossibility (as with Vernam).</div></div>
+  </div>
+
+  <div class="subsection-header">4.5.6 — Representing Images, Sound & Other Data</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Bit pattern</div><div class="term-def">A sequence of bits. The same sequence can represent different things (number, character, colour, instruction) depending on context/data type.</div></div>
+    <div class="term-card"><div class="term-label">Analogue data</div><div class="term-def">Data that varies continuously and can take any value within a range (e.g. sound waves, temperature). Has infinite precision.</div></div>
+    <div class="term-card"><div class="term-label">Digital data</div><div class="term-def">Data represented as discrete values, typically binary 0s and 1s. Sampled and quantised from analogue sources.</div></div>
+    <div class="term-card"><div class="term-label">ADC</div><div class="term-def">Analogue-to-Digital Converter. Hardware that samples an analogue signal at regular intervals and converts each sample to a binary value. Used with microphones and sensors.</div></div>
+    <div class="term-card"><div class="term-label">DAC</div><div class="term-def">Digital-to-Analogue Converter. Hardware that converts a binary digital signal back to a continuous analogue signal. Most commonly used to convert digital audio to sound.</div></div>
+    <div class="term-card"><div class="term-label">Bitmap (raster) graphic</div><div class="term-def">An image stored as a 2D grid of pixels, each with a colour value encoded in binary. File size = width × height × colour depth (bits).</div></div>
+    <div class="term-card"><div class="term-label">Pixel</div><div class="term-def">The smallest addressable element of a raster image. Each pixel stores a colour value.</div></div>
+    <div class="term-card"><div class="term-label">Resolution</div><div class="term-def">The number of pixels in an image (width × height), or dots per inch (dpi). Higher resolution → more detail → larger file size.</div></div>
+    <div class="term-card"><div class="term-label">Colour depth</div><div class="term-def">The number of bits used to represent the colour of a single pixel. 8-bit gives 256 colours; 24-bit (true colour) gives over 16 million colours.</div></div>
+    <div class="term-card"><div class="term-label">Vector graphic</div><div class="term-def">An image stored as mathematical descriptions of geometric shapes. Scales without loss of quality; file size depends on complexity, not image size.</div></div>
+    <div class="term-card"><div class="term-label">Sample rate (audio)</div><div class="term-def">The number of times per second an analogue audio signal is measured. Measured in Hz. Higher sample rate → more accurate reproduction → larger file.</div></div>
+    <div class="term-card"><div class="term-label">Sample resolution / bit depth</div><div class="term-def">The number of bits used to store each audio sample. More bits → finer volume gradations → higher quality and larger file size.</div></div>
+    <div class="term-card"><div class="term-label">MIDI</div><div class="term-def">Musical Instrument Digital Interface. Stores music as instructions (note, duration, instrument) rather than recorded sound. Very compact; quality depends on playback hardware.</div></div>
+    <div class="term-card"><div class="term-label">Lossless compression</div><div class="term-def">Compression that allows the original data to be perfectly reconstructed. No information is lost (e.g. RLE, ZIP).</div></div>
+    <div class="term-card"><div class="term-label">Lossy compression</div><div class="term-def">Compression that permanently removes some data, reducing quality but achieving smaller file sizes (e.g. JPEG, MP3). Cannot be reversed.</div></div>
+    <div class="term-card"><div class="term-label">Run-length encoding (RLE)</div><div class="term-def">A lossless compression method that replaces consecutive repeated values with a count and the value (e.g. AAABBBB → 3A 4B).</div></div>
+    <div class="term-card"><div class="term-label">Dictionary-based compression</div><div class="term-def">Lossless compression that builds a dictionary of repeated sequences and replaces them with shorter codes (e.g. LZ77/LZW used in ZIP and GIF).</div></div>
+  </div>
+
+  <div class="resources">
+    <h4>🔗 Useful Resources</h4>
+    <a href="https://www.binaryhexconverter.com" target="_blank">Binary/Hex Converter</a>
+    <a href="https://www.csfieldguide.org.nz/en/chapters/data-representation/" target="_blank">CS Field Guide – Data Representation</a>
+    <a href="https://www.bbc.co.uk/bitesize/guides/zjxmn39/revision/1" target="_blank">BBC Bitesize – Data Representation</a>
+    <a href="https://www.youtube.com/watch?v=PZRI1IfStY0" target="_blank">Computerphile – Floating Point Numbers (YouTube)</a>
+  </div>
+</div>
+
+<!-- 4.6 -->
+<div id="s46" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.6</span>
+    <h2>Fundamentals of Computer Systems</h2>
+  </div>
+
+  <div class="subsection-header">4.6.1 — Hardware & Software</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Hardware</div><div class="term-def">The physical, tangible components of a computer system (e.g. CPU, RAM, hard drive, keyboard).</div></div>
+    <div class="term-card"><div class="term-label">Software</div><div class="term-def">Programs (sets of instructions) that run on hardware and make the computer useful. Can be changed without altering physical components.</div></div>
+    <div class="term-card"><div class="term-label">System software</div><div class="term-def">Software that provides a platform for running application software and manages hardware resources (e.g. operating systems, device drivers, utilities).</div></div>
+    <div class="term-card"><div class="term-label">Application software</div><div class="term-def">Software designed to help users perform specific tasks (e.g. word processors, games, web browsers).</div></div>
+    <div class="term-card"><div class="term-label">Operating system (OS)</div><div class="term-def">System software that acts as an interface between the user/applications and the hardware. Manages resources (CPU time, memory, I/O) among competing processes and hides hardware complexity.</div></div>
+    <div class="term-card"><div class="term-label">Utility program</div><div class="term-def">System software performing a specific maintenance or housekeeping task (e.g. disk defragmenter, antivirus, file compression tool).</div></div>
+    <div class="term-card"><div class="term-label">Library</div><div class="term-def">Pre-compiled code that can be called by other programs to perform common tasks without rewriting the code (e.g. maths libraries, graphics libraries).</div></div>
+  </div>
+
+  <div class="subsection-header">4.6.2–4.6.3 — Programming Languages & Translators</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Machine code</div><div class="term-def">The lowest-level programming language consisting of binary instructions (0s and 1s) that can be executed directly by the CPU. Processor-specific; not portable.</div></div>
+    <div class="term-card"><div class="term-label">Assembly language</div><div class="term-def">A low-level language using human-readable mnemonics (e.g. MOV, ADD) that correspond 1-to-1 with machine code instructions. Converted to machine code by an assembler.</div></div>
+    <div class="term-card"><div class="term-label">Imperative high-level language</div><div class="term-def">A programming language (e.g. Python, Java) that uses English-like statements and abstracts away hardware details. Translated to machine code by a compiler or interpreter.</div></div>
+    <div class="term-card"><div class="term-label">Assembler</div><div class="term-def">A translator that converts assembly language source code directly into machine code, one instruction at a time (one-to-one translation).</div></div>
+    <div class="term-card"><div class="term-label">Compiler</div><div class="term-def">A translator that converts the entire high-level source code into machine code in one go before execution. Produces a standalone executable; errors reported after full analysis.</div></div>
+    <div class="term-card"><div class="term-label">Interpreter</div><div class="term-def">A translator that executes high-level source code line by line at runtime, translating and running each statement before moving to the next. No standalone executable is produced.</div></div>
+    <div class="term-card"><div class="term-label">Bytecode</div><div class="term-def">An intermediate form of compiled code (e.g. Java .class files) that is not native machine code but is executed by a virtual machine (JVM). Enables platform independence.</div></div>
+    <div class="term-card"><div class="term-label">Source code</div><div class="term-def">The human-readable version of a program written by the programmer, before translation.</div></div>
+    <div class="term-card"><div class="term-label">Object (executable) code</div><div class="term-def">The machine-code output produced by a compiler; ready to be loaded and run by the CPU.</div></div>
+  </div>
+
+  <div class="subsection-header">4.6.4–4.6.5 — Logic Gates & Boolean Algebra</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Logic gate</div><div class="term-def">An electronic component that implements a Boolean function, taking one or more binary inputs and producing a single binary output.</div></div>
+    <div class="term-card"><div class="term-label">NOT gate</div><div class="term-def">Inverts the input: output = 1 when input = 0, and vice versa. Boolean expression: Ā (or ¬A).</div></div>
+    <div class="term-card"><div class="term-label">AND gate</div><div class="term-def">Output = 1 only when ALL inputs are 1. Boolean: A · B (or A AND B).</div></div>
+    <div class="term-card"><div class="term-label">OR gate</div><div class="term-def">Output = 1 when AT LEAST ONE input is 1. Boolean: A + B (or A OR B).</div></div>
+    <div class="term-card"><div class="term-label">XOR gate</div><div class="term-def">Exclusive OR: output = 1 when inputs are DIFFERENT. Boolean: A ⊕ B.</div></div>
+    <div class="term-card"><div class="term-label">NAND gate</div><div class="term-def">NOT AND: output = 0 only when all inputs are 1. Boolean: ¬(A · B). Functionally complete — all other gates can be built from NAND gates.</div></div>
+    <div class="term-card"><div class="term-label">NOR gate</div><div class="term-def">NOT OR: output = 1 only when ALL inputs are 0. Boolean: ¬(A + B). Also functionally complete.</div></div>
+    <div class="term-card"><div class="term-label">Truth table</div><div class="term-def">A table showing all possible input combinations and the corresponding output for a logic circuit or Boolean expression.</div></div>
+    <div class="term-card"><div class="term-label">Half-adder</div><div class="term-def">A circuit that adds two single bits, producing a Sum output (XOR) and a Carry output (AND). Cannot handle a carry-in.</div></div>
+    <div class="term-card"><div class="term-label">Full-adder</div><div class="term-def">A circuit that adds two bits plus a carry-in, producing a Sum and Carry-out. Built from two half-adders. Used in multi-bit addition circuits.</div></div>
+    <div class="term-card"><div class="term-label">D-type flip-flop</div><div class="term-def">An edge-triggered memory element that stores one bit. The stored value updates to the input (D) on the rising (or falling) edge of a clock signal.</div></div>
+    <div class="term-card"><div class="term-label">Boolean algebra</div><div class="term-def">A mathematical system for analysing and simplifying logic expressions using identities and laws (commutative, associative, distributive, De Morgan's).</div></div>
+    <div class="term-card"><div class="term-label">De Morgan's laws</div><div class="term-def">Two rules: (1) ¬(A · B) = ¬A + ¬B  and  (2) ¬(A + B) = ¬A · ¬B. Used to convert between NAND and NOR expressions and to simplify circuits.</div></div>
+  </div>
+
+  <div class="resources">
+    <h4>🔗 Useful Resources</h4>
+    <a href="https://logic.ly/demo" target="_blank">Logic gate simulator – Logic.ly</a>
+    <a href="https://www.nandgame.com" target="_blank">nandgame.com – Build a CPU from NAND gates</a>
+    <a href="https://www.boolean-algebra.com" target="_blank">Boolean algebra simplifier</a>
+    <a href="https://www.csfieldguide.org.nz/en/chapters/logic-gates/" target="_blank">CS Field Guide – Logic Gates</a>
+  </div>
+</div>
+
+<!-- 4.7 -->
+<div id="s47" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.7</span>
+    <h2>Fundamentals of Computer Organisation & Architecture</h2>
+  </div>
+
+  <div class="subsection-header">4.7.1 — Internal Hardware Components</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Processor (CPU)</div><div class="term-def">The Central Processing Unit: the component that executes program instructions. Contains the ALU, control unit, registers and cache.</div></div>
+    <div class="term-card"><div class="term-label">Arithmetic Logic Unit (ALU)</div><div class="term-def">The part of the CPU that performs arithmetic operations (add, subtract, multiply) and logical operations (AND, OR, NOT, compare).</div></div>
+    <div class="term-card"><div class="term-label">Control Unit (CU)</div><div class="term-def">The part of the CPU that directs and coordinates all operations. It fetches instructions, decodes them and issues control signals to execute them.</div></div>
+    <div class="term-card"><div class="term-label">Clock</div><div class="term-def">An oscillator that generates a regular pulse (measured in Hz/GHz). Each pulse synchronises CPU operations; a higher clock speed allows more instructions per second.</div></div>
+    <div class="term-card"><div class="term-label">General-purpose register</div><div class="term-def">A small, fast storage location inside the CPU used to hold data or addresses being actively processed (e.g. ACC in AQA assembly).</div></div>
+    <div class="term-card"><div class="term-label">Program Counter (PC)</div><div class="term-def">A dedicated register that holds the memory address of the next instruction to be fetched.</div></div>
+    <div class="term-card"><div class="term-label">Current Instruction Register (CIR)</div><div class="term-def">Holds the instruction currently being decoded and executed.</div></div>
+    <div class="term-card"><div class="term-label">Memory Address Register (MAR)</div><div class="term-def">Holds the address in main memory that is about to be read from or written to.</div></div>
+    <div class="term-card"><div class="term-label">Memory Buffer Register (MBR/MDR)</div><div class="term-def">A temporary store for data being transferred between the CPU and main memory.</div></div>
+    <div class="term-card"><div class="term-label">Status Register (SR)</div><div class="term-def">Contains flag bits recording the outcome of the last operation (e.g. zero flag, carry flag, overflow flag).</div></div>
+    <div class="term-card"><div class="term-label">Main memory (RAM)</div><div class="term-def">Volatile, directly addressable storage holding programs and data currently in use. Slower than registers/cache but much larger.</div></div>
+    <div class="term-card"><div class="term-label">Address bus</div><div class="term-def">A unidirectional bus carrying memory addresses from the CPU to memory/I/O. Width determines the maximum addressable memory (2ⁿ locations for n-bit bus).</div></div>
+    <div class="term-card"><div class="term-label">Data bus</div><div class="term-def">A bidirectional bus carrying data between the CPU, memory and I/O devices. Width determines how many bits are transferred at once.</div></div>
+    <div class="term-card"><div class="term-label">Control bus</div><div class="term-def">A bidirectional bus carrying control signals (e.g. memory read/write, interrupt request, clock). Coordinates all components.</div></div>
+    <div class="term-card"><div class="term-label">I/O controller</div><div class="term-def">An interface between the CPU and peripheral devices. Translates signals, buffers data, handles interrupts and carries out I/O-related processing to reduce CPU workload.</div></div>
+    <div class="term-card"><div class="term-label">Von Neumann architecture</div><div class="term-def">A computer design in which a single, shared memory stores both instructions and data, connected to the CPU by a single bus. Simple but subject to the "von Neumann bottleneck".</div></div>
+    <div class="term-card"><div class="term-label">Harvard architecture</div><div class="term-def">A design with physically separate memory and buses for instructions and data. Allows simultaneous fetch of instruction and data; used in embedded/DSP systems.</div></div>
+    <div class="term-card"><div class="term-label">Addressable memory</div><div class="term-def">Each location in memory has a unique address. The CPU uses the address bus to specify which location to read from or write to.</div></div>
+  </div>
+
+  <div class="subsection-header">4.7.2–4.7.3 — Stored Program Concept & Fetch-Execute Cycle</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Stored program concept</div><div class="term-def">The principle that machine-code instructions stored in main memory are fetched and executed serially by the processor. Programs can be changed by modifying memory contents, without altering hardware.</div></div>
+    <div class="term-card"><div class="term-label">Fetch-Decode-Execute cycle</div><div class="term-def">The repeating sequence by which the CPU processes instructions: (1) Fetch – copy instruction at address in PC into CIR, increment PC; (2) Decode – interpret the instruction; (3) Execute – carry out the instruction.</div></div>
+    <div class="term-card"><div class="term-label">Interrupt</div><div class="term-def">A signal to the CPU from hardware or software requesting immediate attention (e.g. I/O complete, hardware fault). The CPU saves its current state, handles the interrupt via an ISR, then resumes.</div></div>
+    <div class="term-card"><div class="term-label">Interrupt Service Routine (ISR)</div><div class="term-def">A small program that handles a specific type of interrupt. Executed when that interrupt is triggered.</div></div>
+    <div class="term-card"><div class="term-label">Pipelining</div><div class="term-def">A technique where multiple stages of the fetch-decode-execute cycle are overlapped for different instructions simultaneously, increasing throughput.</div></div>
+    <div class="term-card"><div class="term-label">Cache memory</div><div class="term-def">Small, very fast memory located close to the CPU that stores copies of frequently accessed data/instructions to reduce the average time to access main memory.</div></div>
+  </div>
+
+  <div class="subsection-header">4.7.4 — Instruction Set & Assembly Language</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Instruction set</div><div class="term-def">The complete set of machine-code instructions that a particular CPU can understand and execute. Different processor families have different instruction sets (not portable).</div></div>
+    <div class="term-card"><div class="term-label">Opcode</div><div class="term-def">The part of a machine-code instruction that specifies WHAT operation to perform (e.g. load, add, store).</div></div>
+    <div class="term-card"><div class="term-label">Operand</div><div class="term-def">The part of a machine-code instruction that specifies WHERE the data is (memory address, register, or immediate value) on which the operation acts.</div></div>
+    <div class="term-card"><div class="term-label">Addressing modes</div><div class="term-def">The different ways an operand can specify where data is located: immediate (literal value), direct (memory address), indirect (address of address), indexed (base address + offset).</div></div>
+    <div class="term-card"><div class="term-label">Immediate addressing</div><div class="term-def">The operand IS the actual data value to be used (e.g. LDR R0, #5 loads the value 5).</div></div>
+    <div class="term-card"><div class="term-label">Direct addressing</div><div class="term-def">The operand is a memory address; the CPU reads the data stored at that address.</div></div>
+    <div class="term-card"><div class="term-label">Indirect addressing</div><div class="term-def">The operand is an address that contains another address, which holds the actual data.</div></div>
+    <div class="term-card"><div class="term-label">RISC</div><div class="term-def">Reduced Instruction Set Computer. A CPU design philosophy with a small set of simple, fixed-length instructions that each execute in one clock cycle. Favours registers over complex memory operations.</div></div>
+    <div class="term-card"><div class="term-label">CISC</div><div class="term-def">Complex Instruction Set Computer. A CPU design with a large set of complex, variable-length instructions; a single instruction may perform several operations. Examples: x86 architecture.</div></div>
+    <div class="term-card"><div class="term-label">Co-processor</div><div class="term-def">A secondary processor that supplements the main CPU by handling specific tasks (e.g. graphics GPU, floating-point unit FPU).</div></div>
+    <div class="term-card"><div class="term-label">GPU (Graphics Processing Unit)</div><div class="term-def">A massively parallel co-processor originally designed for rendering graphics, now also used for scientific computing and machine learning due to its thousands of smaller cores.</div></div>
+    <div class="term-card"><div class="term-label">Multicore processor</div><div class="term-def">A single chip containing two or more independent processor cores, enabling true parallel execution of multiple instruction streams.</div></div>
+  </div>
+
+  <div class="subsection-header">4.7.5 — External Hardware Devices</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Secondary storage</div><div class="term-def">Non-volatile storage (data persists when power is off) used for long-term data storage: HDD, SSD, optical disc, flash/USB.</div></div>
+    <div class="term-card"><div class="term-label">HDD (Hard Disk Drive)</div><div class="term-def">Magnetic storage: platters coated with magnetisable material spin at high speed; read/write heads move radially. Data stored in tracks divided into sectors. Relatively slow random access.</div></div>
+    <div class="term-card"><div class="term-label">SSD (Solid-State Drive)</div><div class="term-def">Flash-based non-volatile storage with no moving parts. Faster than HDD, more durable, but historically more expensive per GB.</div></div>
+    <div class="term-card"><div class="term-label">Optical storage</div><div class="term-def">Uses a laser to read/write data as pits and lands on a reflective disc (CD, DVD, Blu-ray). Suitable for distribution and archiving.</div></div>
+    <div class="term-card"><div class="term-label">Flash/USB storage</div><div class="term-def">NAND flash memory packaged as USB drives or memory cards. Portable, non-volatile, no moving parts; limited write cycles.</div></div>
+    <div class="term-card"><div class="term-label">RFID</div><div class="term-def">Radio-Frequency Identification. Uses radio waves to read/write data on tags attached to objects. No line-of-sight needed; used in contactless payments, stock control, security.</div></div>
+  </div>
+
+  <div class="resources">
+    <h4>🔗 Useful Resources</h4>
+    <a href="https://www.101computing.net/LMC/" target="_blank">CPU simulator / Little Man Computer</a>
+    <a href="https://filestore.aqa.org.uk/resources/computing/AQA-75162-75172-ALI.PDF" target="_blank">AQA Assembly instruction set reference (PDF)</a>
+    <a href="https://www.youtube.com/watch?v=cNN_tTXABUA" target="_blank">How CPUs work – Computerphile (YouTube)</a>
+    <a href="https://www.youtube.com/c/BenEater" target="_blank">Ben Eater – Build a CPU from scratch (YouTube)</a>
+  </div>
+</div>
+
+<!-- 4.8 -->
+<div id="s48" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.8</span>
+    <h2>Consequences of Uses of Computing</h2>
+  </div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Computer Misuse Act 1990</div><div class="term-def">UK legislation making it illegal to: (1) access computer material without authorisation, (2) access with intent to commit a further crime, (3) unauthorised modification of computer material (e.g. planting malware).</div></div>
+    <div class="term-card"><div class="term-label">Data Protection Act 2018 / UK GDPR</div><div class="term-def">Law governing how personal data must be collected, stored and processed. Key principles: data must be fairly and lawfully processed, accurate, kept only as long as necessary, and kept securely.</div></div>
+    <div class="term-card"><div class="term-label">Copyright, Designs and Patents Act 1988</div><div class="term-def">Protects intellectual property: code, images, music and text are automatically copyright. Copying, distributing or modifying without permission is illegal unless under a licence.</div></div>
+    <div class="term-card"><div class="term-label">RIPA 2000</div><div class="term-def">Regulation of Investigatory Powers Act. UK law governing surveillance and interception of communications. Allows law enforcement to intercept communications under warrant; raises privacy concerns.</div></div>
+    <div class="term-card"><div class="term-label">Creative Commons licence</div><div class="term-def">A licensing system allowing creators to grant others rights to share, adapt or use their work, sometimes with conditions (e.g. attribution, non-commercial, share-alike).</div></div>
+    <div class="term-card"><div class="term-label">Open-source software</div><div class="term-def">Software whose source code is publicly available for anyone to view, use, modify and distribute, usually under a licence such as GPL. Examples: Linux, Firefox.</div></div>
+    <div class="term-card"><div class="term-label">Proprietary software</div><div class="term-def">Software owned by an individual or company; source code is not freely available and use is governed by a licence agreement.</div></div>
+    <div class="term-card"><div class="term-label">Digital divide</div><div class="term-def">The gap between those who have access to digital technology and the internet and those who do not, often correlating with wealth, geography or age.</div></div>
+    <div class="term-card"><div class="term-label">Malware</div><div class="term-def">Software designed to disrupt, damage or gain unauthorised access to a system. Includes viruses, worms, trojans, ransomware, spyware and adware.</div></div>
+    <div class="term-card"><div class="term-label">Virus</div><div class="term-def">Malware that attaches itself to a legitimate program and replicates by infecting other programs when executed. Requires user action to spread.</div></div>
+    <div class="term-card"><div class="term-label">Worm</div><div class="term-def">Self-replicating malware that spreads automatically across networks without needing to attach to a host program. Exploits network/OS vulnerabilities.</div></div>
+    <div class="term-card"><div class="term-label">Trojan horse</div><div class="term-def">Malware disguised as legitimate software. Does not self-replicate, but opens a backdoor or causes damage once executed by the user.</div></div>
+    <div class="term-card"><div class="term-label">Ransomware</div><div class="term-def">Malware that encrypts a victim's files and demands payment (ransom) in exchange for the decryption key.</div></div>
+    <div class="term-card"><div class="term-label">Phishing</div><div class="term-def">A social engineering attack using fraudulent emails, websites or messages to trick users into revealing passwords, financial details or installing malware.</div></div>
+  </div>
+</div>
+
+<!-- 4.9 -->
+<div id="s49" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.9</span>
+    <h2>Fundamentals of Communication & Networking</h2>
+  </div>
+
+  <div class="subsection-header">4.9.1 — Communication</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Serial transmission</div><div class="term-def">Data bits are sent one after another along a single wire. Slower but cheaper and suitable for long distances; used by USB.</div></div>
+    <div class="term-card"><div class="term-label">Parallel transmission</div><div class="term-def">Multiple bits sent simultaneously along multiple wires. Faster over short distances but susceptible to interference/skew; used internally (e.g. data bus).</div></div>
+    <div class="term-card"><div class="term-label">Synchronous transmission</div><div class="term-def">Data is sent at a fixed rate controlled by a shared clock signal between sender and receiver. Efficient for continuous data streams.</div></div>
+    <div class="term-card"><div class="term-label">Asynchronous transmission</div><div class="term-def">Data is sent without a shared clock; start and stop bits frame each byte to synchronise sender and receiver. Used for irregular data (e.g. keyboard input).</div></div>
+    <div class="term-card"><div class="term-label">Baud rate</div><div class="term-def">The number of signal changes (symbols) per second transmitted over a channel. Measured in baud.</div></div>
+    <div class="term-card"><div class="term-label">Bit rate</div><div class="term-def">The number of bits per second transmitted. Bit rate ≥ baud rate when more than one bit is encoded per signal change.</div></div>
+    <div class="term-card"><div class="term-label">Bandwidth</div><div class="term-def">The maximum data transfer rate of a channel, measured in bits per second (bps). Bit rate is directly proportional to bandwidth.</div></div>
+    <div class="term-card"><div class="term-label">Latency</div><div class="term-def">The delay between sending and receiving data; the time for a signal to travel from source to destination.</div></div>
+    <div class="term-card"><div class="term-label">Protocol</div><div class="term-def">A set of agreed rules governing communication between devices (e.g. format, timing, error checking, synchronisation).</div></div>
+  </div>
+
+  <div class="subsection-header">4.9.2 — Networking</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">LAN</div><div class="term-def">Local Area Network. A network covering a small geographical area (e.g. single building) owned and managed by one organisation.</div></div>
+    <div class="term-card"><div class="term-label">WAN</div><div class="term-def">Wide Area Network. A network spanning a large geographical area, typically made up of interconnected LANs (the Internet is the largest WAN).</div></div>
+    <div class="term-card"><div class="term-label">Physical (star) topology</div><div class="term-def">A network layout where each device connects directly to a central switch/hub via dedicated cable. Failure of one link does not affect others.</div></div>
+    <div class="term-card"><div class="term-label">Logical (bus) topology</div><div class="term-def">A network behaviour in which data is broadcast to all devices on a shared medium; only the intended recipient processes each frame.</div></div>
+    <div class="term-card"><div class="term-label">Peer-to-peer (P2P) network</div><div class="term-def">Each device has equal status and can both request and provide resources. Simple, no dedicated server needed; less scalable than client-server.</div></div>
+    <div class="term-card"><div class="term-label">Client-server network</div><div class="term-def">One or more servers provide services (files, email, web) to multiple client machines. Centralised management; scales well.</div></div>
+    <div class="term-card"><div class="term-label">Switch</div><div class="term-def">A network device that connects multiple devices in a LAN and uses MAC address tables to forward frames only to the correct port.</div></div>
+    <div class="term-card"><div class="term-label">Router</div><div class="term-def">A network device that forwards packets between networks (e.g. LAN to Internet), using IP addresses and routing tables.</div></div>
+    <div class="term-card"><div class="term-label">MAC address</div><div class="term-def">Media Access Control address: a unique 48-bit hardware identifier assigned to every NIC at manufacture. Used at the link layer.</div></div>
+    <div class="term-card"><div class="term-label">CSMA/CA</div><div class="term-def">Carrier Sense Multiple Access with Collision Avoidance. A wireless protocol where a device listens before transmitting and waits a random time if the channel is busy, to reduce collisions.</div></div>
+    <div class="term-card"><div class="term-label">RTS/CTS</div><div class="term-def">Request To Send / Clear To Send. An optional addition to CSMA/CA where a device sends an RTS frame before transmitting; only proceeds when it receives CTS from the access point.</div></div>
+  </div>
+
+  <div class="subsection-header">4.9.3 — The Internet</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Packet switching</div><div class="term-def">A method of data transmission where data is broken into packets, each sent independently across the network and reassembled at the destination. Efficient and fault-tolerant.</div></div>
+    <div class="term-card"><div class="term-label">Packet</div><div class="term-def">A unit of data transmitted over a network, containing: a header (source IP, destination IP, sequence number, checksum) and the payload (data).</div></div>
+    <div class="term-card"><div class="term-label">DNS (Domain Name System)</div><div class="term-def">A hierarchical distributed database that translates domain names into IP addresses. Acts like an internet phone book.</div></div>
+    <div class="term-card"><div class="term-label">Firewall</div><div class="term-def">Security hardware/software that monitors and controls incoming and outgoing network traffic according to rules. Methods: packet filtering, proxy server, stateful inspection.</div></div>
+    <div class="term-card"><div class="term-label">Proxy server</div><div class="term-def">A server acting as an intermediary between client and internet. Caches web pages, filters content and hides clients' IP addresses.</div></div>
+    <div class="term-card"><div class="term-label">Symmetric encryption</div><div class="term-def">Encryption where the same key is used to encrypt and decrypt data. Fast, but the key must be securely shared beforehand (e.g. AES).</div></div>
+    <div class="term-card"><div class="term-label">Asymmetric (public-key) encryption</div><div class="term-def">Uses a mathematically linked key pair: a public key (shared openly, encrypts) and a private key (kept secret, decrypts). Solves the key-exchange problem (e.g. RSA).</div></div>
+    <div class="term-card"><div class="term-label">Digital certificate</div><div class="term-def">An electronic document issued by a Certificate Authority (CA) that links a public key to the identity of its owner. Used in HTTPS to verify website authenticity.</div></div>
+    <div class="term-card"><div class="term-label">Digital signature</div><div class="term-def">A cryptographic mechanism where the sender encrypts a message hash with their private key. The receiver decrypts with the sender's public key to verify authenticity and integrity.</div></div>
+  </div>
+
+  <div class="subsection-header">4.9.4 — TCP/IP</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">TCP/IP model</div><div class="term-def">A four-layer model describing how data is transmitted over the internet: Application, Transport, Network/Internet, Link (physical).</div></div>
+    <div class="term-card"><div class="term-label">Application layer</div><div class="term-def">The topmost TCP/IP layer. Provides network services directly to user applications. Protocols: HTTP, HTTPS, FTP, SMTP, POP3, SSH, DNS.</div></div>
+    <div class="term-card"><div class="term-label">Transport layer</div><div class="term-def">Manages end-to-end communication between hosts. Breaks data into segments, adds port numbers, handles error checking and flow control. Protocols: TCP, UDP.</div></div>
+    <div class="term-card"><div class="term-label">Network / Internet layer</div><div class="term-def">Routes packets across networks using IP addresses. Adds source and destination IP addresses. Protocol: IP.</div></div>
+    <div class="term-card"><div class="term-label">Link layer</div><div class="term-def">Handles physical transmission of data on the local network. Adds MAC addresses. Involves device drivers and network hardware (NIC).</div></div>
+    <div class="term-card"><div class="term-label">TCP</div><div class="term-def">Transmission Control Protocol. A connection-oriented transport protocol that guarantees reliable, ordered delivery using acknowledgements, sequencing and retransmission of lost packets.</div></div>
+    <div class="term-card"><div class="term-label">UDP</div><div class="term-def">User Datagram Protocol. A connectionless, unreliable transport protocol with low overhead. No acknowledgements or retransmission; used where speed is critical (e.g. video streaming, DNS).</div></div>
+    <div class="term-card"><div class="term-label">Port number</div><div class="term-def">A 16-bit number identifying a specific process/service on a host. Well-known ports: HTTP=80, HTTPS=443, FTP=21, SMTP=25, POP3=110, SSH=22.</div></div>
+    <div class="term-card"><div class="term-label">IP address</div><div class="term-def">A unique numeric label assigned to every device on a network. IPv4: 32-bit (e.g. 192.168.1.1). IPv6: 128-bit. Split into network and host identifier parts.</div></div>
+    <div class="term-card"><div class="term-label">Subnet mask</div><div class="term-def">A 32-bit value used with an IP address to distinguish the network identifier bits from the host identifier bits (e.g. 255.255.255.0 = /24).</div></div>
+    <div class="term-card"><div class="term-label">NAT</div><div class="term-def">Network Address Translation. A router function mapping multiple private IP addresses to a single public IP address. Allows many devices to share one public IP; adds a security layer.</div></div>
+    <div class="term-card"><div class="term-label">DHCP</div><div class="term-def">Dynamic Host Configuration Protocol. Automatically assigns IP addresses, subnet masks, gateways and DNS server addresses to devices joining a network.</div></div>
+  </div>
+
+  <div class="resources">
+    <h4>🔗 Useful Resources</h4>
+    <a href="https://www.csfieldguide.org.nz/en/chapters/network-communication-protocols/" target="_blank">CS Field Guide – Networking</a>
+    <a href="https://howdns.works" target="_blank">How DNS works – Julia Evans</a>
+    <a href="https://www.cloudflare.com/learning/ssl/what-is-https/" target="_blank">Cloudflare – HTTPS & TLS</a>
+  </div>
+</div>
+
+<!-- 4.10 -->
+<div id="s410" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.10</span>
+    <h2>Fundamentals of Databases</h2>
+  </div>
+
+  <div class="subsection-header">4.10.1–4.10.3 — Data Modelling & Normalisation</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Entity</div><div class="term-def">A distinct object or concept about which data is stored (e.g. Student, Course, Order). Corresponds to a table in a relational database.</div></div>
+    <div class="term-card"><div class="term-label">Attribute</div><div class="term-def">A property or characteristic of an entity that is stored as a column in a database table (e.g. StudentID, Name, DateOfBirth).</div></div>
+    <div class="term-card"><div class="term-label">Entity Relationship (ER) diagram</div><div class="term-def">A diagram showing entities, their attributes and the relationships between them, using standard notation (rectangles for entities, lines for relationships).</div></div>
+    <div class="term-card"><div class="term-label">Primary key</div><div class="term-def">An attribute (or set of attributes) that uniquely identifies each record/row in a table. Cannot be NULL; must be unique.</div></div>
+    <div class="term-card"><div class="term-label">Composite primary key</div><div class="term-def">A primary key made up of two or more attributes that together uniquely identify a record, where no single attribute alone is sufficient.</div></div>
+    <div class="term-card"><div class="term-label">Foreign key</div><div class="term-def">An attribute in one table that references the primary key of another table. Enforces referential integrity by linking related tables.</div></div>
+    <div class="term-card"><div class="term-label">Referential integrity</div><div class="term-def">The rule that every foreign key value must match an existing primary key value in the referenced table (or be NULL). Prevents orphaned records.</div></div>
+    <div class="term-card"><div class="term-label">Normalisation</div><div class="term-def">The process of structuring a relational database to reduce data redundancy and improve data integrity, using a series of normal forms (1NF, 2NF, 3NF).</div></div>
+    <div class="term-card"><div class="term-label">First Normal Form (1NF)</div><div class="term-def">A table is in 1NF if: all attributes contain atomic (indivisible) values, there are no repeating groups, and every row is uniquely identifiable by a primary key.</div></div>
+    <div class="term-card"><div class="term-label">Second Normal Form (2NF)</div><div class="term-def">A table is in 2NF if it is in 1NF AND every non-key attribute is fully functionally dependent on the WHOLE primary key (eliminates partial dependencies).</div></div>
+    <div class="term-card"><div class="term-label">Third Normal Form (3NF)</div><div class="term-def">A table is in 3NF if it is in 2NF AND no non-key attribute is transitively dependent on the primary key. Every non-key attribute depends only on the key.</div></div>
+    <div class="term-card"><div class="term-label">Functional dependency</div><div class="term-def">Attribute B is functionally dependent on attribute A if knowing A determines the value of B (written A → B).</div></div>
+    <div class="term-card"><div class="term-label">Partial dependency</div><div class="term-def">A non-key attribute depends on only PART of a composite primary key. Violates 2NF.</div></div>
+    <div class="term-card"><div class="term-label">Transitive dependency</div><div class="term-def">A non-key attribute depends on another non-key attribute, rather than directly on the primary key. Violates 3NF.</div></div>
+  </div>
+
+  <div class="subsection-header">4.10.4 — SQL</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">SELECT … FROM … WHERE</div><div class="term-def">The fundamental SQL query structure to retrieve data: SELECT (choose columns), FROM (choose table), WHERE (filter rows by condition).</div></div>
+    <div class="term-card"><div class="term-label">JOIN</div><div class="term-def">Combines rows from two or more tables based on a related column. INNER JOIN returns only matching rows; LEFT JOIN includes all rows from the left table.</div></div>
+    <div class="term-card"><div class="term-label">INSERT INTO</div><div class="term-def">SQL command to add new rows to a table: INSERT INTO table (col1, col2) VALUES (val1, val2);</div></div>
+    <div class="term-card"><div class="term-label">UPDATE … SET</div><div class="term-def">SQL command to modify existing data: UPDATE table SET column = value WHERE condition;</div></div>
+    <div class="term-card"><div class="term-label">DELETE FROM</div><div class="term-def">SQL command to remove rows: DELETE FROM table WHERE condition; (without WHERE deletes ALL rows).</div></div>
+    <div class="term-card"><div class="term-label">ORDER BY</div><div class="term-def">Clause sorting query results by one or more columns: ORDER BY column ASC|DESC.</div></div>
+    <div class="term-card"><div class="term-label">GROUP BY / HAVING</div><div class="term-def">GROUP BY groups rows with identical values in specified columns, used with aggregate functions. HAVING filters groups produced by GROUP BY (like WHERE but for aggregates).</div></div>
+    <div class="term-card"><div class="term-label">Aggregate functions</div><div class="term-def">Functions that compute a single result from multiple rows: COUNT(), SUM(), AVG(), MAX(), MIN().</div></div>
+  </div>
+
+  <div class="subsection-header">4.10.5 — Client-Server Databases & Concurrency</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Concurrent access</div><div class="term-def">Multiple users reading or writing the same database records at the same time. Without control, this can corrupt data (lost updates).</div></div>
+    <div class="term-card"><div class="term-label">Record lock</div><div class="term-def">Prevents other transactions from reading or writing a record while it is being updated, until the transaction completes.</div></div>
+    <div class="term-card"><div class="term-label">Serialisation</div><div class="term-def">Ensuring transactions execute as if they ran one at a time, even when actually concurrent, to prevent inconsistencies.</div></div>
+    <div class="term-card"><div class="term-label">Timestamp ordering</div><div class="term-def">Each transaction is given a timestamp; access to records is controlled to ensure transactions appear to execute in timestamp order.</div></div>
+  </div>
+
+  <div class="resources">
+    <h4>🔗 Useful Resources</h4>
+    <a href="https://sqliteonline.com" target="_blank">SQLiteOnline – Practice SQL in browser</a>
+    <a href="https://www.w3schools.com/sql/" target="_blank">W3Schools SQL Tutorial</a>
+    <a href="https://dbdiagram.io" target="_blank">DB Diagram – Draw ER Diagrams online</a>
+    <a href="https://sqlzoo.net" target="_blank">SQLZoo – Interactive SQL exercises</a>
+  </div>
+</div>
+
+<!-- 4.11 -->
+<div id="s411" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.11</span>
+    <h2>Big Data</h2>
+  </div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Big Data</div><div class="term-def">A term for datasets so large or complex that traditional database tools cannot store, manage or process them within an acceptable time.</div></div>
+    <div class="term-card"><div class="term-label">Volume</div><div class="term-def">The sheer size of Big Data – too large to fit on a single server. Requires distributed storage across many machines.</div></div>
+    <div class="term-card"><div class="term-label">Velocity</div><div class="term-def">The speed at which data is generated and must be processed (e.g. streaming data from sensors, social media – milliseconds to seconds response time).</div></div>
+    <div class="term-card"><div class="term-label">Variety</div><div class="term-def">The diverse formats of Big Data: structured (tables), unstructured (video, audio, text), semi-structured (JSON, XML). Lack of structure is the greatest challenge.</div></div>
+    <div class="term-card"><div class="term-label">Veracity</div><div class="term-def">The trustworthiness and quality of data – uncertainty, inconsistency and noise in large datasets.</div></div>
+    <div class="term-card"><div class="term-label">Value</div><div class="term-def">The usefulness or insight that can be extracted from the data to support decision-making.</div></div>
+    <div class="term-card"><div class="term-label">Distributed processing</div><div class="term-def">Spreading computation across multiple machines/servers to handle datasets too large for one machine.</div></div>
+    <div class="term-card"><div class="term-label">Machine learning</div><div class="term-def">Algorithms that learn patterns from large datasets without being explicitly programmed. Essential for extracting insight from unstructured Big Data.</div></div>
+    <div class="term-card"><div class="term-label">Fact-based model</div><div class="term-def">A data representation where each item of information is stored as an individual, atomic fact, rather than grouped in rows/columns. Suits unstructured Big Data.</div></div>
+    <div class="term-card"><div class="term-label">Graph schema</div><div class="term-def">A structure for Big Data using nodes (entities), edges (relationships between nodes) and properties (attributes of nodes/edges).</div></div>
+    <div class="term-card"><div class="term-label">Immutable data</div><div class="term-def">Data that cannot be changed after creation. New results are created rather than modifying existing data, preventing race conditions in distributed systems.</div></div>
+    <div class="term-card"><div class="term-label">Statelessness</div><div class="term-def">A function/system property where operations do not depend on stored state from previous calls. Each call is independent, simplifying distributed execution.</div></div>
+  </div>
+</div>
+
+<!-- 4.12 -->
+<div id="s412" class="section-block">
+  <div class="section-header">
+    <span class="section-num">4.12</span>
+    <h2>Fundamentals of Functional Programming</h2>
+  </div>
+
+  <div class="subsection-header">4.12.1 — Functional Programming Paradigm</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">Functional programming</div><div class="term-def">A programming paradigm that treats computation as the evaluation of mathematical functions, avoiding changing state and mutable data.</div></div>
+    <div class="term-card"><div class="term-label">Function (in FP)</div><div class="term-def">A mapping from a domain (set of inputs) to a co-domain (set of possible outputs). Written as f: A → B where A is the domain and B is the co-domain.</div></div>
+    <div class="term-card"><div class="term-label">Domain</div><div class="term-def">The set of values that can be used as input to a function (the argument type).</div></div>
+    <div class="term-card"><div class="term-label">Co-domain</div><div class="term-def">The set from which output values of a function are drawn. Not all co-domain values need to be outputs (contrast with range/image).</div></div>
+    <div class="term-card"><div class="term-label">First-class function</div><div class="term-def">Functions that are treated as values: they can be assigned to variables, passed as arguments to other functions and returned as results.</div></div>
+    <div class="term-card"><div class="term-label">Higher-order function</div><div class="term-def">A function that takes one or more functions as arguments and/or returns a function as its result (e.g. map, filter, fold/reduce).</div></div>
+    <div class="term-card"><div class="term-label">Function composition</div><div class="term-def">Combining two functions f and g to create a new function h where h(x) = f(g(x)). Written as f ∘ g.</div></div>
+    <div class="term-card"><div class="term-label">Partial function application</div><div class="term-def">Supplying fewer arguments than a function expects, producing a new function that takes the remaining arguments.</div></div>
+    <div class="term-card"><div class="term-label">Currying</div><div class="term-def">Transforming a function that takes multiple arguments into a sequence of functions each taking a single argument (named after logician Haskell Curry).</div></div>
+    <div class="term-card"><div class="term-label">Pure function</div><div class="term-def">A function whose output depends only on its inputs and has no side effects. Always returns the same result for the same arguments.</div></div>
+    <div class="term-card"><div class="term-label">Side effect</div><div class="term-def">Any effect a function has beyond returning a value (e.g. modifying a global variable, writing to a file, printing to screen). Functional programming avoids side effects.</div></div>
+    <div class="term-card"><div class="term-label">Referential transparency</div><div class="term-def">A property where an expression can be replaced with its value without changing the program's behaviour. Requires pure functions.</div></div>
+  </div>
+
+  <div class="subsection-header">4.12.2 — Writing Functional Programs</div>
+  <div class="terms-grid">
+    <div class="term-card"><div class="term-label">List</div><div class="term-def">The fundamental data structure in functional programming. A list can be empty ([]) or consist of a head (first element) and a tail (the rest of the list).</div></div>
+    <div class="term-card"><div class="term-label">Head</div><div class="term-def">The first element of a non-empty list.</div></div>
+    <div class="term-card"><div class="term-label">Tail</div><div class="term-def">All elements of a list except the first. The tail of a single-element list is an empty list.</div></div>
+    <div class="term-card"><div class="term-label">Recursion (in FP)</div><div class="term-def">The main technique for repetition in functional programming (loops are avoided). A function calls itself on a smaller problem until a base case is reached.</div></div>
+    <div class="term-card"><div class="term-label">Base case</div><div class="term-def">The condition in a recursive function that terminates recursion (e.g. an empty list). Without a base case, recursion would be infinite.</div></div>
+    <div class="term-card"><div class="term-label">Map</div><div class="term-def">A higher-order function that applies a given function to every element of a list, returning a new list of results: map f [a, b, c] = [f(a), f(b), f(c)].</div></div>
+    <div class="term-card"><div class="term-label">Filter</div><div class="term-def">A higher-order function that returns a new list containing only those elements of a list for which a predicate function returns True.</div></div>
+    <div class="term-card"><div class="term-label">Fold (reduce)</div><div class="term-def">A higher-order function that combines all elements of a list into a single result by repeatedly applying a binary function with an accumulator (e.g. summing a list).</div></div>
+    <div class="term-card"><div class="term-label">Predicate</div><div class="term-def">A function that returns a Boolean value (True or False). Used by filter to test whether each element should be kept.</div></div>
+    <div class="term-card"><div class="term-label">Lambda (anonymous) function</div><div class="term-def">A nameless function defined inline, typically with a brief body. Written in Haskell as \x -> expression, in Python as lambda x: expression.</div></div>
+  </div>
+
+  <div class="resources">
+    <h4>🔗 Useful Resources</h4>
+    <a href="https://tryhaskell.org" target="_blank">Try Haskell in browser</a>
+    <a href="https://www.haskell.org/documentation/" target="_blank">Haskell beginner tutorial</a>
+    <a href="https://www.youtube.com/watch?v=LnX3B9oaKzw" target="_blank">Computerphile – Functional Programming (YouTube)</a>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  AQA A-Level Computer Science 7517 · Paper 2 Revision · Key Terms & Definitions
+</footer>
+
+<script>
+  let coverMode = false;
+  function toggleCover(btn) {
+    coverMode = !coverMode;
+    document.body.classList.toggle('cover-mode', coverMode);
+    btn.textContent = coverMode ? '▶ Reveal All Definitions' : '▶ Cover Definitions';
+    if (coverMode) {
+      document.querySelectorAll('.term-def').forEach(d => {
+        d.onclick = function() {
+          this.style.background = '';
+          this.style.color = '';
+          this.onclick = null;
+        };
+      });
+    } else {
+      document.querySelectorAll('.term-def').forEach(d => {
+        d.style.background = '';
+        d.style.color = '';
+        d.onclick = null;
+      });
+    }
+  }
+</script>
+</body>
+</html>

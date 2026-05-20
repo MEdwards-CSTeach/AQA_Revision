@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA CS OOP Key Terms — Paper 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --surface: #1a1813;
+    --surface2: #221f18;
+    --border: #2d2a22;
+    --accent: #f59e0b;
+    --accent2: #78350f;
+    --accent3: #fde68a;
+    --accent-soft: #f59e0b22;
+    --text: #f5f0e8;
+    --text-muted: #9ca3af;
+    --code-bg: #1a1813;
+    --code-border: #3d3520;
+    --java: #fb923c;
+    --python: #a78bfa;
+    --green: #4ade80;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #78350f 0%, #1c1508 60%, #0f0e0c 100%);
+    border-bottom: 1px solid var(--accent);
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '{ }';
+    position: absolute;
+    right: 3rem; top: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 6rem;
+    color: rgba(245,158,11,0.07);
+    pointer-events: none;
+    line-height: 1;
+  }
+  .header-inner { max-width: 1200px; margin: 0 auto; }
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.2rem 0.7rem;
+    border-radius: 3px;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+  header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--accent3);
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 1rem;
+  }
+  nav a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-family: 'Space Mono', monospace;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* SECTION GROUPS */
+  .section-group {
+    margin-bottom: 3.5rem;
+  }
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .group-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+  }
+  .group-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent3);
+  }
+
+  /* TERM CARDS */
+  .term-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .term-card:hover { border-color: var(--accent); }
+  .term-top {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1.2rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .term-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .term-body { padding: 0.9rem 1.2rem; }
+  .term-def-text {
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+  }
+  .term-def-text strong { color: var(--accent); }
+  .term-example {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 0.8rem;
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--accent2);
+  }
+
+  /* CODE BLOCKS */
+  .code-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .code-block {
+    background: #0a0906;
+    border: 1px solid var(--code-border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .code-lang {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    border-bottom: 1px solid var(--code-border);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .lang-java { color: var(--java); }
+  .lang-python { color: var(--python); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot-java { background: var(--java); }
+  .dot-python { background: var(--python); }
+  .code-block pre {
+    padding: 0.7rem 0.9rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    line-height: 1.55;
+    color: #d4c5a0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-block pre .kw { color: var(--accent); }
+  .code-block pre .cm { color: #6b7280; font-style: italic; }
+  .code-block pre .st { color: var(--green); }
+  .code-block pre .py-kw { color: var(--python); }
+
+  /* QUICK REF TABLE */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+    margin-top: 0.5rem;
+  }
+  .ref-table th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .sym { font-family: 'Space Mono', monospace; color: var(--accent); font-size: 1.1em; }
+  .tag-pub { color: var(--green); }
+  .tag-pri { color: #f87171; }
+  .tag-pro { color: #60a5fa; }
+
+  /* PRINCIPLES */
+  .principle-block {
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+  .principle-block h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .principle-block p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+  }
+
+  @media (max-width: 700px) {
+    .code-cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="badge">AQA 7517 · Paper 1 · Section 4.1.2.3</div>
+    <h1>Object-Oriented <span>Programming</span></h1>
+    <p>Key Terms with Java &amp; Python Code Examples</p>
+    <p style="font-size:0.8rem; color: var(--text-muted);">Includes: classes, objects, encapsulation, inheritance, polymorphism, UML, design principles</p>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#core">Core Concepts</a>
+    <a href="#encap">Encapsulation</a>
+    <a href="#inherit">Inheritance</a>
+    <a href="#poly">Polymorphism</a>
+    <a href="#relationships">Relationships</a>
+    <a href="#design">Design Principles</a>
+    <a href="#uml">UML</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- CORE CONCEPTS -->
+<div id="core" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">01</div>
+    <h2>Core OOP Concepts</h2>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Class</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A blueprint or template that defines the attributes (fields/properties) and behaviours (methods) that objects of that type will have. A class does not occupy memory in the same way an object does — <strong>it is a definition</strong>.</div>
+      <div class="term-example">Example: A 'BankAccount' class defines that all bank accounts have a balance and can deposit/withdraw money.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public class</span> BankAccount {
+  <span class="kw">private double</span> balance;
+  <span class="kw">private</span> String owner;
+  <span class="kw">public</span> BankAccount(String owner,
+      <span class="kw">double</span> balance) {
+    <span class="kw">this</span>.owner = owner;
+    <span class="kw">this</span>.balance = balance;
+  }
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="py-kw">class</span> BankAccount:
+  <span class="py-kw">def</span> __init__(self,
+      owner, balance):
+    self.__balance = balance
+    self.__owner = owner</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Object</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A specific instance of a class, created at runtime. Each object has its own copy of the attributes defined by the class, but shares the methods defined in the class.</div>
+      <div class="term-example">Example: myAccount = new BankAccount('Alice', 1000.0) creates a specific object from the BankAccount class.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="cm">// Creating objects (instances)</span>
+BankAccount myAccount =
+  <span class="kw">new</span> BankAccount(<span class="st">"Alice"</span>, 1000.0);
+BankAccount yourAccount =
+  <span class="kw">new</span> BankAccount(<span class="st">"Bob"</span>, 500.0);</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="cm"># Creating objects (instances)</span>
+my_account = BankAccount(
+    <span class="st">'Alice'</span>, 1000.0)
+your_account = BankAccount(
+    <span class="st">'Bob'</span>, 500.0)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Instantiation</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> The process of creating a specific object (instance) from a class definition. This typically involves calling a constructor, which sets up the initial state of the object.</div>
+      <div class="term-example">Example: Calling new Dog('Rex', 'Labrador') instantiates a Dog object.</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Constructor</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A special method called when an object is instantiated. It initialises the object's attributes. In Java, it has the same name as the class. In Python, it is <code>__init__</code>.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public class</span> Student {
+  <span class="kw">private</span> String name;
+  <span class="kw">private int</span> age;
+  <span class="cm">// Constructor</span>
+  <span class="kw">public</span> Student(String name,
+      <span class="kw">int</span> age) {
+    <span class="kw">this</span>.name = name;
+    <span class="kw">this</span>.age = age;
+  }
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="py-kw">class</span> Student:
+  <span class="py-kw">def</span> __init__(self,
+      name, age):
+    self.name = name
+    self.age = age
+
+s = Student(<span class="st">'Alice'</span>, 16)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Attribute / Field / Property</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A variable that belongs to an object or class, storing data that describes the state of the object. Also called instance variables or member variables.</div>
+      <div class="term-example">Example: A Car class might have attributes: colour, speed, fuelLevel.</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Method</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A function defined inside a class that describes the behaviour of objects. Methods can access and modify the object's attributes. In Python, methods always take 'self' as the first parameter.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public void</span> deposit(<span class="kw">double</span> amount) {
+  balance += amount;
+}
+<span class="kw">public double</span> getBalance() {
+  <span class="kw">return</span> balance;
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="py-kw">def</span> deposit(self, amount):
+  self.__balance += amount
+
+<span class="py-kw">def</span> get_balance(self):
+  <span class="py-kw">return</span> self.__balance</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ENCAPSULATION -->
+<div id="encap" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">02</div>
+    <h2>Encapsulation &amp; Access Control</h2>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Encapsulation</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> The bundling of data (attributes) and methods that operate on that data within a single unit (class) and restricting direct access to some of the object's components. This protects internal state and hides implementation details.</div>
+      <div class="term-example">Example: A BankAccount hides its balance behind private access — external code cannot change the balance directly but must use deposit() or withdraw().</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Access Specifiers / Modifiers</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> Keywords that control the visibility and accessibility of class members.</div>
+      <table class="ref-table" style="margin-top:0.6rem;">
+        <tr><th>Modifier</th><th>Access Scope</th><th>Java</th><th>Python Convention</th></tr>
+        <tr><td><span class="tag-pub">public</span></td><td>Accessible from anywhere</td><td><code>public</code></td><td><code>self.name</code></td></tr>
+        <tr><td><span class="tag-pri">private</span></td><td>Accessible only within the class</td><td><code>private</code></td><td><code>self.__name</code></td></tr>
+        <tr><td><span class="tag-pro">protected</span></td><td>Accessible within class and subclasses</td><td><code>protected</code></td><td><code>self._name</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Getter and Setter Methods</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> <strong>Getter methods (accessors)</strong> return the value of a private attribute. <strong>Setter methods (mutators)</strong> allow controlled modification of a private attribute, often with validation. These are how encapsulation allows safe access to private data.</div>
+      <div class="term-example">Example: getBalance() returns the balance; setAge(int a) sets age only if a &gt; 0.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public int</span> getAge() { <span class="cm">// getter</span>
+  <span class="kw">return</span> age;
+}
+<span class="kw">public void</span> setAge(<span class="kw">int</span> a) { <span class="cm">// setter</span>
+  <span class="kw">if</span> (a > 0) age = a;
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="py-kw">def</span> get_age(self):    <span class="cm"># getter</span>
+  <span class="py-kw">return</span> self.__age
+
+<span class="py-kw">def</span> set_age(self, a): <span class="cm"># setter</span>
+  <span class="py-kw">if</span> a > 0:
+    self.__age = a</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- INHERITANCE -->
+<div id="inherit" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">03</div>
+    <h2>Inheritance</h2>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Inheritance</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A mechanism where a class (subclass/child class) derives attributes and methods from another class (superclass/parent class). The subclass can extend or override the inherited behaviour. Promotes code reuse.</div>
+      <div class="term-example">Example: A 'SavingsAccount' class inherits from 'BankAccount', gaining all its attributes and methods, and adds an interestRate attribute.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public class</span> Animal {
+  <span class="kw">private</span> String name;
+  <span class="kw">public void</span> eat() { ... }
+}
+<span class="cm">// Dog inherits from Animal</span>
+<span class="kw">public class</span> Dog
+    <span class="kw">extends</span> Animal {
+  <span class="kw">public void</span> bark() {
+    System.out.println(<span class="st">"Woof!"</span>);
+  }
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="py-kw">class</span> Animal:
+  <span class="py-kw">def</span> eat(self):
+    print(<span class="st">f'{self.name} eats.'</span>)
+
+<span class="cm"># Dog inherits from Animal</span>
+<span class="py-kw">class</span> Dog(Animal):
+  <span class="py-kw">def</span> bark(self):
+    print(<span class="st">'Woof!'</span>)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Superclass / Parent Class / Base Class</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> The class that is inherited from. It provides common attributes and methods that subclasses can inherit and potentially override.</div>
+      <div class="term-example">Example: In 'class Dog extends Animal', Animal is the superclass.</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Subclass / Child Class / Derived Class</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A class that inherits from a superclass. It gains the superclass's attributes and methods and can add new ones or override existing ones.</div>
+      <div class="term-example">Example: Dog is a subclass of Animal: it inherits eat() and breathe() but also adds bark().</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">The super Keyword</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> Used in a subclass to refer to the superclass. Commonly used to call the parent class constructor or to call an overridden method from the parent.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public</span> SavingsAccount(
+    String owner, <span class="kw">double</span> balance,
+    <span class="kw">double</span> rate) {
+  <span class="kw">super</span>(owner, balance); <span class="cm">// parent</span>
+  <span class="kw">this</span>.interestRate = rate;
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="py-kw">def</span> __init__(self, owner,
+    balance, rate):
+  <span class="cm"># call parent constructor</span>
+  super().__init__(owner, balance)
+  self.interest_rate = rate</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- POLYMORPHISM -->
+<div id="poly" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">04</div>
+    <h2>Polymorphism &amp; Overriding</h2>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Polymorphism</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> The ability of different classes to respond to the same method call in different ways. A method call on a superclass reference can behave differently depending on the actual type of the object at runtime. "Many forms".</div>
+      <div class="term-example">Example: Different Animal subclasses each override makeSound() differently — Dog barks, Cat meows, Cow moos — but all called via the same method name.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre>Animal a = <span class="kw">new</span> Dog();
+a.makeSound(); <span class="cm">// prints Woof!</span>
+
+Animal b = <span class="kw">new</span> Cat();
+b.makeSound(); <span class="cm">// prints Meow!</span></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre>animals = [Dog(), Cat()]
+<span class="py-kw">for</span> a <span class="py-kw">in</span> animals:
+  a.make_sound()
+  <span class="cm"># Woof! then Meow!</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Overriding</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> When a subclass provides its own implementation of a method that is already defined in its superclass. The subclass version replaces the superclass version for objects of the subclass type.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre>@Override <span class="cm">// overrides Shape</span>
+<span class="kw">public double</span> area() {
+  <span class="kw">return</span> Math.PI * radius * radius;
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre><span class="cm"># overrides Shape</span>
+<span class="py-kw">def</span> area(self):
+  <span class="py-kw">import</span> math
+  <span class="py-kw">return</span> math.pi * self.radius**2</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Abstract Method</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A method declared in a class but with no implementation. Subclasses <em>must</em> provide their own implementation. A class with abstract methods is an abstract class and cannot be instantiated directly.</div>
+      <div class="term-example">Example: An abstract Shape class declares area() as abstract — Rectangle and Circle must each provide their own implementation.</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Virtual Method</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A method in a superclass that <em>can</em> be overridden in subclasses. In Java, all non-static, non-final methods are virtual by default. The correct version is resolved at runtime (dynamic dispatch).</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Static Method</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A method that belongs to the class itself rather than to any specific object (instance). It can be called without creating an object. Static methods cannot access instance attributes or other non-static methods directly.</div>
+      <div class="code-cols">
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-java"></span><span class="lang-java">Java</span></div>
+          <pre><span class="kw">public static int</span> square(<span class="kw">int</span> n) {
+  <span class="kw">return</span> n * n;
+}
+<span class="cm">// No object needed:</span>
+MathHelper.square(5); <span class="cm">// 25</span></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-lang"><span class="dot dot-python"></span><span class="lang-python">Python</span></div>
+          <pre>@staticmethod
+<span class="py-kw">def</span> square(n):
+  <span class="py-kw">return</span> n * n
+
+<span class="cm"># No object needed:</span>
+MathHelper.square(5) <span class="cm"># 25</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RELATIONSHIPS -->
+<div id="relationships" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">05</div>
+    <h2>Relationships Between Classes</h2>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Aggregation</span> <span style="font-size:0.75rem; color:var(--text-muted); font-family:'Space Mono',monospace;">◇ white/hollow diamond</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A 'has-a' relationship between classes where the contained object <em>can exist independently</em> of the container. If the container is destroyed, the contained object can still exist.</div>
+      <div class="term-example">Example: A Library has Books. But if the Library closes, the Books still exist — Books can exist outside the Library.</div>
+    </div>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">Composition</span> <span style="font-size:0.75rem; color:var(--text-muted); font-family:'Space Mono',monospace;">◆ black/filled diamond</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> A stronger 'has-a' relationship where the contained object <em>cannot exist without</em> the container — "is made up of". If the container is destroyed, the contained objects are also destroyed.</div>
+      <div class="term-example">Example: A House has Rooms. If the House is demolished, the Rooms cease to exist. A Room cannot exist without a House.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DESIGN PRINCIPLES -->
+<div id="design" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">06</div>
+    <h2>OOP Design Principles</h2>
+  </div>
+
+  <div class="principle-block">
+    <h4>Encapsulate What Varies</h4>
+    <p>Identify the parts of a program that change frequently and separate them from what stays the same. Isolate varying behaviour into its own class so changes don't affect the rest of the code.</p>
+    <p style="margin-top:0.4rem; font-size:0.8rem; color:var(--text);">Example: Instead of putting tax calculation logic directly in an Order class, extract it into a TaxCalculator class. When tax rules change, only that class needs updating.</p>
+  </div>
+
+  <div class="principle-block">
+    <h4>Favour Composition Over Inheritance</h4>
+    <p>Where possible, assemble objects from smaller, reusable components (composition) rather than building large inheritance hierarchies. This leads to more flexible, maintainable code.</p>
+    <p style="margin-top:0.4rem; font-size:0.8rem; color:var(--text);">Example: Rather than creating Duck inheriting from Bird and FlyingBird, give Duck a FlyBehaviour object that can be swapped at runtime.</p>
+  </div>
+
+  <div class="principle-block">
+    <h4>Program to Interfaces, Not Implementation</h4>
+    <p>Write code that depends on abstract types (interfaces or abstract classes) rather than concrete implementations. This allows the implementation to be swapped without changing the code that uses it.</p>
+    <p style="margin-top:0.4rem; font-size:0.8rem; color:var(--text);">Example: A program that uses a Shape interface with area() can work with any shape (Circle, Rectangle) without knowing the specific type.</p>
+  </div>
+
+</div>
+
+<!-- UML -->
+<div id="uml" class="section-group">
+  <div class="group-header">
+    <div class="group-icon">07</div>
+    <h2>UML Class Diagrams</h2>
+  </div>
+
+  <div class="term-card">
+    <div class="term-top"><span class="term-name">UML Class Diagram</span></div>
+    <div class="term-body">
+      <div class="term-def-text"><strong>Definition:</strong> Unified Modelling Language diagram showing the structure of classes and their relationships. Each class box shows the class name, attributes (with access specifiers), and methods. Relationships shown with lines and arrows.</div>
+      <table class="ref-table" style="margin-top:0.8rem;">
+        <tr><th>Notation</th><th>Meaning</th><th>UML Symbol</th></tr>
+        <tr><td>Inheritance</td><td>Subclass extends superclass</td><td>Arrow with hollow triangle →</td></tr>
+        <tr><td>Composition</td><td>Strong has-a (contained cannot exist alone)</td><td>Black filled diamond ◆</td></tr>
+        <tr><td>Aggregation</td><td>Weak has-a (contained can exist independently)</td><td>White hollow diamond ◇</td></tr>
+        <tr><td><span class="tag-pub">+</span> Public</td><td>Accessible by any class</td><td>+ prefix</td></tr>
+        <tr><td><span class="tag-pri">-</span> Private</td><td>Accessible only within the class</td><td>- prefix</td></tr>
+        <tr><td><span class="tag-pro">#</span> Protected</td><td>Accessible within class and subclasses</td><td># prefix</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  AQA A-Level Computer Science 7517 · Paper 1 · OOP Key Terms · Section 4.1.2.3
+</footer>
+
+</body>
+</html>

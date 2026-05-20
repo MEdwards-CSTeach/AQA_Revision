@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA CS 7517 — Exam Technique Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── SITE NAV BAR ── */
+  .site-nav {
+    background: #0e0c09;
+    border-bottom: 1px solid #3a3328;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 42px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .site-nav a.home {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #e8a045;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    opacity: .85;
+    transition: opacity .15s;
+  }
+  .site-nav a.home:hover { opacity: 1; }
+  .site-nav .sep { color: #3a3328; font-size: .9rem; }
+  .site-nav .current {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .07em;
+    color: #7a7060;
+  }
+</style>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --accent: #c0392b;
+    --accent2: #2c7be5;
+    --gold: #d4a017;
+    --green: #1a7a4a;
+    --muted: #6b6561;
+    --rule: #c8bfb0;
+    --highlight: #fff3cd;
+    --highlight2: #d1ecf1;
+    --p1-col: #2c7be5;
+    --p2-col: #c0392b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 59px,
+      rgba(255,255,255,0.04) 59px,
+      rgba(255,255,255,0.04) 60px
+    );
+  }
+  .header-inner { max-width: 900px; margin: 0 auto; position: relative; }
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    margin-bottom: .6rem;
+    letter-spacing: -.01em;
+  }
+  header p {
+    color: rgba(245,240,232,.65);
+    font-size: .95rem;
+    max-width: 580px;
+  }
+
+  /* ── PAPER TABS ── */
+  .paper-tabs {
+    display: flex;
+    max-width: 900px;
+    margin: 0 auto;
+    gap: 0;
+    padding: 0 2rem;
+    position: relative;
+    top: -1px;
+  }
+  .paper-tab {
+    flex: 1;
+    padding: .75rem 1rem;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-bottom: none;
+    transition: all .2s;
+    border-radius: 6px 6px 0 0;
+  }
+  .paper-tab.p1 { background: var(--p1-col); color: #fff; }
+  .paper-tab.p2 { background: var(--p2-col); color: #fff; }
+  .paper-tab.both { background: var(--ink); color: var(--paper); }
+  .paper-tab:hover { filter: brightness(1.1); }
+
+  /* ── MAIN LAYOUT ── */
+  main { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+  /* ── NAV ── */
+  nav.toc {
+    background: white;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .3rem 2rem;
+  }
+  nav.toc h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    grid-column: 1 / -1;
+    margin-bottom: .5rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  nav.toc a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: .88rem;
+    padding: .15rem 0;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  nav.toc a:hover { color: var(--accent2); }
+  nav.toc a .num {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+    color: var(--muted);
+    min-width: 1.5rem;
+  }
+
+  /* ── SECTIONS ── */
+  section { margin-bottom: 3.5rem; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--muted);
+    margin-bottom: .4rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.85rem;
+    margin-bottom: 1.2rem;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.6rem 0 .6rem;
+    color: var(--ink);
+  }
+  p { margin-bottom: .9rem; }
+
+  /* ── PAPER BADGES ── */
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 3px;
+    vertical-align: middle;
+    letter-spacing: .05em;
+    margin-left: .3rem;
+  }
+  .badge.p1 { background: #dbeafe; color: var(--p1-col); }
+  .badge.p2 { background: #fee2e2; color: var(--p2-col); }
+  .badge.both { background: #e5e7eb; color: var(--ink); }
+
+  /* ── COMMAND TERM CARDS ── */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .cmd-card {
+    background: white;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    position: relative;
+    transition: box-shadow .2s;
+  }
+  .cmd-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+  .cmd-word {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--accent);
+    margin-bottom: .3rem;
+  }
+  .cmd-marks {
+    position: absolute;
+    top: .9rem; right: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+  }
+  .cmd-def {
+    font-size: .85rem;
+    color: var(--muted);
+    margin-bottom: .6rem;
+  }
+  .cmd-tip {
+    font-size: .82rem;
+    background: var(--highlight);
+    border-left: 3px solid var(--gold);
+    padding: .4rem .7rem;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: 8px;
+    padding: 1.1rem 1.4rem;
+    margin: 1.2rem 0;
+    display: flex;
+    gap: .8rem;
+    align-items: flex-start;
+  }
+  .callout.warn {
+    background: #fff3cd;
+    border: 1.5px solid #ffc107;
+  }
+  .callout.good {
+    background: #d1f7e0;
+    border: 1.5px solid var(--green);
+  }
+  .callout.info {
+    background: #dbeafe;
+    border: 1.5px solid var(--accent2);
+  }
+  .callout.danger {
+    background: #fee2e2;
+    border: 1.5px solid var(--accent);
+  }
+  .callout-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: .05rem;
+  }
+  .callout-body { flex: 1; }
+  .callout-body strong { display: block; margin-bottom: .25rem; font-size: .92rem; }
+  .callout-body p, .callout-body li { font-size: .88rem; margin-bottom: .3rem; }
+  .callout-body ul { padding-left: 1.2rem; }
+
+  /* ── EXAMPLE BOXES ── */
+  .example {
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1.3rem 0;
+  }
+  .example-header {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .4rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .example-body { padding: 1rem 1.2rem; background: white; }
+  .example-q {
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: .7rem;
+    font-size: .9rem;
+    padding-left: .8rem;
+    border-left: 3px solid var(--rule);
+  }
+  .example-bad, .example-good {
+    border-radius: 6px;
+    padding: .6rem .9rem;
+    font-size: .85rem;
+    margin-bottom: .5rem;
+  }
+  .example-bad {
+    background: #fee2e2;
+    border-left: 3px solid var(--accent);
+  }
+  .example-good {
+    background: #d1f7e0;
+    border-left: 3px solid var(--green);
+  }
+  .label-bad, .label-good {
+    font-family: 'DM Mono', monospace;
+    font-size: .68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: .25rem;
+    display: block;
+  }
+  .label-bad { color: var(--accent); }
+  .label-good { color: var(--green); }
+
+  /* ── PROCESS STEPS ── */
+  .steps { margin: 1.2rem 0; }
+  .step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: .8rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: .1rem;
+  }
+  .step-content { flex: 1; font-size: .9rem; }
+  .step-content strong { display: block; font-size: .9rem; margin-bottom: .15rem; }
+
+  /* ── MARKS TABLE ── */
+  .marks-guide {
+    background: white;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1.2rem 0;
+  }
+  .marks-guide table { width: 100%; border-collapse: collapse; }
+  .marks-guide th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: .6rem 1rem;
+    text-align: left;
+  }
+  .marks-guide td {
+    padding: .6rem 1rem;
+    font-size: .86rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .marks-guide tr:last-child td { border-bottom: none; }
+  .marks-guide tr:nth-child(even) td { background: #faf8f5; }
+
+  /* ── QUICK-REFERENCE PANEL ── */
+  .qr-panel {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 1.8rem 2rem;
+    margin: 1.5rem 0;
+  }
+  .qr-panel h3 {
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 1rem;
+  }
+  .qr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem 2rem;
+  }
+  .qr-item {
+    font-size: .85rem;
+    padding: .3rem 0;
+    border-bottom: 1px solid rgba(245,240,232,.12);
+    display: flex;
+    gap: .5rem;
+    color: rgba(245,240,232,.85);
+  }
+  .qr-item::before { content: '→'; color: var(--gold); flex-shrink: 0; }
+
+  /* ── CODE BLOCK ── */
+  pre {
+    font-family: 'DM Mono', monospace;
+    font-size: .82rem;
+    background: #1a1a2e;
+    color: #e2f0d9;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: .8rem 0;
+    line-height: 1.5;
+  }
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: .85em;
+    background: rgba(0,0,0,.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── TOPIC PILLS ── */
+  .topic-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin: .8rem 0;
+  }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1.5px solid var(--rule);
+    color: var(--muted);
+  }
+
+  /* ── DIVIDER ── */
+  hr {
+    border: none;
+    border-top: 1.5px solid var(--rule);
+    margin: 2.5rem 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(245,240,232,.5);
+    text-align: center;
+    padding: 1.5rem;
+    font-size: .8rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .05em;
+  }
+
+  @media (max-width: 600px) {
+    .cmd-grid { grid-template-columns: 1fr; }
+    .qr-grid { grid-template-columns: 1fr; }
+    nav.toc { grid-template-columns: 1fr; }
+    .paper-tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="home" href="index.html">← Revision Hub</a>
+  <span class="sep">/</span>
+  <span class="current">Exam Technique Guide</span>
+</nav>
+
+<header>
+  <div class="header-inner">
+    <div class="tag">AQA 7517 A-Level Computer Science</div>
+    <h1>Exam Technique<br><em>& Answer Strategy Guide</em></h1>
+    <p>How to read questions properly, use command terms correctly, and never throw away marks.</p>
+  </div>
+</header>
+
+<div class="paper-tabs">
+  <div class="paper-tab p1">Paper 1 — On-screen</div>
+  <div class="paper-tab p2">Paper 2 — Written</div>
+  <div class="paper-tab both">Both Papers</div>
+</div>
+
+<main>
+
+  <nav class="toc">
+    <h3>Contents</h3>
+    <a href="#golden-rules"><span class="num">01</span> The Golden Rules</a>
+    <a href="#command-terms"><span class="num">02</span> Command Terms Decoded</a>
+    <a href="#mark-allocation"><span class="num">03</span> Reading the Marks</a>
+    <a href="#paper1"><span class="num">04</span> Paper 1 — Programming & Theory</a>
+    <a href="#skeleton"><span class="num">05</span> Paper 1 — Skeleton Code Questions</a>
+    <a href="#paper2"><span class="num">06</span> Paper 2 — Written Theory</a>
+    <a href="#extended"><span class="num">07</span> Extended Response Questions</a>
+    <a href="#topic-traps"><span class="num">08</span> Topic-Specific Traps</a>
+    <a href="#checklist"><span class="num">09</span> Exam-Day Checklist</a>
+  </nav>
+
+  <!-- ═══════════════════════════ 01 GOLDEN RULES ═══════════════════════════ -->
+  <section id="golden-rules">
+    <div class="section-label">01</div>
+    <h2>The Golden Rules</h2>
+
+    <p>Before any technique, these apply to every question on every paper. Read them until they are automatic.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Identify the command term first</strong>
+          The very first word (or short phrase) of a question tells you <em>what to do</em>. State, Explain, Describe, and Calculate require completely different types of answer. Underline it before you write a single word.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Count the marks before you write</strong>
+          One mark almost always = one distinct point. A [4 mark] question needs four separate, creditworthy statements. If you write three sentences for a 4-marker, you will likely drop a mark. Aim for at least one more point than the mark total as insurance.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Use the context — always</strong>
+          If the question gives a scenario (e.g. "a file server", "a medical diagnosis system"), your answer must relate to that context. A generic advantage of SSDs might not score if it is irrelevant to the given scenario. The examiner's report repeatedly flags this as a top reason marks are lost.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Make your initial statement, then clarify it</strong>
+          State the point clearly, then develop it. "Data is immutable" by itself often scores 0. "Data is immutable, meaning its value cannot be changed once assigned, so multiple threads can read it simultaneously without causing errors" scores both marks. When in doubt, always add a clarifying sentence — it cannot lose you marks.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>Never contradict yourself</strong>
+          If you write something correct and then write something that contradicts it, the examiner may award zero for that point. Cross out an answer entirely if you change your mind rather than adding a conflicting sentence.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <strong>Re-read the question after answering</strong>
+          With time remaining, re-read the question and check: (a) did you answer what was asked, not what you expected to be asked? (b) did you address all parts — questions with "and" in them often have two distinct mark-earning requirements.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>The "and" trap</strong>
+        <p>Questions like "Describe how data is represented on a magnetic disk <strong>and</strong> how it is transmitted using TCP/IP" are two questions in one. Students who wrote only about one half scored at most 50% of the available marks regardless of answer quality. Always look for conjunctions (and, as well as, also).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ 02 COMMAND TERMS ═══════════════════════════ -->
+  <section id="command-terms">
+    <div class="section-label">02</div>
+    <h2>Command Terms Decoded</h2>
+    <p>Every command term has a specific meaning and demands a specific type of response. Misreading the command is the single biggest cause of unnecessary mark loss.</p>
+
+    <div class="cmd-grid">
+
+      <div class="cmd-card">
+        <div class="cmd-word">State</div>
+        <div class="cmd-marks">1–2 marks</div>
+        <div class="cmd-def">Express in clear terms. No explanation required.</div>
+        <div class="cmd-tip">One precise noun/phrase is enough. Do not waste time explaining — it won't earn extra marks and wastes time you need elsewhere.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Define</div>
+        <div class="cmd-marks">1–2 marks</div>
+        <div class="cmd-def">Specify the meaning of a term precisely.</div>
+        <div class="cmd-tip">Include what it <em>is</em> and, if technical, what it <em>does</em>. "Hardware is the physical components of a computer system" — noun + characteristic.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Describe</div>
+        <div class="cmd-marks">2–4 marks</div>
+        <div class="cmd-def">Set out characteristics — what it is and how it works.</div>
+        <div class="cmd-tip">More than a definition. Describe the process or features. "An I/O controller acts as an interface between the CPU and peripherals, translating signals between them" — not just "it communicates."</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Explain</div>
+        <div class="cmd-marks">2–6 marks</div>
+        <div class="cmd-def">Set out purposes or reasons — the why and how.</div>
+        <div class="cmd-tip">Use "because", "so that", "which means", "therefore". An explanation that does not include a reason will not score the second mark. Make a statement then justify it.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Compare</div>
+        <div class="cmd-marks">2–4 marks</div>
+        <div class="cmd-def">Identify similarities and/or differences.</div>
+        <div class="cmd-tip">You must reference both things. "Lossy compression reduces file size more than lossless" scores; "Lossy compression reduces file size a lot" does not. Use comparative language: more, less, whereas, unlike.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Calculate</div>
+        <div class="cmd-marks">1–4 marks</div>
+        <div class="cmd-def">Work out a numerical value, showing your working.</div>
+        <div class="cmd-tip">Always show each step — method marks are available even for wrong final answers. Write units in your answer. State your formula before substituting numbers.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Draw</div>
+        <div class="cmd-marks">2–4 marks</div>
+        <div class="cmd-def">Produce a diagram.</div>
+        <div class="cmd-tip">Label everything. If drawing a logic circuit, check operator precedence carefully — AND binds tighter than OR. If drawing an ERD, check relationship directions.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Discuss</div>
+        <div class="cmd-marks">4–12 marks</div>
+        <div class="cmd-def">Present key points — balanced, with reasoning.</div>
+        <div class="cmd-tip">Extended response. Structure your answer. Cover multiple distinct points. For ethical questions, consider multiple stakeholder perspectives. Do not just list — develop each point.</div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-word">Suggest</div>
+        <div class="cmd-marks">1–2 marks</div>
+        <div class="cmd-def">Present a possible case or solution.</div>
+        <div class="cmd-tip">There may be no single correct answer — but your suggestion must be plausible and consistent with the scenario given. Justify your suggestion briefly.</div>
+      </div>
+
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-icon">❌</div>
+      <div class="callout-body">
+        <strong>The Explain vs Describe mix-up</strong>
+        <p>"Describe the role of an I/O controller" and "Explain the role of an I/O controller" need different things. Describe = what it does; Explain = why / how it does it. For Explain, always include a reason. "Acts as an interface" alone is a description. "Acts as an interface between the CPU and peripherals, so that signals can be translated between them, allowing them to communicate despite using different protocols" is an explanation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ 03 MARK ALLOCATION ═══════════════════════════ -->
+  <section id="mark-allocation">
+    <div class="section-label">03</div>
+    <h2>Reading the Marks</h2>
+
+    <p>The number of marks in brackets is a direct signal about the depth of answer required.</p>
+
+    <div class="marks-guide">
+      <table>
+        <thead>
+          <tr><th>Marks</th><th>What's expected</th><th>Time to spend (approx)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>[1]</strong></td>
+            <td>One specific, precise point. No explanation needed.</td>
+            <td>1–2 minutes</td>
+          </tr>
+          <tr>
+            <td><strong>[2]</strong></td>
+            <td>Two distinct points, OR one point fully explained/developed.</td>
+            <td>3–4 minutes</td>
+          </tr>
+          <tr>
+            <td><strong>[3–4]</strong></td>
+            <td>Three or four distinct mark-worthy statements. Each needs to be separate — don't say the same thing twice in different words.</td>
+            <td>5–8 minutes</td>
+          </tr>
+          <tr>
+            <td><strong>[6+]</strong></td>
+            <td>Extended answer. Plan first. Structure into clear distinct points. Quality over quantity, but ensure enough distinct points to hit the mark total.</td>
+            <td>10–18 minutes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>Multiple choice & "select all that apply"</strong>
+        <p>Some questions ask you to select multiple true statements. Read every option fully before selecting. In June 2024, approximately 50 students selected two or more options on a question that explicitly said "select only one." These are automatic zeros. Read the instruction, not just the options.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ 04 PAPER 1 ═══════════════════════════ -->
+  <section id="paper1">
+    <div class="section-label">04</div>
+    <h2>Paper 1 — Programming Theory <span class="badge p1">P1</span></h2>
+
+    <p>Paper 1 covers 4.1 Fundamentals of Programming, 4.2 Data Structures, 4.3 Algorithms, and 4.4 Theory of Computation. It runs for <strong>2 hours 30 minutes on-screen</strong>.</p>
+
+    <h3>Theory questions — short answer</h3>
+    <p>The theory sections on Paper 1 follow the same command term rules as Paper 2. Do not rush these because you feel the "real work" is the coding — every mark counts equally.</p>
+
+    <div class="callout good">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>OOP questions — use the correct terminology</strong>
+        <ul>
+          <li>Don't say "a function inside a class" — say <strong>method</strong>.</li>
+          <li>Don't say "a copy of the class" — say <strong>instance/object</strong>.</li>
+          <li>Don't confuse <strong>inheritance</strong> (is-a relationship) with <strong>composition</strong> (has-a). Composition uses a filled diamond in UML; aggregation uses an open diamond.</li>
+          <li>When explaining encapsulation, mention <em>hiding internal state</em> and <em>controlling access via methods</em>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Trace tables</h3>
+    <p>Trace table questions are among the most reliable mark-earners — the process is mechanical. Follow this approach:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">Create a column for every variable and the output before you start tracing.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">Execute <em>one line at a time</em>. Never jump ahead.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">For loops, always check the termination condition — off-by-one errors lose marks.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">For shift operations, draw the binary and count carefully — shifting in the wrong direction is a common error.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">If a trace asks "what is the purpose of this program", complete the trace first — the answer usually becomes clear from the final output values.</div>
+      </div>
+    </div>
+
+    <h3>Big-O and algorithm complexity</h3>
+    <p>When asked to compare algorithms for time or space complexity: state the Big-O class for each algorithm (e.g. O(n log n) vs O(n²)), then explain what this means in terms of how performance changes as input size grows. Do not just state the notation — examiners want to know you understand its significance.</p>
+  </section>
+
+  <!-- ═══════════════════════════ 05 SKELETON CODE ═══════════════════════════ -->
+  <section id="skeleton">
+    <div class="section-label">05</div>
+    <h2>Skeleton Code Questions <span class="badge p1">P1</span></h2>
+
+    <p>The skeleton program is released in advance as Preliminary Material. <strong>Study it before the exam</strong>. Understand the overall purpose of the program, the classes/functions provided, parameter names, and return types — the exam will build on them.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Read the question requirement, not just the code</strong>
+          Questions often specify exactly what to implement: "write a function that takes X and returns Y." Code that does something different, even if syntactically correct, will not score.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Use the existing structure</strong>
+          If the skeleton has an existing class with methods, write your code to fit within that structure. Call existing methods/functions where appropriate — this shows understanding.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Test mentally with the given test data</strong>
+          Walk through your code with the provided test data before finalising. Many errors are simple logic mistakes that a 30-second trace would catch.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Don't leave blank — attempt and comment</strong>
+          Even a partial attempt with a comment explaining your approach can earn method marks. A blank answer earns nothing.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Indentation matters in Python</strong>
+        <p>In Python, a misplaced indentation is a syntax error. Ensure loop bodies, if-blocks, and function bodies are correctly indented. For Java/C#, check brace matching. The on-screen editor may not catch these for you.</p>
+      </div>
+    </div>
+
+    <h3>Adapting/extending code</h3>
+    <p>Questions may ask you to <em>adapt</em> existing code rather than write from scratch. Only change what is necessary — unnecessary changes to working code can break it and lose you marks. Highlight (in your head) exactly which lines need to change before you start editing.</p>
+  </section>
+
+  <!-- ═══════════════════════════ 06 PAPER 2 ═══════════════════════════ -->
+  <section id="paper2">
+    <div class="section-label">06</div>
+    <h2>Paper 2 — Written Theory <span class="badge p2">P2</span></h2>
+
+    <p>Paper 2 covers topics 4.5 through 4.12. It is a written exam of <strong>2 hours 30 minutes</strong> with compulsory short and extended answer questions.</p>
+
+    <div class="topic-pills">
+      <span class="pill">4.5 Data Representation</span>
+      <span class="pill">4.6 Computer Systems</span>
+      <span class="pill">4.7 Organisation & Architecture</span>
+      <span class="pill">4.8 Consequences of Computing</span>
+      <span class="pill">4.9 Networking</span>
+      <span class="pill">4.10 Databases</span>
+      <span class="pill">4.11 Big Data</span>
+      <span class="pill">4.12 Functional Programming</span>
+    </div>
+
+    <h3>Binary / number system questions (4.5)</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content"><strong>Show every step.</strong> Even if the final answer is wrong, method marks are available for correct intermediate working. Write out the column headers (128, 64, 32…) before you start.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content"><strong>Negative binary:</strong> For two's complement, check the sign bit. For floating-point, a negative mantissa means the number is negative — don't ignore it.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content"><strong>Floating point normalisation:</strong> After finding the mantissa, check that the first two bits differ (0.1xxx for positive, 1.0xxx for negative). If they don't, shift until they do and adjust the exponent accordingly.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content"><strong>Memory calculations:</strong> Use powers of 2, not powers of 10. 1 KiB = 2¹⁰, 1 GiB = 2³⁰. A 36-bit address bus gives 2³⁶ addressable locations — do not use 2¹⁶.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header">
+        <span>Floating Point — Common Error</span>
+        <span class="badge p2">4.5</span>
+      </div>
+      <div class="example-body">
+        <p class="example-q">Convert the floating-point representation to decimal. The mantissa is 10110000, exponent is 11111011 (both in two's complement).</p>
+        <div class="example-bad">
+          <span class="label-bad">❌ Losing marks</span>
+          Shifting the binary point in the wrong direction (right instead of left for a negative exponent), or ignoring the negative sign of the mantissa. Many students shift correctly but then treat a negative mantissa as positive.
+        </div>
+        <div class="example-good">
+          <span class="label-good">✅ Correct approach</span>
+          Step 1: Exponent in decimal = –5 (two's complement). Step 2: Binary point shifts LEFT 5 places. Step 3: Mantissa is negative (starts with 1), so two's complement to get magnitude. Step 4: Combine sign and magnitude for final answer. Show every step.
+        </div>
+      </div>
+    </div>
+
+    <h3>Assembly language / fetch-execute cycle (4.7)</h3>
+    <p>Trace execution step by step. Create a register table (MAR, MDR, CIR, PC, general registers) before starting. The most common errors are: shifting registers in the wrong direction, forgetting to increment the PC, and confusing the control bus with the control unit.</p>
+
+    <div class="example">
+      <div class="example-header">
+        <span>Assembly Trace — Process</span>
+        <span class="badge p2">4.7</span>
+      </div>
+      <div class="example-body">
+        <p class="example-q">Trace the execution of this assembly program and state its purpose.</p>
+        <div class="example-good">
+          <span class="label-good">✅ Approach</span>
+          Draw the table first: | Step | PC | MAR | MDR | CIR | R0 | R1 | R2 | Output |<br>Execute one line at a time. Complete the full trace <em>before</em> stating the purpose. The purpose will be evident from what the output contains. State it precisely: "The program adds an odd parity bit to a character code" is better than "it checks binary numbers."
+        </div>
+      </div>
+    </div>
+
+    <h3>Boolean algebra (4.6)</h3>
+    <p>When simplifying, state which law or identity you are applying at each step (e.g. "By De Morgan's Law", "By X + X' = 1"). This earns method marks even if the simplification goes wrong later. Check operator precedence: NOT is applied first, then AND, then OR.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Logic circuit operator precedence</strong>
+        <p>For the expression A + B·C·D: AND is applied first, so B, C, and D are ANDed together before ORing with A. Students frequently draw an OR gate between B and C first, then AND the result with D — this is wrong. Draw brackets in your head: A + (B·C·D).</p>
+      </div>
+    </div>
+
+    <h3>Databases (4.10)</h3>
+    <p>SQL questions: INSERT INTO and UPDATE appear less frequently than SELECT and students often make errors on them. Remember: UPDATE <em>TableName</em> SET ... WHERE ... (not the field name after UPDATE). Enclose string/date values in quotes. For normalisation questions — do not just state "data inconsistency"; <em>describe</em> the problem: "data may be stored in multiple places so an update to one record may not be reflected in another, leading to inconsistent data."</p>
+
+    <div class="example">
+      <div class="example-header">
+        <span>Normalisation — The Vague Answer Problem</span>
+        <span class="badge p2">4.10</span>
+      </div>
+      <div class="example-body">
+        <p class="example-q">Describe two problems that might occur if a database is not fully normalised.</p>
+        <div class="example-bad">
+          <span class="label-bad">❌ Zero marks</span>
+          "Data inconsistency." / "Data redundancy." — These are labels, not descriptions. They will not score.
+        </div>
+        <div class="example-good">
+          <span class="label-good">✅ Full marks</span>
+          "Data may be stored in multiple records, so if a supplier's address changes, it would need to be updated in every order record, and if one is missed the data becomes inconsistent." / "Deleting an order may result in losing the only record of a supplier's details, causing unintended deletion of information."
+        </div>
+      </div>
+    </div>
+
+    <h3>Networking — TCP/IP (4.9)</h3>
+    <p>When answering questions about the TCP/IP stack, you must link specific tasks to specific layers. Writing "the data is packaged and sent" without naming which layer does what will not earn full marks. Know: Application (data), Transport (segments + port), Internet (packets + IP), Link (frames + MAC).</p>
+
+    <h3>Ethical/legal questions (4.8)</h3>
+    <p>These questions are often worth 6 marks or more and reward breadth and depth. A common error is focusing entirely on one issue (e.g. blame for errors) while missing others (bias in training data, data security, consent, legislation, accessibility, long-term impact on employment). Read the scenario carefully — answering about a different scenario (e.g. "replacing humans" when the question said "assisting humans") will not score.</p>
+  </section>
+
+  <!-- ═══════════════════════════ 07 EXTENDED RESPONSE ═══════════════════════════ -->
+  <section id="extended">
+    <div class="section-label">07</div>
+    <h2>Extended Response Questions <span class="badge both">Both</span></h2>
+
+    <p>Questions worth 6 or more marks — especially the [12-mark] Paper 2 questions — are planned, not free-written.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Spend 2–3 minutes planning</strong>
+          Jot bullet points of all the points you want to make. Cross them off as you write. This prevents repetition and ensures you don't forget a key area.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>One mark = one idea = one paragraph</strong>
+          For a 12-mark question, you need at least 12 distinct creditworthy statements. Keep each paragraph focused on one point.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Don't just list — develop every point</strong>
+          "Data is encrypted" is one mark. "Data is encrypted so that if intercepted, it cannot be read without the decryption key, protecting user privacy" is potentially two marks — and it demonstrates understanding.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Cover the range the question suggests</strong>
+          If the question has two named components (e.g. disk representation AND TCP/IP), split your answer roughly equally. Spending 90% of your answer on one half will cap your marks.
+        </div>
+      </div>
+    </div>
+
+    <div class="qr-panel">
+      <h3>Extended response planning — quick structure</h3>
+      <div class="qr-grid">
+        <div class="qr-item">Identify all named topics in the question</div>
+        <div class="qr-item">Allocate marks mentally per topic</div>
+        <div class="qr-item">Note bullet points for each topic first</div>
+        <div class="qr-item">Write: point → develop → link to context</div>
+        <div class="qr-item">Avoid repeating the same idea differently</div>
+        <div class="qr-item">For ethics: think about multiple stakeholders</div>
+        <div class="qr-item">Re-read the question after writing, not before</div>
+        <div class="qr-item">Check you haven't contradicted yourself</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ 08 TOPIC TRAPS ═══════════════════════════ -->
+  <section id="topic-traps">
+    <div class="section-label">08</div>
+    <h2>Topic-Specific Traps</h2>
+    <p>These are the errors that appear year after year in examiner reports. Learn to avoid them.</p>
+
+    <div class="example">
+      <div class="example-header"><span>4.5 — Floating Point</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>Shifting binary point in the wrong direction when the exponent is negative. Treating a negative mantissa as positive.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>Check the sign of the exponent first. Negative exponent = shift left. Always check the MSB of the mantissa for the sign.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.6 — Flip-flops</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>"The output flips from 0 to 1 or 1 to 0 when a clock pulse arrives" — wrong. Students confuse the name "flip-flop" with the behaviour.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>An edge-triggered D-type flip-flop acts as a memory element: on a clock pulse, the output changes to match the current value of the data input at that moment. It remembers, not toggles.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.6 — Control Bus vs Control Unit</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>Confusing the control bus with the control unit — they are different things. The control unit is a component of the CPU; the control bus is a communication pathway.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>Control Unit = part of CPU that decodes and coordinates instructions. Control Bus = carries control signals (read/write, clock, interrupts) between components.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.7 — Assembly language advantages</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>Vague answers like "it is faster" or "it is more efficient."</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>"Assembly language allows a programmer to write optimised code that may execute faster or use less memory than code compiled from a high-level language, since the programmer has direct control over which registers and instructions are used."</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.7 — Imperative languages</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>"An imperative language describes what a problem is" — this is the OPPOSITE. This answer scored zero in June 2024.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>Imperative = describes HOW to solve a problem step by step. Declarative = describes WHAT the problem is (e.g. SQL, Haskell). Remember: imperative = instructions/steps.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.10 — SQL UPDATE syntax</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span><code>UPDATE FieldName SET ...</code> — wrong. Putting the field name instead of the table name after UPDATE.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span><pre>UPDATE TableName
+SET field = value
+WHERE condition;</pre>Also: remember quotes around strings and dates, and the correct delimiter format for dates.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.12 — Functional Programming</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>"Data structures are immutable" — this alone scores 0. / "The co-domain is from natural numbers to real numbers" — this describes the function type, not the co-domain.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>Always develop: "Data structures are immutable, meaning their values cannot be changed once assigned. This means multiple threads can read the same data simultaneously without any thread causing side effects that affect others." For co-domain: state the actual set (e.g. "the set of real numbers"), not the mapping.</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header"><span>4.9 — I/O Controller</span></div>
+      <div class="example-body">
+        <div class="example-bad"><span class="label-bad">❌ Common error</span>"It is used for communication" / "It is an interface." Too vague — doesn't explain what it actually does.</div>
+        <div class="example-good"><span class="label-good">✅ Fix</span>"The I/O controller acts as an interface between the CPU and peripheral devices, translating electrical signals between them so that devices using different protocols can communicate with the processor."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ 09 CHECKLIST ═══════════════════════════ -->
+  <section id="checklist">
+    <div class="section-label">09</div>
+    <h2>Exam-Day Checklist <span class="badge both">Both</span></h2>
+
+    <h3>Before the exam</h3>
+    <div class="callout good">
+      <div class="callout-icon">📋</div>
+      <div class="callout-body">
+        <ul>
+          <li>For Paper 1: Review the Preliminary Material skeleton code. Know its structure, methods, and purpose before you sit down.</li>
+          <li>Confirm which programming language you are using — do not accidentally switch syntax mid-paper.</li>
+          <li>Revise the AQA assembly language instruction set — it is provided in the exam but knowing it saves time.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>At the start of the paper</h3>
+    <div class="callout info">
+      <div class="callout-icon">🔍</div>
+      <div class="callout-body">
+        <ul>
+          <li>Skim the whole paper in the first 2–3 minutes to see what topics appear and where the large-mark questions are.</li>
+          <li>Identify the extended response question(s) and mentally budget more time for them.</li>
+          <li>Note any questions that give you a scenario or data set — you will need to refer back to it.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>For every question</h3>
+    <div class="callout good">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <ul>
+          <li>Underline the command term.</li>
+          <li>Underline any context or named scenario.</li>
+          <li>Count the marks — write at least that many distinct points.</li>
+          <li>Make your initial statement, then clarify it. Never just name a feature; explain what it means or does.</li>
+          <li>If the question includes an example, reference it specifically in your answer.</li>
+          <li>Re-read the question after writing your answer — check you answered it, not a similar question you were expecting.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Time management</h3>
+    <div class="callout warn">
+      <div class="callout-icon">⏱️</div>
+      <div class="callout-body">
+        <ul>
+          <li>Paper 1 (2h 30m): Roughly 1 mark per minute is a safe guide. Don't over-spend on early short questions.</li>
+          <li>Paper 2 (2h 30m): Same rule. A 12-mark question deserves ~12–15 minutes including planning.</li>
+          <li>Leave 5 minutes at the end to re-read anything you flagged as uncertain.</li>
+          <li>If stuck on a question, move on and return — a fresh perspective often helps.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qr-panel" style="margin-top:2rem">
+      <h3>The Master Tip — Say It, Prove It, Link It</h3>
+      <div style="font-size:.9rem; color:rgba(245,240,232,.85); line-height:1.7">
+        <p style="margin-bottom:.6rem">For almost every question worth 2+ marks, use this structure:</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--gold)">Say it:</strong> Make the initial statement. ("TCP breaks data into segments.")</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--gold)">Prove it:</strong> Clarify or expand with specifics. ("Each segment contains the destination port number and sequence number.")</p>
+        <p><strong style="color:var(--gold)">Link it:</strong> Connect to the purpose or scenario. ("This allows packets arriving out of order to be reassembled correctly at the destination.")</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  AQA Computer Science 7517 — Exam Technique Guide &nbsp;|&nbsp; For student use in preparation for Paper 1 &amp; Paper 2
+</footer>
+
+</body>
+</html>

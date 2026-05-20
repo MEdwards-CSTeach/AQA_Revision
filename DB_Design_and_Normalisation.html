@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamentals of Databases — AQA CS 4.10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:#0d1b2a;
+  color:#e8f0f7;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+
+/* ── CSS VARIABLES ────────────────────────────────────────── */
+:root{
+  --navy:#0d1b2a;
+  --navy2:#142233;
+  --panel:#1a2e42;
+  --panel2:#1e3550;
+  --teal:#00b4a0;
+  --teal2:#00d4bc;
+  --gold:#f5a623;
+  --red:#e05555;
+  --green:#2ecc8a;
+  --blue:#4da8da;
+  --text:#e8f0f7;
+  --muted:#8facc0;
+  --border:#2a4060;
+  --radius:10px;
+}
+
+/* ── NAVIGATION ───────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,27,42,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0.7rem 1.5rem;
+  display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;
+}
+nav .nav-brand{
+  font-family:'DM Serif Display',serif;
+  font-size:1rem;color:var(--teal);
+  margin-right:1rem;white-space:nowrap;
+}
+nav a{
+  color:var(--muted);text-decoration:none;
+  font-size:0.8rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;
+  padding:0.3rem 0.7rem;border-radius:4px;
+  transition:color 0.2s,background 0.2s;
+}
+nav a:hover{color:var(--text);background:var(--panel)}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero{
+  background:linear-gradient(135deg,#0d1b2a 0%,#0e2640 50%,#102a3e 100%);
+  border-bottom:1px solid var(--border);
+  padding:4rem 2rem 3rem;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 60%,rgba(0,180,160,0.08) 0%,transparent 60%),
+             radial-gradient(ellipse at 75% 30%,rgba(77,168,218,0.06) 0%,transparent 55%);
+  pointer-events:none;
+}
+.hero-tag{
+  display:inline-block;
+  background:rgba(0,180,160,0.15);border:1px solid rgba(0,180,160,0.4);
+  color:var(--teal);font-size:0.75rem;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;padding:0.3rem 0.9rem;border-radius:20px;
+  margin-bottom:1.2rem;
+}
+.hero h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(2rem,5vw,3.5rem);
+  color:#fff;line-height:1.15;margin-bottom:0.8rem;
+}
+.hero h1 span{color:var(--teal)}
+.hero p{
+  font-size:1.1rem;color:var(--muted);max-width:600px;margin:0 auto 1.8rem;
+}
+.hero-pills{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap}
+.pill{
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--muted);font-size:0.78rem;font-weight:600;
+  padding:0.3rem 0.8rem;border-radius:20px;
+}
+
+/* ── LAYOUT ───────────────────────────────────────────────── */
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* ── SECTION WRAPPER ──────────────────────────────────────── */
+.section{margin-bottom:3.5rem}
+.section-header{
+  display:flex;align-items:center;gap:1rem;
+  margin-bottom:1.5rem;padding-bottom:0.8rem;
+  border-bottom:1px solid var(--border);
+}
+.section-num{
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;font-weight:500;
+  background:var(--teal);color:#000;
+  padding:0.2rem 0.5rem;border-radius:4px;
+  flex-shrink:0;
+}
+.section-header h2{
+  font-family:'DM Serif Display',serif;
+  font-size:1.7rem;color:#fff;
+}
+
+.section-header h2 span{color:var(--teal)}
+
+/* ── SUBSECTION ───────────────────────────────────────────── */
+h3.sub{
+  font-family:'DM Serif Display',serif;
+  font-size:1.15rem;color:var(--teal2);
+  margin:1.8rem 0 0.6rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+h3.sub::before{content:'';display:block;width:3px;height:1rem;background:var(--teal);border-radius:2px}
+
+/* ── CARDS & BOXES ────────────────────────────────────────── */
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.25rem 1.4rem;
+  margin-bottom:1rem;
+}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1rem}
+.card.accent-teal{border-left:3px solid var(--teal)}
+.card.accent-gold{border-left:3px solid var(--gold)}
+.card.accent-red{border-left:3px solid var(--red)}
+.card.accent-green{border-left:3px solid var(--green)}
+
+.card-label{
+  font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:0.3rem;
+}
+.card h4{color:#fff;font-size:1rem;margin-bottom:0.4rem}
+.card p,.card li{color:var(--muted);font-size:0.9rem}
+.card ul{padding-left:1.2rem}
+.card li{margin-bottom:0.25rem}
+
+/* highlight box */
+.hbox{
+  border-radius:var(--radius);padding:1.1rem 1.4rem;margin:1rem 0;
+  border:1px solid;
+}
+.hbox.teal{background:rgba(0,180,160,0.08);border-color:rgba(0,180,160,0.35)}
+.hbox.gold{background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.35)}
+.hbox.red{background:rgba(224,85,85,0.08);border-color:rgba(224,85,85,0.35)}
+.hbox.green{background:rgba(46,204,138,0.08);border-color:rgba(46,204,138,0.35)}
+.hbox-title{font-weight:700;font-size:0.9rem;margin-bottom:0.4rem}
+.hbox.teal .hbox-title{color:var(--teal)}
+.hbox.gold .hbox-title{color:var(--gold)}
+.hbox.red .hbox-title{color:var(--red)}
+.hbox.green .hbox-title{color:var(--green)}
+
+/* ── DEFINITION TABLE ─────────────────────────────────────── */
+.def-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+.def-table th,.def-table td{
+  padding:0.7rem 1rem;text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.def-table thead th{
+  background:var(--panel2);color:var(--teal);
+  font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+}
+.def-table tbody tr:hover{background:rgba(255,255,255,0.03)}
+.def-table .term{color:#fff;font-weight:600;font-family:'DM Mono',monospace;font-size:0.82rem;white-space:nowrap}
+.def-table .def{color:var(--muted)}
+.def-table .def em{color:var(--blue);font-style:normal}
+
+/* ── CODE / NOTATION ──────────────────────────────────────── */
+.notation{
+  font-family:'DM Mono',monospace;
+  font-size:0.88rem;
+  background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);
+  border-radius:6px;padding:0.9rem 1.1rem;
+  margin:0.6rem 0;line-height:1.8;
+  overflow-x:auto;
+}
+.notation .pk{color:var(--gold);text-decoration:underline;font-weight:500}
+.notation .fk{color:var(--blue)}
+.notation .entity{color:var(--teal);font-weight:600}
+.notation .comment{color:var(--muted);font-style:italic}
+
+/* ── SVG ERDs ─────────────────────────────────────────────── */
+.erd-wrap{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1rem;margin:1rem 0;
+  overflow-x:auto;
+  display:flex;justify-content:center;
+}
+.erd-wrap svg{display:block;max-width:100%;height:auto}
+.erd-caption{
+  text-align:center;font-size:0.8rem;color:var(--muted);
+  margin-top:0.4rem;margin-bottom:0.5rem;
+  font-style:italic;
+}
+
+/* ── NORMALISATION STAGES ─────────────────────────────────── */
+.norm-stages{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin:1rem 0}
+@media(max-width:720px){.norm-stages{grid-template-columns:1fr 1fr}}
+.norm-stage{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.norm-stage-head{padding:0.6rem;text-align:center;font-weight:700;font-size:1rem}
+.norm-stage-body{padding:0.7rem;background:var(--panel);font-size:0.82rem;color:var(--muted)}
+.norm-stage-body strong{color:#fff;display:block;margin-bottom:0.3rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em}
+.norm-unf .norm-stage-head{background:#5a1e1e;color:#ffaaaa}
+.norm-1nf .norm-stage-head{background:#5a3e1e;color:#ffd699}
+.norm-2nf .norm-stage-head{background:#1e3e5a;color:#99ccff}
+.norm-3nf .norm-stage-head{background:#1e5a3e;color:#99ffcc}
+
+/* ── DEPENDENCY ARROWS ────────────────────────────────────── */
+.dep-viz{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.4rem 0}
+.dep-box{
+  font-family:'DM Mono',monospace;font-size:0.82rem;
+  padding:0.3rem 0.7rem;border-radius:5px;
+  border:1px solid;
+}
+.dep-pk{background:rgba(245,166,35,0.15);border-color:var(--gold);color:var(--gold)}
+.dep-nk{background:rgba(77,168,218,0.15);border-color:var(--blue);color:var(--blue)}
+.dep-bad{background:rgba(224,85,85,0.15);border-color:var(--red);color:var(--red)}
+.dep-arrow{color:var(--muted);font-size:1.1rem;font-weight:700}
+.dep-label{font-size:0.75rem;color:var(--muted);margin-left:0.3rem}
+
+/* ── ANOMALY GRID ─────────────────────────────────────────── */
+.anomaly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0}
+.anomaly-card{
+  background:rgba(224,85,85,0.07);
+  border:1px solid rgba(224,85,85,0.3);
+  border-radius:var(--radius);padding:1rem;
+}
+.anomaly-icon{font-size:1.6rem;margin-bottom:0.4rem}
+.anomaly-card h4{color:var(--red);font-size:0.95rem;margin-bottom:0.4rem}
+.anomaly-card p{font-size:0.85rem;color:var(--muted)}
+
+/* ── FLAT FILE TABLE ──────────────────────────────────────── */
+.flat-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:0.78rem;margin:0.8rem 0;overflow-x:auto;display:block}
+.flat-table th{background:var(--panel2);color:var(--teal);padding:0.5rem 0.6rem;border:1px solid var(--border);white-space:nowrap}
+.flat-table td{padding:0.45rem 0.6rem;border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.flat-table tr:nth-child(even) td{background:rgba(255,255,255,0.03)}
+.flat-table .hi-red td{color:var(--red);background:rgba(224,85,85,0.05)}
+.flat-table .hi-gold td{color:var(--gold);background:rgba(245,166,35,0.05)}
+
+/* ── STEP PROCESS ─────────────────────────────────────────── */
+.steps{display:flex;gap:0;flex-wrap:wrap;margin:1rem 0}
+.step{
+  flex:1;min-width:160px;
+  background:var(--panel);border:1px solid var(--border);
+  padding:0.9rem;position:relative;
+}
+.step:not(:last-child)::after{
+  content:'→';
+  position:absolute;right:-0.8rem;top:50%;transform:translateY(-50%);
+  color:var(--teal);font-size:1.2rem;font-weight:700;z-index:1;
+}
+.step-num{
+  font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:700;
+  color:var(--teal);margin-bottom:0.3rem;
+}
+.step h4{color:#fff;font-size:0.88rem;margin-bottom:0.3rem}
+.step p{font-size:0.8rem;color:var(--muted)}
+
+/* ── EXAM TIPS ────────────────────────────────────────────── */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:1rem 0}
+.tip{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
+.tip-icon{font-size:1.4rem;margin-bottom:0.4rem}
+.tip h4{color:#fff;font-size:0.9rem;margin-bottom:0.3rem}
+.tip p{font-size:0.83rem;color:var(--muted)}
+
+/* ── MANTRA BOX ───────────────────────────────────────────── */
+.mantra{
+  background:linear-gradient(135deg,rgba(0,180,160,0.15),rgba(77,168,218,0.1));
+  border:1px solid rgba(0,180,160,0.4);
+  border-radius:var(--radius);padding:1.5rem 1.8rem;
+  margin:1.5rem 0;text-align:center;
+}
+.mantra p{
+  font-family:'DM Serif Display',serif;
+  font-size:1.25rem;color:#fff;line-height:1.5;
+}
+.mantra span.k{color:var(--teal)}
+.mantra span.w{color:var(--gold)}
+.mantra span.n{color:var(--green)}
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer{
+  text-align:center;padding:2rem;
+  border-top:1px solid var(--border);
+  color:var(--muted);font-size:0.82rem;
+}
+
+/* ── ANIMATIONS ───────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.section{animation:fadeUp 0.5s ease both}
+.section:nth-child(1){animation-delay:0.05s}
+.section:nth-child(2){animation-delay:0.1s}
+.section:nth-child(3){animation-delay:0.15s}
+.section:nth-child(4){animation-delay:0.2s}
+.section:nth-child(5){animation-delay:0.25s}
+.section:nth-child(6){animation-delay:0.3s}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media(max-width:600px){
+  .steps{flex-direction:column}
+  .step:not(:last-child)::after{content:'↓';right:auto;left:50%;top:auto;bottom:-0.8rem;transform:translateX(-50%)}
+  nav a{font-size:0.7rem;padding:0.25rem 0.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">DB Revision</span>
+  <a href="#vocab">Vocabulary</a>
+  <a href="#erds">ERDs</a>
+  <a href="#relationships">Relationships</a>
+  <a href="#why-normalise">Why Normalise</a>
+  <a href="#1nf">1NF</a>
+  <a href="#2nf">2NF</a>
+  <a href="#3nf">3NF</a>
+  <a href="#summary">Summary</a>
+  <a href="#tips">Exam Tips</a>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-tag">AQA A-Level Computer Science · 4.10</div>
+  <h1>Fundamentals of <span>Databases</span></h1>
+  <p>Entity-Relationship Diagrams, Relational Databases & Normalisation to 3NF</p>
+  <div class="hero-pills">
+    <span class="pill">ERDs &amp; Entities</span>
+    <span class="pill">1NF · 2NF · 3NF</span>
+    <span class="pill">Partial Dependencies</span>
+    <span class="pill">Transitive Dependencies</span>
+    <span class="pill">SQL Foundations</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ══ SECTION 1: VOCABULARY ═════════════════════════════════ -->
+<section class="section" id="vocab">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>Key Database <span>Vocabulary</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:1rem">These definitions must be precise — vague answers lose marks. Learn the exact wording.</p>
+
+  <table class="def-table">
+    <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td class="term">Entity</td><td class="def">A thing or object about which data is stored. Examples: <em>Student</em>, <em>Book</em>, <em>Course</em>, <em>Teacher</em></td></tr>
+      <tr><td class="term">Attribute</td><td class="def">A property or characteristic of an entity. Example: <em>StudentID</em>, <em>Name</em>, <em>DateOfBirth</em></td></tr>
+      <tr><td class="term">Relation / Table</td><td class="def">A two-dimensional structure of rows (tuples) and columns (attributes). All values in one column are of the same type.</td></tr>
+      <tr><td class="term">Tuple / Record</td><td class="def">A single row in a relation — one instance of an entity.</td></tr>
+      <tr><td class="term">Primary Key (PK)</td><td class="def">An attribute, or minimal set of attributes, whose value <em>uniquely identifies</em> each tuple in a relation. Cannot be null.</td></tr>
+      <tr><td class="term">Composite Primary Key</td><td class="def">A PK made from two or more attributes. Neither attribute alone is sufficient — only the combination is unique.</td></tr>
+      <tr><td class="term">Foreign Key (FK)</td><td class="def">An attribute in one relation whose values match the primary key values in <em>another</em> relation — creates a link between tables.</td></tr>
+      <tr><td class="term">Referential Integrity</td><td class="def">Every FK value must correspond to an existing PK value in the referenced table. No orphaned records allowed.</td></tr>
+      <tr><td class="term">Entity Identifier</td><td class="def">AQA's term for primary key — the attribute(s) used to uniquely identify a tuple.</td></tr>
+      <tr><td class="term">Candidate Key</td><td class="def">Any attribute (or set) that <em>could</em> be used as a primary key — it uniquely identifies each row.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="hbox gold">
+    <div class="hbox-title">📝 Notation — Entity Descriptions</div>
+    <div class="notation">
+      <span class="entity">Student</span>(<span class="pk">StudentID</span>, FirstName, LastName, DOB, <span class="fk">*CourseID</span>)<br>
+      <span class="comment">// Underlined = Primary Key &nbsp;&nbsp; * prefix = Foreign Key</span>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted)">In AQA exams you must underline the PK and mark FKs with an asterisk (*).</p>
+  </div>
+</section>
+
+<!-- ══ SECTION 2: ERDs ════════════════════════════════════════ -->
+<section class="section" id="erds">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>Entity-Relationship <span>Diagrams</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:1.2rem">An ERD is a visual model showing the entities in a system and how they relate. In AQA exams, entities are rectangles connected by lines labelled with the degree (cardinality) at each end.</p>
+
+  <div class="card-grid">
+    <div class="card accent-teal">
+      <div class="card-label">Component</div>
+      <h4>Entity</h4>
+      <p>A rectangle labelled with the entity name. Represents a "thing" we store data about.</p>
+    </div>
+    <div class="card accent-teal">
+      <div class="card-label">Component</div>
+      <h4>Relationship</h4>
+      <p>A line connecting two entities. Always label the degree at <strong style="color:#fff">both ends</strong>.</p>
+    </div>
+    <div class="card accent-gold">
+      <div class="card-label">Component</div>
+      <h4>Degree / Cardinality</h4>
+      <p>Shows how many instances can be involved: <strong style="color:#fff">1</strong> (one side) or <strong style="color:#fff">M</strong> (many side).</p>
+    </div>
+    <div class="card accent-gold">
+      <div class="card-label">Component</div>
+      <h4>Attributes</h4>
+      <p>Described in entity notation format. Underline PK. Use * for FK.</p>
+    </div>
+  </div>
+
+  <!-- ERD: Simple 1:1 -->
+  <h3 class="sub">Example ERD — Simple Library (1:M)</h3>
+  <div class="erd-wrap">
+    <svg viewBox="0 0 600 140" width="600" height="140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="no-marker" markerWidth="0" markerHeight="0" refX="0" refY="0"/>
+      </defs>
+      <!-- Member entity -->
+      <rect x="20" y="30" width="150" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="95" y="52" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Member</text>
+      <!-- Attributes -->
+      <rect x="20" y="64" width="150" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="28" y="80" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 MemberID</text>
+      <rect x="20" y="88" width="150" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="28" y="104" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">MemberName</text>
+      <rect x="20" y="112" width="150" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="28" y="128" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">Email</text>
+
+      <!-- Relationship line -->
+      <line x1="170" y1="64" x2="290" y2="64" stroke="#00b4a0" stroke-width="2"/>
+      <!-- degree labels -->
+      <text x="176" y="56" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">1</text>
+      <text x="270" y="56" font-family="DM Mono,monospace" font-size="14" fill="#00d4bc" font-weight="700">M</text>
+      <!-- crow's foot -->
+      <line x1="278" y1="58" x2="290" y2="64" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="278" y1="70" x2="290" y2="64" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Loan entity -->
+      <rect x="290" y="30" width="140" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="360" y="52" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Loan</text>
+      <rect x="290" y="64" width="140" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="298" y="80" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 LoanID</text>
+      <rect x="290" y="88" width="140" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="298" y="104" font-family="DM Mono,monospace" font-size="10" fill="#4da8da">🔗 *MemberID</text>
+      <rect x="290" y="112" width="140" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="298" y="128" font-family="DM Mono,monospace" font-size="10" fill="#4da8da">🔗 *ISBN</text>
+
+      <!-- Relationship line Loan→Book -->
+      <line x1="430" y1="64" x2="550" y2="64" stroke="#00b4a0" stroke-width="2"/>
+      <text x="442" y="56" font-family="DM Mono,monospace" font-size="14" fill="#00d4bc" font-weight="700">M</text>
+      <text x="532" y="56" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">1</text>
+      <!-- crow foot left -->
+      <line x1="430" y1="58" x2="442" y2="64" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="430" y1="70" x2="442" y2="64" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Book entity -->
+      <rect x="450" y="30" width="140" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="520" y="52" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Book</text>
+      <rect x="450" y="64" width="140" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="458" y="80" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 ISBN</text>
+      <rect x="450" y="88" width="140" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="458" y="104" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">Title</text>
+      <rect x="450" y="112" width="140" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="458" y="128" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">Author</text>
+    </svg>
+  </div>
+  <p class="erd-caption">Library ERD — Member(1) loans many(M) Books, resolved via a Loan link table</p>
+
+  <div class="notation">
+    <span class="entity">Member</span>(<span class="pk">MemberID</span>, MemberName, Email)<br>
+    <span class="entity">Loan</span>(<span class="pk">LoanID</span>, <span class="fk">*MemberID</span>, <span class="fk">*ISBN</span>, DateOut, DueDate)<br>
+    <span class="entity">Book</span>(<span class="pk">ISBN</span>, Title, Author, Genre)
+  </div>
+</section>
+
+<!-- ══ SECTION 3: RELATIONSHIPS ══════════════════════════════ -->
+<section class="section" id="relationships">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Relationship <span>Types &amp; Degree</span></h2>
+  </div>
+
+  <!-- 1:1 -->
+  <h3 class="sub">One-to-One (1:1)</h3>
+  <div class="erd-wrap">
+    <svg viewBox="0 0 420 80" width="420" height="80" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="20" width="140" height="40" rx="2" fill="#1A3C5E" stroke="#8facc0" stroke-width="1.5"/>
+      <text x="80" y="45" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Person</text>
+      <line x1="150" y1="40" x2="270" y2="40" stroke="#8facc0" stroke-width="2"/>
+      <text x="156" y="33" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">1</text>
+      <text x="252" y="33" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">1</text>
+      <rect x="270" y="20" width="140" height="40" rx="2" fill="#1A3C5E" stroke="#8facc0" stroke-width="1.5"/>
+      <text x="340" y="45" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Passport</text>
+      <text x="210" y="68" font-family="Source Sans 3,sans-serif" font-size="11" fill="#8facc0" text-anchor="middle">Each person has exactly one passport</text>
+    </svg>
+  </div>
+
+  <!-- 1:M -->
+  <h3 class="sub">One-to-Many (1:M) — Most Common ⭐</h3>
+  <div class="erd-wrap">
+    <svg viewBox="0 0 480 90" width="480" height="90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="20" width="150" height="40" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="2"/>
+      <text x="85" y="45" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Customer</text>
+      <line x1="160" y1="40" x2="300" y2="40" stroke="#00b4a0" stroke-width="2.5"/>
+      <text x="167" y="33" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">1</text>
+      <!-- crow's foot (many) -->
+      <line x1="288" y1="33" x2="300" y2="40" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="288" y1="47" x2="300" y2="40" stroke="#00b4a0" stroke-width="2"/>
+      <text x="274" y="33" font-family="DM Mono,monospace" font-size="14" fill="#00d4bc" font-weight="700">M</text>
+      <rect x="300" y="20" width="150" height="40" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="2"/>
+      <text x="375" y="45" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Order</text>
+      <text x="240" y="76" font-family="Source Sans 3,sans-serif" font-size="11" fill="#8facc0" text-anchor="middle">One customer places many orders. FK: CustomerID stored in Order table.</text>
+    </svg>
+  </div>
+
+  <!-- M:M -->
+  <h3 class="sub">Many-to-Many (M:M) — Must Be Resolved ⚠️</h3>
+  <div class="erd-wrap">
+    <svg viewBox="0 0 480 90" width="480" height="90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="20" width="150" height="40" rx="2" fill="#3a1a1a" stroke="#e05555" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="85" y="45" font-family="DM Serif Display,serif" font-size="14" fill="#ffaaaa" text-anchor="middle">Student</text>
+      <line x1="160" y1="40" x2="300" y2="40" stroke="#e05555" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="165" y="33" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">M</text>
+      <text x="278" y="33" font-family="DM Mono,monospace" font-size="14" fill="#e05555" font-weight="700">M</text>
+      <rect x="300" y="20" width="150" height="40" rx="2" fill="#3a1a1a" stroke="#e05555" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="375" y="45" font-family="DM Serif Display,serif" font-size="14" fill="#ffaaaa" text-anchor="middle">Course</text>
+      <text x="240" y="76" font-family="Source Sans 3,sans-serif" font-size="11" fill="#e05555" text-anchor="middle">⚠ Cannot implement directly — must create a link table!</text>
+    </svg>
+  </div>
+
+  <!-- Resolution -->
+  <h3 class="sub">Resolving M:M — The Link Table</h3>
+  <p style="color:var(--muted);margin-bottom:0.8rem">Create a <strong style="color:#fff">link table</strong> (junction / bridge / associative table) containing both PKs as foreign keys. Together they form a <strong style="color:#fff">composite primary key</strong>.</p>
+
+  <div class="erd-wrap">
+    <svg viewBox="0 0 700 160" width="700" height="160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Student -->
+      <rect x="10" y="20" width="160" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="90" y="42" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Student</text>
+      <rect x="10" y="54" width="160" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="70" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 StudentID</text>
+      <rect x="10" y="78" width="160" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="94" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">StudentName</text>
+      <rect x="10" y="102" width="160" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="118" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">DOB</text>
+
+      <!-- Line Student → Enrolment -->
+      <line x1="170" y1="54" x2="265" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <text x="176" y="46" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+      <text x="243" y="46" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <line x1="253" y1="48" x2="265" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="253" y1="60" x2="265" y2="54" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Enrolment (link table) -->
+      <rect x="265" y="10" width="170" height="34" rx="2" fill="#0e3a2e" stroke="#2ecc8a" stroke-width="2"/>
+      <text x="350" y="32" font-family="DM Serif Display,serif" font-size="14" fill="#99ffcc" text-anchor="middle">Enrolment</text>
+      <text x="350" y="8" font-family="Source Sans 3,sans-serif" font-size="9" fill="#2ecc8a" text-anchor="middle">LINK TABLE</text>
+      <rect x="265" y="44" width="170" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="273" y="60" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 StudentID</text>
+      <text x="360" y="60" font-family="DM Mono,monospace" font-size="9" fill="#2ecc8a">← composite</text>
+      <rect x="265" y="68" width="170" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="273" y="84" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 CourseID</text>
+      <text x="360" y="84" font-family="DM Mono,monospace" font-size="9" fill="#2ecc8a">← PK</text>
+      <rect x="265" y="92" width="170" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="273" y="108" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">Grade</text>
+      <rect x="265" y="116" width="170" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="273" y="132" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">DateEnrolled</text>
+
+      <!-- Line Enrolment → Course -->
+      <line x1="435" y1="54" x2="525" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <text x="440" y="46" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <line x1="435" y1="48" x2="447" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="435" y1="60" x2="447" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <text x="506" y="46" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+
+      <!-- Course -->
+      <rect x="525" y="20" width="160" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="605" y="42" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Course</text>
+      <rect x="525" y="54" width="160" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="533" y="70" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 CourseID</text>
+      <rect x="525" y="78" width="160" height="24" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="533" y="94" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">CourseName</text>
+      <rect x="525" y="102" width="160" height="24" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="533" y="118" font-family="DM Mono,monospace" font-size="10" fill="#4da8da">🔗 *TeacherID</text>
+
+      <!-- Caption -->
+      <text x="350" y="152" font-family="Source Sans 3,sans-serif" font-size="11" fill="#8facc0" text-anchor="middle" font-style="italic">M:M resolved — Enrolment has composite PK (StudentID + CourseID); both are also Foreign Keys</text>
+    </svg>
+  </div>
+
+  <div class="hbox green">
+    <div class="hbox-title">✅ Key Insight</div>
+    <p style="font-size:0.88rem;color:var(--muted)">Both columns in the link table's composite PK are <strong style="color:#fff">simultaneously foreign keys</strong> — they reference the PKs of both related tables. This is the standard pattern for resolving any M:M relationship.</p>
+  </div>
+</section>
+
+<!-- ══ SECTION 4: WHY NORMALISE ══════════════════════════════ -->
+<section class="section" id="why-normalise">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Why <span>Normalise?</span></h2>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:1rem">An unnormalised database (flat file) storing all data in one table creates serious problems:</p>
+
+  <div class="anomaly-grid">
+    <div class="anomaly-card">
+      <div class="anomaly-icon">🔁</div>
+      <h4>Update Anomaly</h4>
+      <p>Changing a teacher's email means updating every row they appear in. Miss one → data becomes inconsistent.</p>
+    </div>
+    <div class="anomaly-card">
+      <div class="anomaly-icon">➕</div>
+      <h4>Insertion Anomaly</h4>
+      <p>Cannot add a new course without a student enrolling first — every column is needed to create any row.</p>
+    </div>
+    <div class="anomaly-card">
+      <div class="anomaly-icon">❌</div>
+      <h4>Deletion Anomaly</h4>
+      <p>Delete the last student on a course → all course data is permanently lost from the database.</p>
+    </div>
+    <div class="anomaly-card">
+      <div class="anomaly-icon">♻️</div>
+      <h4>Data Redundancy</h4>
+      <p>Same data stored many times (e.g. teacher name in every row). Wastes space; increases inconsistency risk.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Our Working Example — The Flat File</h3>
+  <p style="color:var(--muted);margin-bottom:0.6rem">We will normalise this school enrolment data through 1NF, 2NF and 3NF:</p>
+
+  <div style="overflow-x:auto">
+  <table class="flat-table">
+    <thead>
+      <tr><th>StudentID</th><th>StudentName</th><th>DOB</th><th>CourseID</th><th>CourseName</th><th>TeacherID</th><th>TeacherName</th><th>Grade</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hi-gold"><td>S01</td><td>Ali Ahmed</td><td>01/03/06</td><td>CS01</td><td>Computer Sci</td><td>T01</td><td>Ms Brown</td><td>A</td></tr>
+      <tr class="hi-gold"><td>S01</td><td>Ali Ahmed</td><td>01/03/06</td><td>MA01</td><td>Mathematics</td><td>T02</td><td>Mr Jones</td><td>B</td></tr>
+      <tr class="hi-red"><td>S02</td><td>Priya Patel</td><td>14/07/06</td><td>CS01</td><td>Computer Sci</td><td>T01</td><td>Ms Brown</td><td>B</td></tr>
+      <tr class="hi-red"><td>S02</td><td>Priya Patel</td><td>14/07/06</td><td>EN01</td><td>English</td><td>T03</td><td>Mrs Smith</td><td>A*</td></tr>
+      <tr><td>S03</td><td>Tom Wilson</td><td>22/11/05</td><td>MA01</td><td>Mathematics</td><td>T02</td><td>Mr Jones</td><td>C</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:0.82rem;color:var(--red);margin-top:0.5rem">⚠ Problems: Ali Ahmed repeated, Ms Brown repeated, no single PK, delete S02 = lose English course data</p>
+</section>
+
+<!-- ══ SECTION 5: 1NF ═════════════════════════════════════════ -->
+<section class="section" id="1nf">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>First Normal Form <span>(1NF)</span></h2>
+  </div>
+
+  <div class="hbox teal">
+    <div class="hbox-title">Rules for 1NF</div>
+    <ul style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin-top:0.3rem">
+      <li>All attribute values must be <strong style="color:#fff">atomic</strong> (indivisible — one value per cell)</li>
+      <li>No repeating groups of columns</li>
+      <li>A <strong style="color:#fff">primary key</strong> must be defined</li>
+    </ul>
+  </div>
+
+  <h3 class="sub">The Thinking Process: UNF → 1NF</h3>
+  <div class="card accent-teal">
+    <p style="color:var(--muted);font-size:0.9rem">❓ <strong style="color:#fff">Ask:</strong> Can a single attribute uniquely identify every row? No — StudentID S01 appears twice!<br>
+    ✅ <strong style="color:#fff">Solution:</strong> Use <strong style="color:#fff">(StudentID, CourseID)</strong> together as a <strong style="color:var(--teal)">composite primary key</strong>. One student can take many courses, so both are needed to pinpoint a row.</p>
+  </div>
+
+  <div class="notation">
+    <span class="entity">Enrolment</span>(<span class="pk">StudentID</span>, <span class="pk">CourseID</span>, StudentName, DOB, CourseName, TeacherID, TeacherName, Grade)<br>
+    <span class="comment">// PK = (StudentID + CourseID) — composite</span>
+  </div>
+
+  <div class="hbox gold">
+    <div class="hbox-title">⚠ Still Not Fixed — Partial Dependencies Remain</div>
+    <ul style="color:var(--muted);font-size:0.88rem;padding-left:1.2rem;margin-top:0.3rem">
+      <li>StudentName, DOB → depend only on <strong style="color:#fff">StudentID</strong> (not on CourseID)</li>
+      <li>CourseName, TeacherID, TeacherName → depend only on <strong style="color:#fff">CourseID</strong> (not on StudentID)</li>
+      <li>Grade → depends on <strong style="color:#fff">both</strong> StudentID AND CourseID ✅</li>
+    </ul>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.4rem">These are called <strong style="color:var(--gold)">partial dependencies</strong> — fixed by 2NF.</p>
+  </div>
+</section>
+
+<!-- ══ SECTION 6: 2NF ═════════════════════════════════════════ -->
+<section class="section" id="2nf">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>Second Normal Form <span>(2NF)</span></h2>
+  </div>
+
+  <div class="hbox teal">
+    <div class="hbox-title">Rules for 2NF</div>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Already in 1NF <strong style="color:#fff">AND</strong> every non-key attribute is <strong style="color:#fff">fully functionally dependent</strong> on the <strong style="color:#fff">whole</strong> primary key — no partial dependencies.</p>
+  </div>
+
+  <!-- Terminology -->
+  <h3 class="sub">Critical Terminology — Students Often Struggle Here</h3>
+
+  <div class="card-grid">
+    <div class="card accent-teal">
+      <div class="card-label">Concept</div>
+      <h4>Functional Dependency</h4>
+      <p>Attribute B is <em style="color:var(--teal);font-style:normal">functionally dependent</em> on A if knowing A always tells you B.</p>
+      <div style="margin-top:0.6rem">
+        <div class="dep-viz">
+          <span class="dep-pk">StudentID</span>
+          <span class="dep-arrow">→</span>
+          <span class="dep-nk">StudentName</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">Written as: A → B</p>
+      </div>
+    </div>
+    <div class="card accent-red">
+      <div class="card-label">Problem (2NF violates)</div>
+      <h4>Partial Dependency ⚠️</h4>
+      <p>A non-key attribute depends on <em style="color:var(--red);font-style:normal">only PART</em> of the composite PK — not all of it.</p>
+      <div style="margin-top:0.6rem">
+        <div class="dep-viz">
+          <span class="dep-pk">StudentID</span>
+          <span class="dep-arrow">→</span>
+          <span class="dep-bad">StudentName</span>
+          <span class="dep-label">(partial!)</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--red);margin-top:0.2rem">CourseID is not needed to know StudentName</p>
+      </div>
+    </div>
+    <div class="card accent-green">
+      <div class="card-label">Target (2NF requires)</div>
+      <h4>Full Functional Dependency ✅</h4>
+      <p>A non-key attribute depends on the <em style="color:var(--green);font-style:normal">entire</em> composite PK — removing any part breaks it.</p>
+      <div style="margin-top:0.6rem">
+        <div class="dep-viz">
+          <span class="dep-pk">StudentID + CourseID</span>
+          <span class="dep-arrow">→</span>
+          <span class="dep-nk">Grade</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--green);margin-top:0.2rem">Both parts of the PK needed for Grade</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox gold">
+    <div class="hbox-title">💡 Memory Trick for 2NF</div>
+    <p style="font-size:0.9rem;color:var(--muted)">"Does this attribute need <strong style="color:#fff">ALL</strong> parts of the PK to identify it, or just <strong style="color:#fff">PART</strong> of it?"</p>
+    <p style="font-size:0.9rem;color:var(--gold);margin-top:0.4rem">If it only needs PART → Partial Dependency → move it to its own table!</p>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem">⚡ <strong style="color:#fff">Important:</strong> 2NF only applies when there is a <strong style="color:#fff">composite</strong> primary key. A single-attribute PK → already in 2NF if it was in 1NF.</p>
+  </div>
+
+  <h3 class="sub">Applying 2NF — Dependency Analysis</h3>
+
+  <table class="def-table">
+    <thead><tr><th>Non-key Attribute(s)</th><th>Depends on...</th><th>Type</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="term">StudentName, DOB</td>
+        <td class="def">StudentID only</td>
+        <td style="color:var(--red);font-weight:700">⚠ PARTIAL</td>
+        <td style="color:var(--muted)">Move → Student table</td>
+      </tr>
+      <tr>
+        <td class="term">CourseName</td>
+        <td class="def">CourseID only</td>
+        <td style="color:var(--red);font-weight:700">⚠ PARTIAL</td>
+        <td style="color:var(--muted)">Move → Course table</td>
+      </tr>
+      <tr>
+        <td class="term">TeacherID, TeacherName</td>
+        <td class="def">CourseID only</td>
+        <td style="color:var(--red);font-weight:700">⚠ PARTIAL</td>
+        <td style="color:var(--muted)">Move → Course table</td>
+      </tr>
+      <tr>
+        <td class="term">Grade</td>
+        <td class="def">StudentID + CourseID (both)</td>
+        <td style="color:var(--green);font-weight:700">✅ FULL</td>
+        <td style="color:var(--muted)">Keep in Enrolment</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub">Result: 2NF — Three Tables</h3>
+  <div class="notation">
+    <span class="entity">Student</span>(<span class="pk">StudentID</span>, StudentName, DOB)<br>
+    <span class="entity">Course</span>(<span class="pk">CourseID</span>, CourseName, TeacherID, TeacherName) <span class="comment">// ← TeacherName still a problem!</span><br>
+    <span class="entity">Enrolment</span>(<span class="pk">StudentID</span>, <span class="pk">CourseID</span>, Grade) <span class="comment">// composite PK</span>
+  </div>
+
+  <!-- ERD for 2NF -->
+  <div class="erd-wrap">
+    <svg viewBox="0 0 700 160" width="700" height="160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Student -->
+      <rect x="10" y="20" width="155" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="87" y="42" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Student</text>
+      <rect x="10" y="54" width="155" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="69" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 StudentID</text>
+      <rect x="10" y="76" width="155" height="22" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="91" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">StudentName</text>
+      <rect x="10" y="98" width="155" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="113" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">DOB</text>
+
+      <!-- Line Student→Enrolment -->
+      <line x1="165" y1="54" x2="265" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <text x="170" y="46" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+      <text x="247" y="46" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <line x1="253" y1="48" x2="265" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="253" y1="60" x2="265" y2="54" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Enrolment -->
+      <rect x="265" y="20" width="170" height="34" rx="2" fill="#1A3C5E" stroke="#2ecc8a" stroke-width="2"/>
+      <text x="350" y="42" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Enrolment</text>
+      <rect x="265" y="54" width="170" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="273" y="69" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 StudentID + CourseID</text>
+      <rect x="265" y="76" width="170" height="22" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="273" y="91" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">Grade</text>
+
+      <!-- Line Enrolment→Course -->
+      <line x1="435" y1="54" x2="525" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <text x="440" y="46" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <text x="507" y="46" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+      <line x1="435" y1="48" x2="447" y2="54" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="435" y1="60" x2="447" y2="54" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Course (with 3NF issue highlighted) -->
+      <rect x="525" y="20" width="165" height="34" rx="2" fill="#3a2e10" stroke="#f5a623" stroke-width="2"/>
+      <text x="607" y="42" font-family="DM Serif Display,serif" font-size="14" fill="#ffd699" text-anchor="middle">Course</text>
+      <rect x="525" y="54" width="165" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="533" y="69" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 CourseID</text>
+      <rect x="525" y="76" width="165" height="22" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="533" y="91" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">CourseName</text>
+      <rect x="525" y="98" width="165" height="22" fill="#3a2010" stroke="#f5a623" stroke-width="1"/>
+      <text x="533" y="113" font-family="DM Mono,monospace" font-size="10" fill="#ffa040">TeacherID ⚠</text>
+      <rect x="525" y="120" width="165" height="22" fill="#3a2010" stroke="#f5a623" stroke-width="1"/>
+      <text x="533" y="135" font-family="DM Mono,monospace" font-size="10" fill="#ffa040">TeacherName ⚠</text>
+
+      <text x="350" y="152" font-family="Source Sans 3,sans-serif" font-size="10" fill="#f5a623" text-anchor="middle" font-style="italic">⚠ Course table not yet 3NF: TeacherName depends on TeacherID, not CourseID!</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ══ SECTION 7: 3NF ═════════════════════════════════════════ -->
+<section class="section" id="3nf">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>Third Normal Form <span>(3NF)</span></h2>
+  </div>
+
+  <div class="hbox teal">
+    <div class="hbox-title">Rules for 3NF</div>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Already in 2NF <strong style="color:#fff">AND</strong> there are <strong style="color:#fff">no transitive dependencies</strong> — every non-key attribute must depend <strong style="color:#fff">only and directly</strong> on the primary key.</p>
+  </div>
+
+  <h3 class="sub">Transitive Dependency</h3>
+  <div class="card accent-red">
+    <h4>Definition</h4>
+    <p>A non-key attribute (C) depends on <em style="color:var(--red);font-style:normal">another non-key attribute</em> (B), which in turn depends on the PK (A).</p>
+    <div style="margin:0.8rem 0">
+      <div class="dep-viz">
+        <span class="dep-pk">CourseID (PK)</span>
+        <span class="dep-arrow">→</span>
+        <span class="dep-nk">TeacherID</span>
+        <span class="dep-arrow">→</span>
+        <span class="dep-bad">TeacherName</span>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem">TeacherName depends on TeacherID (a non-key attr), not directly on CourseID (the PK). This is the transitive dependency.</p>
+    </div>
+    <p style="font-size:0.85rem;color:var(--red)"><strong>Fix:</strong> Move TeacherName into its own Teacher table with TeacherID as PK. Course keeps TeacherID as a FK.</p>
+  </div>
+
+  <h3 class="sub">Result: 3NF — Four Tables</h3>
+  <div class="notation">
+    <span class="entity">Student</span>(<span class="pk">StudentID</span>, StudentName, DOB)<br>
+    <span class="entity">Enrolment</span>(<span class="pk">StudentID</span>, <span class="pk">CourseID</span>, Grade) <span class="comment">// composite PK — both are also FKs</span><br>
+    <span class="entity">Course</span>(<span class="pk">CourseID</span>, CourseName, <span class="fk">*TeacherID</span>)<br>
+    <span class="entity">Teacher</span>(<span class="pk">TeacherID</span>, TeacherName)
+  </div>
+
+  <!-- Final 3NF ERD -->
+  <h3 class="sub">Final 3NF Entity-Relationship Diagram</h3>
+  <div class="erd-wrap">
+    <svg viewBox="0 0 760 280" width="760" height="280" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Student -->
+      <rect x="10" y="60" width="160" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="90" y="82" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Student</text>
+      <rect x="10" y="94" width="160" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="109" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 StudentID</text>
+      <rect x="10" y="116" width="160" height="22" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="131" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">StudentName</text>
+      <rect x="10" y="138" width="160" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="18" y="153" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">DOB</text>
+
+      <!-- Line Student→Enrolment -->
+      <line x1="170" y1="94" x2="280" y2="94" stroke="#00b4a0" stroke-width="2"/>
+      <text x="175" y="86" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+      <text x="260" y="86" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <line x1="268" y1="88" x2="280" y2="94" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="268" y1="100" x2="280" y2="94" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Enrolment -->
+      <rect x="280" y="60" width="200" height="34" rx="2" fill="#0e3a2e" stroke="#2ecc8a" stroke-width="2"/>
+      <text x="380" y="82" font-family="DM Serif Display,serif" font-size="14" fill="#99ffcc" text-anchor="middle">Enrolment</text>
+      <text x="380" y="54" font-family="Source Sans 3,sans-serif" font-size="9" fill="#2ecc8a" text-anchor="middle">LINK TABLE — composite PK</text>
+      <rect x="280" y="94" width="200" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="288" y="109" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 StudentID  (FK)</text>
+      <rect x="280" y="116" width="200" height="22" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="288" y="131" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 CourseID  (FK)</text>
+      <rect x="280" y="138" width="200" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="288" y="153" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">Grade</text>
+
+      <!-- Line Enrolment→Course -->
+      <line x1="480" y1="94" x2="580" y2="94" stroke="#00b4a0" stroke-width="2"/>
+      <text x="486" y="86" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <text x="562" y="86" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+      <line x1="480" y1="88" x2="492" y2="94" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="480" y1="100" x2="492" y2="94" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Course -->
+      <rect x="580" y="60" width="170" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="665" y="82" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Course</text>
+      <rect x="580" y="94" width="170" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="588" y="109" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 CourseID</text>
+      <rect x="580" y="116" width="170" height="22" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="588" y="131" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">CourseName</text>
+      <rect x="580" y="138" width="170" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="588" y="153" font-family="DM Mono,monospace" font-size="10" fill="#4da8da">🔗 *TeacherID</text>
+
+      <!-- Line Course→Teacher (vertical) -->
+      <line x1="665" y1="160" x2="665" y2="210" stroke="#00b4a0" stroke-width="2"/>
+      <text x="672" y="180" font-family="DM Mono,monospace" font-size="13" fill="#00d4bc" font-weight="700">M</text>
+      <text x="672" y="210" font-family="DM Mono,monospace" font-size="13" fill="#e05555" font-weight="700">1</text>
+      <line x1="659" y1="198" x2="665" y2="210" stroke="#00b4a0" stroke-width="2"/>
+      <line x1="671" y1="198" x2="665" y2="210" stroke="#00b4a0" stroke-width="2"/>
+
+      <!-- Teacher -->
+      <rect x="580" y="215" width="170" height="34" rx="2" fill="#1A3C5E" stroke="#00b4a0" stroke-width="1.5"/>
+      <text x="665" y="237" font-family="DM Serif Display,serif" font-size="14" fill="white" text-anchor="middle">Teacher</text>
+      <rect x="580" y="249" width="170" height="22" fill="#1e3550" stroke="#2a4060" stroke-width="1"/>
+      <text x="588" y="264" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 TeacherID</text>
+      <rect x="580" y="271" width="170" height="22" fill="#142233" stroke="#2a4060" stroke-width="1" />
+      <!-- clipping the last row to viewBox -->
+      <text x="588" y="278" font-family="DM Mono,monospace" font-size="10" fill="#8facc0">TeacherName</text>
+
+      <!-- KEY legend -->
+      <rect x="10" y="220" width="240" height="58" rx="4" fill="#142233" stroke="#2a4060" stroke-width="1"/>
+      <text x="20" y="236" font-family="Source Sans 3,sans-serif" font-size="11" fill="#8facc0" font-weight="700">KEY</text>
+      <text x="20" y="252" font-family="DM Mono,monospace" font-size="10" fill="#f5a623">🔑 Primary Key (underlined in notation)</text>
+      <text x="20" y="266" font-family="DM Mono,monospace" font-size="10" fill="#4da8da">🔗 * = Foreign Key</text>
+      <text x="20" y="278" font-family="Source Sans 3,sans-serif" font-size="10" fill="#8facc0">1 = one side · M = many side</text>
+    </svg>
+  </div>
+  <p class="erd-caption">Final 3NF database — four tables, all anomalies eliminated</p>
+
+  <div class="hbox green">
+    <div class="hbox-title">✅ 3NF Achieved — What Changed?</div>
+    <ul style="color:var(--muted);font-size:0.88rem;padding-left:1.2rem;margin-top:0.3rem">
+      <li>TeacherName moved into a new <strong style="color:#fff">Teacher</strong> table — now depends only on TeacherID (its own PK)</li>
+      <li>Course table keeps <strong style="color:#fff">*TeacherID</strong> as a Foreign Key linking to Teacher</li>
+      <li>Every non-key attribute in every table now depends <strong style="color:#fff">only</strong> on that table's primary key</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ SECTION 8: SUMMARY ════════════════════════════════════ -->
+<section class="section" id="summary">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>Normalisation <span>Journey Summary</span></h2>
+  </div>
+
+  <div class="norm-stages">
+    <div class="norm-stage norm-unf">
+      <div class="norm-stage-head">UNF</div>
+      <div class="norm-stage-body">
+        <strong>Unnormalised</strong>
+        Raw data in one table. No PK. Repeating groups. All anomalies present.
+      </div>
+    </div>
+    <div class="norm-stage norm-1nf">
+      <div class="norm-stage-head">1NF</div>
+      <div class="norm-stage-body">
+        <strong>First Normal Form</strong>
+        Atomic values. PK defined (composite if needed). No repeating groups.
+        <br><em style="color:#f5a623">Removes: repeating groups</em>
+      </div>
+    </div>
+    <div class="norm-stage norm-2nf">
+      <div class="norm-stage-head">2NF</div>
+      <div class="norm-stage-body">
+        <strong>Second Normal Form</strong>
+        1NF + no partial dependencies. Non-key attrs depend on WHOLE PK.
+        <br><em style="color:#99ccff">Removes: partial dependencies</em>
+      </div>
+    </div>
+    <div class="norm-stage norm-3nf">
+      <div class="norm-stage-head">3NF</div>
+      <div class="norm-stage-body">
+        <strong>Third Normal Form</strong>
+        2NF + no transitive dependencies. Non-key attrs depend ONLY on PK.
+        <br><em style="color:#99ffcc">Removes: transitive dependencies</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="mantra">
+    <p>
+      "Every non-key attribute must depend on
+      <span class="k">THE KEY</span>,
+      <span class="w">THE WHOLE KEY</span>,
+      and <span class="n">NOTHING BUT THE KEY</span>."
+    </p>
+    <p style="font-size:0.9rem;color:var(--muted);margin-top:0.7rem;font-family:'Source Sans 3',sans-serif">
+      THE KEY → 1NF &nbsp;|&nbsp; THE WHOLE KEY → 2NF &nbsp;|&nbsp; NOTHING BUT THE KEY → 3NF
+    </p>
+  </div>
+
+  <table class="def-table">
+    <thead><tr><th>Form</th><th>Requires</th><th>Removes</th><th>Key Term</th></tr></thead>
+    <tbody>
+      <tr><td class="term" style="color:#ffaaaa">UNF</td><td class="def">—</td><td class="def">Nothing yet</td><td class="def">Flat file</td></tr>
+      <tr><td class="term" style="color:#ffd699">1NF</td><td class="def">Atomic values, PK defined</td><td class="def">Repeating groups</td><td class="def">Atomic, Primary Key</td></tr>
+      <tr><td class="term" style="color:#99ccff">2NF</td><td class="def">1NF + composite PK needed</td><td class="def">Partial dependencies</td><td class="def">Functional dependency</td></tr>
+      <tr><td class="term" style="color:#99ffcc">3NF</td><td class="def">2NF</td><td class="def">Transitive dependencies</td><td class="def">Transitive dependency</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══ SECTION 9: EXAM TIPS ══════════════════════════════════ -->
+<section class="section" id="tips">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>Exam <span>Tips</span></h2>
+  </div>
+
+  <div class="tips-grid">
+    <div class="tip">
+      <div class="tip-icon">📝</div>
+      <h4>Define Terms Precisely</h4>
+      <p>"A primary key is an attribute (or set of attributes) that uniquely identifies each tuple in a relation." Include key vocabulary — vague answers score zero.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🔗</div>
+      <h4>Label Both Ends of ERD Lines</h4>
+      <p>Always write 1 or M at <strong style="color:#fff">both</strong> ends of every relationship line. Forgetting either end loses the mark.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">⚠️</div>
+      <h4>2NF Only With Composite PK</h4>
+      <p>If the PK is a single attribute, there can be no partial dependencies — the relation is automatically in 2NF. Only check 2NF when PK has 2+ attributes.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🔄</div>
+      <h4>Partial vs Transitive</h4>
+      <p><strong style="color:#fff">Partial</strong> = non-key depends on part of composite PK → 2NF issue.<br><strong style="color:#fff">Transitive</strong> = non-key depends on another non-key → 3NF issue.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">✅</div>
+      <h4>Underline PKs, Mark FKs</h4>
+      <p>In entity description notation, always underline the primary key attribute(s) and prefix foreign keys with *. Easy marks often lost here.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🧠</div>
+      <h4>Resolve All M:M Relationships</h4>
+      <p>In a normalised design question, an unresolved many-to-many is always wrong. Always create the link table with a composite PK.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">The Designing Process — Quick Reminder</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">STEP 1</div>
+      <h4>Identify Entities</h4>
+      <p>Nouns in the scenario → entities (rectangles)</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP 2</div>
+      <h4>Find Attributes</h4>
+      <p>What data is stored? Pick/invent a PK for each</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP 3</div>
+      <h4>Find Relationships</h4>
+      <p>Check every pair: is it 1:1, 1:M, or M:M?</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP 4</div>
+      <h4>Resolve M:M</h4>
+      <p>Create link tables with composite PKs</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP 5</div>
+      <h4>Add FKs</h4>
+      <p>FK goes on the many-side of 1:M relationships</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>AQA A-Level Computer Science 7517 · Section 4.10 Fundamentals of Databases</p>
+  <p style="margin-top:0.3rem">Revision resource — Entity Relationship Modelling &amp; Normalisation to 3NF</p>
+</footer>
+
+</body>
+</html>

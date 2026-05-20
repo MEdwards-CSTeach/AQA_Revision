@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.4.2 & 4.4.3 — Regular & Context-Free Languages | AQA CS 7517</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0e0c09;
+    --surface:  #1a1712;
+    --surface2: #242018;
+    --border:   #3a3328;
+    --text:     #ede8dc;
+    --muted:    #7a7060;
+    --teal:     #26A69A;
+    --teal-bg:  #00695C;
+    --teal-lt:  rgba(38,166,154,0.12);
+    --purple:   #AB47BC;
+    --purple-bg:#6A1B9A;
+    --purple-lt:rgba(171,71,188,0.12);
+    --amber:    #FF7043;
+    --amber-bg: #BF360C;
+    --amber-lt: rgba(255,112,67,0.12);
+    --navy:     #42A5F5;
+    --navy-bg:  #1565C0;
+    --navy-lt:  rgba(66,165,245,0.12);
+    --green:    #66BB6A;
+    --red:      #EF5350;
+    --gold:     #e8a045;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.7; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 3.5rem 2rem 3rem;
+    background: radial-gradient(ellipse at 20% 60%, rgba(38,166,154,0.15), transparent 55%),
+                radial-gradient(ellipse at 80% 20%, rgba(66,165,245,0.10), transparent 50%);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner { max-width: 960px; margin: 0 auto; }
+  .back-link { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: .4rem; margin-bottom: 1.5rem; }
+  .back-link:hover { color: var(--text); }
+  .topic-tag { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); background: rgba(232,160,69,.1); border: 1px solid rgba(232,160,69,.25); padding: 3px 10px; border-radius: 4px; display: inline-block; margin-bottom: 1rem; }
+  header h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 4.5vw, 3.2rem); line-height: 1.15; color: var(--text); margin-bottom: .6rem; }
+  header h1 em { font-style: italic; color: var(--gold); }
+  .spec-ref { font-family: 'DM Mono', monospace; font-size: .8rem; color: var(--muted); margin-top: 1rem; }
+
+  /* ── TOPIC PILLS ── */
+  .topic-nav { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+  .tnav-pill { font-family: 'DM Mono', monospace; font-size: .7rem; padding: 5px 12px; border-radius: 20px; border: 1px solid; text-decoration: none; transition: background .2s; }
+  .tnav-pill.teal   { color: var(--teal);   border-color: var(--teal);   }
+  .tnav-pill.purple { color: var(--purple); border-color: var(--purple); }
+  .tnav-pill.amber  { color: var(--amber);  border-color: var(--amber);  }
+  .tnav-pill.navy   { color: var(--navy);   border-color: var(--navy);   }
+  .tnav-pill:hover  { background: rgba(255,255,255,.05); }
+
+  /* ── MAIN ── */
+  main { max-width: 960px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 4rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+  }
+  .section-header.teal   { background: var(--teal-bg);   }
+  .section-header.purple { background: var(--purple-bg); }
+  .section-header.amber  { background: var(--amber-bg);  }
+  .section-header.navy   { background: var(--navy-bg);   }
+
+  .section-num { font-family: 'DM Mono', monospace; font-size: .75rem; letter-spacing: .1em; opacity: .7; }
+  .section-header h2 { font-family: 'DM Serif Display', serif; font-size: 1.7rem; color: #fff; }
+  .section-body { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; padding: 2rem; }
+
+  /* ── CONTENT ── */
+  h3 { font-family: 'DM Sans', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--text); margin: 1.8rem 0 .8rem; }
+  p { color: #c8c0b0; font-size: .97rem; margin-bottom: .8rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+  li { color: #c8c0b0; font-size: .97rem; margin-bottom: .35rem; }
+  li strong { color: var(--text); }
+  code, .mono { font-family: 'DM Mono', monospace; font-size: .9rem; background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 3px; color: #90CAF9; }
+  .code-block {
+    background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
+    padding: 1rem 1.2rem; margin: 1rem 0; overflow-x: auto;
+    font-family: 'DM Mono', monospace; font-size: .9rem; color: #90CAF9; line-height: 1.6;
+  }
+  .code-block .comment { color: var(--muted); }
+
+  /* ── DEFINITION TABLE ── */
+  .def-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  .def-table th { text-align: left; padding: .6rem .8rem; font-size: .82rem; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .def-table td { padding: .65rem .8rem; font-size: .93rem; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: top; }
+  .def-table tr:last-child td { border-bottom: none; }
+  .def-table td:first-child { font-family: 'DM Mono', monospace; color: #90CAF9; white-space: nowrap; }
+  .def-table td:last-child { color: #c8c0b0; }
+  .def-table tr:hover td { background: rgba(255,255,255,.02); }
+
+  /* ── CALLOUT BOXES ── */
+  .callout { border-radius: 6px; padding: 1rem 1.2rem; margin: 1.2rem 0; border-left: 4px solid; }
+  .callout.key   { background: rgba(66,165,245,.08);  border-color: var(--navy);   }
+  .callout.tip   { background: rgba(232,160,69,.08);  border-color: var(--gold);   }
+  .callout.warn  { background: rgba(239,83,80,.08);   border-color: var(--red);    }
+  .callout.ok    { background: rgba(102,187,106,.08); border-color: var(--green);  }
+  .callout-label { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .4rem; font-weight: 600; }
+  .callout.key   .callout-label { color: var(--navy);   }
+  .callout.tip   .callout-label { color: var(--gold);   }
+  .callout.warn  .callout-label { color: var(--red);    }
+  .callout.ok    .callout-label { color: var(--green);  }
+  .callout p { margin-bottom: 0; font-size: .93rem; }
+
+  /* ── META CARDS ── */
+  .card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 1rem; margin: 1.2rem 0; }
+  .meta-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; }
+  .meta-card .label { font-family: 'DM Mono', monospace; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+  .meta-card .value { font-size: .95rem; color: var(--text); font-weight: 500; }
+  .meta-card .value code { background: none; padding: 0; }
+
+  /* ── COMPARISON TABLE ── */
+  .comp-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+  .comp-table th { padding: .65rem .9rem; border-bottom: 2px solid var(--border); font-size: .8rem; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+  .comp-table th:nth-child(2) { color: var(--purple); }
+  .comp-table th:nth-child(3) { color: var(--navy); }
+  .comp-table td { padding: .6rem .9rem; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: top; color: #c8c0b0; }
+  .comp-table td:first-child { font-weight: 600; color: var(--text); font-size: .88rem; }
+  .comp-table .yes { color: var(--green); }
+  .comp-table .no  { color: var(--red); }
+
+  /* ── SYNTAX DIAGRAM PLACEHOLDER ── */
+  .diagram-box { border: 2px dashed var(--border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1.2rem 0; color: var(--muted); font-size: .9rem; }
+  .diagram-box .diagram-label { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .6rem; }
+  .diagram-box a { color: var(--navy); }
+
+  /* ── BNF STEP TRACE ── */
+  .trace-step { display: flex; align-items: baseline; gap: .8rem; padding: .5rem 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .trace-arrow { color: var(--gold); font-family: 'DM Mono', monospace; font-size: .85rem; flex-shrink: 0; }
+  .trace-code  { font-family: 'DM Mono', monospace; font-size: .9rem; color: #90CAF9; }
+  .trace-note  { font-size: .82rem; color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: .06em; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="back-link">← Back to Revision Hub</a>
+    <div class="topic-tag">Paper 1 · Theory of Computation · Year 12</div>
+    <h1>4.4.2 Regular Languages<br>&amp; <em>4.4.3 Context-Free Languages</em></h1>
+    <p class="spec-ref">AQA Computer Science 7517 · Specification sections 4.4.2.2 · 4.4.2.3 · 4.4.2.4 · 4.4.3.1</p>
+    <nav class="topic-nav">
+      <a class="tnav-pill teal"   href="#sets">4.4.2.2 Sets</a>
+      <a class="tnav-pill purple" href="#regex">4.4.2.3 Regular Expressions</a>
+      <a class="tnav-pill amber"  href="#regular-lang">4.4.2.4 Regular Languages</a>
+      <a class="tnav-pill navy"   href="#bnf">4.4.3 BNF &amp; Syntax Diagrams</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 1 — SETS
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="sets">
+  <div class="section-header teal">
+    <div>
+      <div class="section-num">4.4.2.2</div>
+      <h2>Maths for Regular Expressions — Sets</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="callout key">
+      <div class="callout-label">Definition</div>
+      <p>A <strong>set</strong> is an unordered collection of values in which each value occurs at most once. Sets have no duplicates and no concept of order.</p>
+    </div>
+
+    <h3>Ways to Specify a Set</h3>
+    <div class="card-row">
+      <div class="meta-card">
+        <div class="label">Roster (Listing)</div>
+        <div class="value"><code>A = {1, 2, 3, 4, 5}</code></div>
+      </div>
+      <div class="meta-card">
+        <div class="label">Set Comprehension</div>
+        <div class="value"><code>A = {x | x ∈ ℕ ∧ x ≥ 1}</code></div>
+      </div>
+      <div class="meta-card">
+        <div class="label">Compact Notation</div>
+        <div class="value"><code>{0ⁿ1ⁿ | n ≥ 1}</code></div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">Reading set comprehension</div>
+      <p><code>{x | x ∈ ℕ ∧ x ≥ 1}</code> — read as: "the set of all x <strong>such that</strong> x <strong>is a member of</strong> ℕ (natural numbers) <strong>AND</strong> x is greater than or equal to 1." The notation gives {1, 2, 3, 4, …}</p>
+    </div>
+
+    <h3>Key Notation</h3>
+    <table class="def-table">
+      <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>|</td><td>Such that (inside set comprehension)</td></tr>
+        <tr><td>∈</td><td>Is a member of / belongs to</td></tr>
+        <tr><td>∧</td><td>AND (logical conjunction)</td></tr>
+        <tr><td>ℕ</td><td>The set of natural numbers = {0, 1, 2, 3, …}</td></tr>
+        <tr><td>{ } or Ø</td><td>The empty set — a set with no elements</td></tr>
+        <tr><td>|A|</td><td>Cardinality of set A — the number of elements in A</td></tr>
+        <tr><td>A ⊆ B</td><td>A is a subset of B (may be equal)</td></tr>
+        <tr><td>A ⊂ B</td><td>A is a proper subset of B (B has at least one element A doesn't)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Types of Sets</h3>
+    <table class="def-table">
+      <thead><tr><th>Type</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Finite</td><td>Has a definite last element; |A| is a specific number</td><td>{1, 2, 3} — |A| = 3</td></tr>
+        <tr><td>Infinite</td><td>Has no last element; goes on forever</td><td>ℕ = {0, 1, 2, 3, …}</td></tr>
+        <tr><td>Countably infinite</td><td>Infinite but can be matched 1-to-1 with ℕ</td><td>Even numbers: {0, 2, 4, 6, …}</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Set Operations</h3>
+    <table class="def-table">
+      <thead><tr><th>Operation</th><th>Notation</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Union</td><td>A ∪ B</td><td>All elements in A OR B (or both)</td><td>{1,2} ∪ {2,3} = {1,2,3}</td></tr>
+        <tr><td>Intersection</td><td>A ∩ B</td><td>Only elements in BOTH A AND B</td><td>{1,2} ∩ {2,3} = {2}</td></tr>
+        <tr><td>Difference</td><td>A \ B</td><td>Elements in A that are NOT in B</td><td>{1,2,3} \ {2} = {1,3}</td></tr>
+        <tr><td>Membership</td><td>x ∈ A</td><td>Test if x is in A</td><td>3 ∈ {1,2,3} → TRUE</td></tr>
+        <tr><td>Cartesian Product</td><td>A × B</td><td>All ordered pairs (a,b) where a∈A and b∈B</td><td>{0,1}×{a,b} = {(0,a),(0,b),(1,a),(1,b)}</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout tip">
+      <div class="callout-label">Compact notation — know this for the exam</div>
+      <p><code>{0ⁿ1ⁿ | n ≥ 1}</code> means the set of all strings of n zeros followed by n ones, where n is at least 1. This gives: {01, 0011, 000111, 00001111, …}. This notation often appears in exam questions about regular languages.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 2 — REGULAR EXPRESSIONS
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="regex">
+  <div class="section-header purple">
+    <div>
+      <div class="section-num">4.4.2.3</div>
+      <h2>Regular Expressions</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="callout key">
+      <div class="callout-label">Definition</div>
+      <p>A <strong>regular expression</strong> is a way of describing a <strong>set</strong> of strings using a convenient shorthand notation. Each regular expression generates exactly one set of strings.</p>
+    </div>
+
+    <h3>The Five Metacharacters You Must Know</h3>
+    <table class="def-table">
+      <thead><tr><th>Symbol</th><th>Name</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>*</td><td>Zero or more</td><td>Repeat the preceding element 0 or more times</td><td><code>ab*</code> → a, ab, abb, abbb, …</td></tr>
+        <tr><td>+</td><td>One or more</td><td>Repeat the preceding element 1 or more times</td><td><code>ab+</code> → ab, abb, abbb, …</td></tr>
+        <tr><td>?</td><td>Optional (0 or 1)</td><td>The preceding element appears 0 or 1 times</td><td><code>colou?r</code> → color, colour</td></tr>
+        <tr><td>|</td><td>Alternation (OR)</td><td>Match either the left OR right expression</td><td><code>cat|dog</code> → cat, dog</td></tr>
+        <tr><td>( )</td><td>Grouping</td><td>Group sub-expressions for operators to apply to</td><td><code>(ab)+</code> → ab, abab, ababab, …</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout tip">
+      <div class="callout-label">Exam note</div>
+      <p>You only need to know *, +, ?, |, and ( ). If any other metacharacter is used in an exam question, it will be explained within the question.</p>
+    </div>
+
+    <h3>Worked Examples</h3>
+
+    <div class="code-block">
+<span class="comment">-- a(a|b)*</span>
+Generates: {a, aa, ab, aaa, aab, aba, abb, aaaa, …}
+
+  a      — exactly one "a" at the start (required)
+  (a|b)  — either "a" or "b" as each subsequent character
+  *      — zero or more repetitions of the group
+    </div>
+
+    <div class="code-block">
+<span class="comment">-- (0|1)+</span>
+Generates: {0, 1, 00, 01, 10, 11, 000, 001, …} — all non-empty binary strings
+
+  (0|1)  — a binary digit (0 or 1)
+  +      — one or more repetitions
+    </div>
+
+    <div class="code-block">
+<span class="comment">-- colou?r</span>
+Generates: {color, colour}
+
+  colou?r — the "u" is optional (0 or 1 occurrences)
+    </div>
+
+    <div class="code-block">
+<span class="comment">-- (ab)+c*</span>
+Generates: {ab, abc, abcc, abab, ababc, ababcc, …}
+
+  (ab)+  — the group "ab" repeated one or more times
+  c*     — zero or more "c" characters
+    </div>
+
+    <h3>Relationship Between Regular Expressions and FSMs</h3>
+
+    <div class="callout key">
+      <div class="callout-label">Key Principle — Equivalence</div>
+      <p><strong>Regular expressions and Finite State Machines (FSMs) are equivalent ways of defining a regular language.</strong> Any language describable by a regex can also be accepted by an FSM — and vice versa. They always describe exactly the same set of languages.</p>
+    </div>
+
+    <p>This means:</p>
+    <ul>
+      <li>You can convert any regular expression into an FSM (state transition diagram)</li>
+      <li>You can convert any FSM into a regular expression</li>
+      <li>Both describe exactly the <em>regular languages</em> — and nothing more</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-label">Exam skill</div>
+      <p>You may be asked to write a regular expression for a given FSM, or draw an FSM for a given regular expression. To practice, identify the set of strings the FSM accepts, then build a regex that generates exactly that set.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 3 — REGULAR LANGUAGES
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="regular-lang">
+  <div class="section-header amber">
+    <div>
+      <div class="section-num">4.4.2.4</div>
+      <h2>What is a Regular Language?</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="callout key">
+      <div class="callout-label">The Definition</div>
+      <p>A language is called <strong>regular</strong> if it can be represented by a regular expression. Equivalently, a regular language is any language that a Finite State Machine (FSM) will accept. These two definitions are completely equivalent.</p>
+    </div>
+
+    <h3>Two Equivalent Definitions</h3>
+    <div class="card-row">
+      <div class="meta-card">
+        <div class="label">Definition 1 — Regular Expression</div>
+        <div class="value">A language is regular if there exists a regular expression that generates exactly its strings.</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">Definition 2 — FSM</div>
+        <div class="value">A language is regular if there exists a Finite State Machine that accepts exactly its strings.</div>
+      </div>
+    </div>
+
+    <h3>Examples of Regular Languages</h3>
+    <ul>
+      <li>All binary strings — described by <code>(0|1)*</code></li>
+      <li>Strings starting with "a" — described by <code>a(a|b|…)*</code></li>
+      <li>Strings ending in "00" — described by <code>(0|1)*00</code></li>
+      <li>British/American "colour"/"color" — described by <code>colou?r</code></li>
+    </ul>
+
+    <h3>What is NOT a Regular Language?</h3>
+
+    <div class="callout warn">
+      <div class="callout-label">Not Regular — Requires Counting</div>
+      <p><code>{0ⁿ1ⁿ | n ≥ 1}</code> = {01, 0011, 000111, …}</p>
+      <p>This language requires that the number of 0s <em>equals</em> the number of 1s. <strong>No regular expression can describe this.</strong></p>
+    </div>
+
+    <p><strong>Why is it not regular?</strong></p>
+    <ul>
+      <li>An FSM has a <strong>fixed number of states</strong> — it cannot "count"</li>
+      <li>To count n zeros you would need n different states — but n is unbounded</li>
+      <li>This requires a <strong>Context-Free Grammar (BNF)</strong></li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-label">Quick Test for "Is it regular?"</div>
+      <p>Ask yourself: can I write a regular expression using *, +, ?, |, ( ) that generates exactly this language? If the language requires matching/counting (equal numbers of two things, balanced brackets, etc.), it is <strong>NOT regular</strong>.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 4 — BNF & SYNTAX DIAGRAMS
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="bnf">
+  <div class="section-header navy">
+    <div>
+      <div class="section-num">4.4.3</div>
+      <h2>BNF &amp; Syntax Diagrams</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="callout key">
+      <div class="callout-label">Definition</div>
+      <p><strong>Backus-Naur Form (BNF)</strong> is a formal notation for describing the syntax (grammar) of a language using <strong>production rules</strong>. It is used to define context-free languages — a superset of regular languages.</p>
+    </div>
+
+    <h3>BNF Notation — The Symbols</h3>
+    <table class="def-table">
+      <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>&lt;name&gt;</td><td><strong>Non-terminal</strong> — a symbol that can be further expanded. Always in angle brackets. Does not appear directly in the final string.</td></tr>
+        <tr><td>::=</td><td><strong>"is defined as"</strong> — separates the non-terminal (left) from its definition (right)</td></tr>
+        <tr><td>|</td><td><strong>OR / Alternative</strong> — the non-terminal can become one OR the other option</td></tr>
+        <tr><td>a, b, c</td><td><strong>Terminals</strong> — actual characters or tokens that appear literally in the language (no angle brackets)</td></tr>
+        <tr><td>ε</td><td><strong>Empty string</strong> — produces nothing; the rule generates the empty string</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout tip">
+      <div class="callout-label">Reading a BNF rule</div>
+      <p>The general structure: <code>&lt;non-terminal&gt; ::= option1 | option2 | option3</code><br>
+      Read as: "A &lt;non-terminal&gt; is defined as option1, OR option2, OR option3."</p>
+    </div>
+
+    <h3>Example: Defining Digits and Integers</h3>
+    <div class="code-block">
+&lt;digit&gt;   ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+&lt;integer&gt; ::= &lt;digit&gt; | &lt;digit&gt;&lt;integer&gt;
+    </div>
+    <p><strong>Reading &lt;integer&gt;:</strong></p>
+    <ul>
+      <li><code>&lt;digit&gt;</code> — a single digit (base case, e.g. 5)</li>
+      <li><code>&lt;digit&gt;&lt;integer&gt;</code> — a digit followed by another integer (recursive case)</li>
+    </ul>
+    <p>The recursion allows any-length integer: 5, 42, 137, 9000, …</p>
+
+    <h3>Tracing a BNF Derivation</h3>
+    <p>Example: showing how "427" is generated from <code>&lt;integer&gt;</code></p>
+    <div class="trace-step"><div class="trace-arrow">Start</div><div class="trace-code">&lt;integer&gt;</div></div>
+    <div class="trace-step"><div class="trace-arrow">→</div><div class="trace-code">&lt;digit&gt;&lt;integer&gt;</div><div class="trace-note">use recursive case</div></div>
+    <div class="trace-step"><div class="trace-arrow">→</div><div class="trace-code">4&lt;integer&gt;</div><div class="trace-note">&lt;digit&gt; → 4</div></div>
+    <div class="trace-step"><div class="trace-arrow">→</div><div class="trace-code">4&lt;digit&gt;&lt;integer&gt;</div><div class="trace-note">use recursive case again</div></div>
+    <div class="trace-step"><div class="trace-arrow">→</div><div class="trace-code">42&lt;integer&gt;</div><div class="trace-note">&lt;digit&gt; → 2</div></div>
+    <div class="trace-step"><div class="trace-arrow">→</div><div class="trace-code">42&lt;digit&gt;</div><div class="trace-note">use base case</div></div>
+    <div class="trace-step"><div class="trace-arrow">→</div><div class="trace-code">427</div><div class="trace-note">&lt;digit&gt; → 7 ✓</div></div>
+
+    <h3>Step-by-Step: How to Write BNF Rules</h3>
+    <ol>
+      <li><strong>Identify the terminals</strong> — the actual characters that appear in valid strings</li>
+      <li><strong>Name your non-terminals</strong> — choose descriptive names (e.g. &lt;digit&gt;, &lt;letter&gt;, &lt;expr&gt;)</li>
+      <li><strong>Write the base case first</strong> — a simple terminal rule (no recursion)</li>
+      <li><strong>Write the recursive case</strong> — combine a terminal/non-terminal with the rule itself</li>
+      <li><strong>Verify</strong> — trace through your rules to check they generate what you expect</li>
+    </ol>
+
+    <h3>More BNF Examples</h3>
+
+    <p><strong>Non-empty binary strings:</strong></p>
+    <div class="code-block">
+&lt;bit&gt;    ::= 0 | 1
+&lt;binary&gt; ::= &lt;bit&gt; | &lt;bit&gt;&lt;binary&gt;
+    </div>
+
+    <p><strong>Variable names (letter, then letters or digits):</strong></p>
+    <div class="code-block">
+&lt;letter&gt;   ::= a | b | c | … | z
+&lt;digit&gt;    ::= 0 | 1 | 2 | … | 9
+&lt;alphanum&gt; ::= &lt;letter&gt; | &lt;digit&gt;
+&lt;rest&gt;     ::= &lt;alphanum&gt; | &lt;alphanum&gt;&lt;rest&gt;
+&lt;varname&gt;  ::= &lt;letter&gt; | &lt;letter&gt;&lt;rest&gt;
+    </div>
+
+    <p><strong>Balanced parentheses (CANNOT be described by regex):</strong></p>
+    <div class="code-block">
+&lt;S&gt; ::= ε | ( &lt;S&gt; ) | &lt;S&gt;&lt;S&gt;
+<span class="comment">-- Generates: (), (()), ()(), ((())), …</span>
+    </div>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:2rem 0;">
+
+    <h3>Syntax Diagrams</h3>
+
+    <div class="callout key">
+      <div class="callout-label">What are syntax diagrams?</div>
+      <p>Syntax diagrams (also called <strong>railroad diagrams</strong>) are a <em>visual</em> representation of BNF production rules. They are completely equivalent to BNF — every BNF rule has a corresponding syntax diagram.</p>
+    </div>
+
+    <h3>Symbol Key for Syntax Diagrams</h3>
+    <table class="def-table">
+      <thead><tr><th>Shape</th><th>Represents</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Rectangle / Box</td><td>Non-terminal</td><td>A rule that expands further. Written with the rule name inside.</td></tr>
+        <tr><td>Oval / Rounded shape</td><td>Terminal</td><td>A literal character or token. Appears exactly as shown in the output string.</td></tr>
+        <tr><td>Arrow (→)</td><td>Flow direction</td><td>Follow arrows left to right through the diagram.</td></tr>
+        <tr><td>Fork (split path)</td><td>Choice (OR)</td><td>Like | in BNF — you can take any of the available paths.</td></tr>
+        <tr><td>Loop (arrow going back)</td><td>Repetition</td><td>Like * or + in regex — you can go around the loop multiple times.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>How to Read a Syntax Diagram</h3>
+    <ol>
+      <li>Enter from the left</li>
+      <li>Follow the arrows — at every fork, choose any valid path</li>
+      <li>When you hit a terminal (oval), add that character to your string</li>
+      <li>When you hit a non-terminal (rectangle), expand it using its own diagram</li>
+      <li>At loop arrows, you may go round again or exit</li>
+      <li>Exit from the right — whatever path you took produces a valid string</li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-label">Drawing tip</div>
+      <p>⚡ Every path through the diagram from entry to exit represents one valid string in the language. To list strings in the language, trace every possible path.</p>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Diagram Resource</div>
+      <p>Generate syntax diagrams from your BNF rules at:<br>
+      <a href="https://railroad.xgqfrms.xyz/" target="_blank">railroad.xgqfrms.xyz</a> — paste your BNF and it draws the diagram automatically.<br>
+      Also try: <strong>Tab-Atkins Railroad Diagram Generator</strong> — search online for the latest link.</p>
+    </div>
+
+    <h3>Converting Between BNF and Syntax Diagrams</h3>
+    <table class="def-table">
+      <thead><tr><th>BNF</th><th>Syntax Diagram</th></tr></thead>
+      <tbody>
+        <tr><td>Each production rule</td><td>Becomes one diagram</td></tr>
+        <tr><td><code>&lt;non-terminal&gt;</code></td><td>Rectangle labelled with the non-terminal name</td></tr>
+        <tr><td>Terminal (a, b, c)</td><td>Oval labelled with the terminal character</td></tr>
+        <tr><td><code>|</code> (alternation)</td><td>Fork / split in the diagram</td></tr>
+        <tr><td>Recursion (rule calls itself)</td><td>Loop arrow going back</td></tr>
+        <tr><td>ε (empty string alternative)</td><td>Path that bypasses all elements (direct connection to exit)</td></tr>
+      </tbody>
+    </table>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:2rem 0;">
+
+    <h3>Why BNF Can Represent More Languages Than Regular Expressions</h3>
+
+    <div class="callout warn">
+      <div class="callout-label">The fundamental limitation of regular expressions</div>
+      <p>Regular expressions and FSMs have <strong>no memory</strong>. They process input character by character with no ability to remember or count previous characters. This means they <strong>cannot</strong>: count repetitions, match equal quantities, or verify balanced structures.</p>
+    </div>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Regular Expression / FSM</th>
+          <th>BNF / Context-Free Grammar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Languages covered</td><td>Regular languages only</td><td>Context-free + regular languages</td></tr>
+        <tr><td>Recursion</td><td class="no">✖ Not possible</td><td class="yes">✔ Built-in (rule can reference itself)</td></tr>
+        <tr><td>Counting / Matching</td><td class="no">✖ Cannot count or match</td><td class="yes">✔ Handles balanced/counted structures</td></tr>
+        <tr><td>{0ⁿ1ⁿ | n≥1}</td><td class="no">✖ Cannot describe</td><td class="yes">✔ &lt;S&gt; ::= 01 | 0&lt;S&gt;1</td></tr>
+        <tr><td>Balanced brackets</td><td class="no">✖ Cannot describe</td><td class="yes">✔ &lt;S&gt; ::= ε | (&lt;S&gt;) | &lt;S&gt;&lt;S&gt;</td></tr>
+        <tr><td>Use in compilers</td><td>Lexical analysis (tokenising)</td><td>Parsing (checking full syntax)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout ok">
+      <div class="callout-label">Model Exam Answer</div>
+      <p><em>"BNF uses recursive production rules, which allows it to describe languages where elements must be counted or matched in equal numbers. A regular expression cannot do this because Finite State Machines have no memory — they cannot count an arbitrary number of symbols. For example, {0ⁿ1ⁿ | n ≥ 1} requires remembering how many 0s were seen, which an FSM cannot do."</em></p>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer>
+  AQA Computer Science 7517 — Revision Hub &nbsp;|&nbsp; 4.4.2 &amp; 4.4.3 &nbsp;|&nbsp; For student use only
+</footer>
+
+</body>
+</html>

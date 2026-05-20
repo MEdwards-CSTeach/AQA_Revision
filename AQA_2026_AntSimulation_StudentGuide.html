@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA 2026 Paper 1 – Ant Simulation: Student Reference Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #f6c90e;
+    --accent2: #58a6ff;
+    --accent3: #3fb950;
+    --accent4: #ff7b72;
+    --accent5: #d2a8ff;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --tag-bg: #1f3a2f;
+    --tag-color: #3fb950;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 60%, #1a2332 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 3rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(88,166,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .header-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(246,201,14,0.1);
+    border: 1px solid rgba(246,201,14,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    max-width: 700px;
+  }
+  header h1 span { color: var(--accent); }
+  header p.subtitle {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    font-size: 14px;
+  }
+
+  /* ── Nav ── */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 1rem 1.2rem;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  nav a:hover { color: var(--text); border-color: var(--accent); }
+
+  /* ── Layout ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent5);
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  p { margin-bottom: 0.8rem; color: var(--text); }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .card-accent { border-left: 3px solid var(--accent); }
+  .card-blue   { border-left: 3px solid var(--accent2); }
+  .card-green  { border-left: 3px solid var(--accent3); }
+  .card-red    { border-left: 3px solid var(--accent4); }
+  .card-purple { border-left: 3px solid var(--accent5); }
+
+  /* ── Grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  /* ── UML table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 1.2rem;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(48,54,61,0.3); }
+  .mono { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent5); }
+  .returns { color: var(--accent3); font-family: 'Space Mono', monospace; font-size: 12px; }
+  .override-badge {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(255,123,114,0.15);
+    color: var(--accent4);
+    border: 1px solid rgba(255,123,114,0.3);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+    margin-left: 4px;
+  }
+  .static-badge {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(88,166,255,0.12);
+    color: var(--accent2);
+    border: 1px solid rgba(88,166,255,0.25);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+    margin-left: 4px;
+  }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #c9d1d9;
+    margin-bottom: 1rem;
+  }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    background: rgba(110,118,129,0.15);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--accent5);
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .badge-yellow { background: rgba(246,201,14,0.12); color: var(--accent); border: 1px solid rgba(246,201,14,0.3); }
+  .badge-blue   { background: rgba(88,166,255,0.12); color: var(--accent2); border: 1px solid rgba(88,166,255,0.25); }
+  .badge-green  { background: rgba(63,185,80,0.12);  color: var(--accent3); border: 1px solid rgba(63,185,80,0.25); }
+  .badge-red    { background: rgba(255,123,114,0.12); color: var(--accent4); border: 1px solid rgba(255,123,114,0.25); }
+  .badge-purple { background: rgba(210,168,255,0.12); color: var(--accent5); border: 1px solid rgba(210,168,255,0.25); }
+
+  /* ── Callouts ── */
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .callout-warn  { background: rgba(246,201,14,0.07); border: 1px solid rgba(246,201,14,0.25); }
+  .callout-info  { background: rgba(88,166,255,0.07); border: 1px solid rgba(88,166,255,0.2); }
+  .callout-tip   { background: rgba(63,185,80,0.07);  border: 1px solid rgba(63,185,80,0.2); }
+  .callout-exam  { background: rgba(210,168,255,0.07); border: 1px solid rgba(210,168,255,0.25); }
+  .callout-icon  { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+  .callout-body  { flex: 1; }
+  .callout-body strong { display: block; margin-bottom: 0.25rem; font-size: 13px; }
+
+  /* ── UML diagram area ── */
+  .uml-box {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
+  .uml-class {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    margin: 0.5rem;
+    min-width: 180px;
+    vertical-align: top;
+  }
+  .uml-class-header {
+    background: var(--surface2);
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .uml-class-header.abstract { color: var(--accent3); font-style: italic; }
+  .uml-class-header.concrete { color: var(--accent2); }
+  .uml-class-header.leaf     { color: var(--text); }
+  .uml-section { padding: 0.4rem 0.8rem; border-bottom: 1px solid rgba(48,54,61,0.5); font-family: 'Space Mono', monospace; font-size: 11px; line-height: 1.8; }
+  .uml-attr { color: var(--accent5); }
+  .uml-method { color: var(--accent2); }
+  .uml-override { color: var(--accent4); }
+
+  /* ── Q&A questions ── */
+  .q-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+  }
+  .q-header {
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .q-marks {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(246,201,14,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(246,201,14,0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-text { flex: 1; font-size: 14px; }
+  .q-type {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .answer-box {
+    border-top: 1px dashed var(--border);
+    padding: 0.7rem 1rem;
+    background: rgba(63,185,80,0.04);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .answer-box strong { color: var(--accent3); }
+
+  /* ── Divider ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* ── Sim params table ── */
+  .sim-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 700px) { .sim-grid { grid-template-columns: 1fr 1fr; } }
+  .sim-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem;
+    text-align: center;
+  }
+  .sim-card .sim-no {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .sim-card .sim-val { font-size: 18px; font-weight: 700; color: var(--text); }
+  .sim-card .sim-label { font-size: 11px; color: var(--text-muted); margin-top: 0.2rem; }
+
+  /* ── Algo flow ── */
+  .flow-step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+    align-items: flex-start;
+  }
+  .flow-num {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 50%;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow-content { flex: 1; padding-top: 3px; font-size: 14px; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    margin-top: 4rem;
+  }
+  .site-nav {
+    background: #0e0c09;
+    border-bottom: 1px solid #3a3328;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 42px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .site-nav a.home {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #e8a045;
+    text-decoration: none;
+    opacity: .85;
+    transition: opacity .15s;
+  }
+  .site-nav a.home:hover { opacity: 1; }
+  .site-nav .sep { color: #3a3328; font-size: .9rem; }
+  .site-nav .current {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .07em;
+    color: #7a7060;
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="home" href="index.html">← Revision Hub</a>
+  <span class="sep">/</span>
+  <span class="current">Ant Simulation Guide</span>
+</nav>
+
+<header>
+  <div class="header-tag">AQA A-Level Computer Science · Paper 1 · Summer 2026</div>
+  <h1>Section D Reference Guide<br><span>Ant Simulation</span></h1>
+  <p class="subtitle">Class structure, UML, method reference, algorithm walkthroughs and predicted exam questions — all in one place.</p>
+</header>
+
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#inheritance">Inheritance</a>
+  <a href="#classes">Classes & Methods</a>
+  <a href="#algorithms">Algorithms</a>
+  <a href="#simulations">Simulations</a>
+  <a href="#questions">Predicted Questions</a>
+  <a href="#patterns">Past Paper Patterns</a>
+</nav>
+
+<div class="page">
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="overview">System Overview</div>
+
+  <div class="card card-accent">
+    <h3 style="margin-top:0; color: var(--accent)">What is the Ant Simulation?</h3>
+    <p>An <strong>ant colony simulation</strong> played out on a 2D grid. Each cell can contain food, an ant nest, ants and pheromone trails. The simulation advances stage by stage — at each stage ants move, pick up or deposit food, and lay pheromone trails. Nests consume food each stage and may spawn or lose ants depending on food levels.</p>
+    <p>The user can choose from four pre-set simulations, then inspect the grid or advance the simulation through a menu.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h4 style="margin-top:0">Key Concepts from the Preliminary Material</h4>
+      <ul style="margin-left:1.2rem; font-size:14px; color:var(--text)">
+        <li>Queen ants <strong>stay in their nest</strong> and reproduce</li>
+        <li>Worker ants <strong>move around</strong> searching for food</li>
+        <li>Workers carrying food <strong>return directly</strong> to nest, laying pheromones</li>
+        <li>Workers with no food <strong>follow strongest pheromone</strong> nearby, or move randomly</li>
+        <li>Pheromones <strong>decay</strong> each stage; removed when strength = 0</li>
+        <li>Nests with low food <strong>lose ants randomly</strong></li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h4 style="margin-top:0">Menu Options</h4>
+      <ul style="margin-left:1.2rem; font-size:14px; color:var(--text)">
+        <li><code>1</code> – Display overall details (all cells)</li>
+        <li><code>2</code> – Display area details (start row/col → end row/col)</li>
+        <li><code>3</code> – Inspect a single cell in detail</li>
+        <li><code>4</code> – Advance one stage</li>
+        <li><code>5</code> – Advance X stages</li>
+        <li><code>9</code> – Quit</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="inheritance">Inheritance Hierarchy (UML)</div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body"><strong>OOP Pattern:</strong> All main entities (Cell, Ant, Nest, Pheromone) inherit from the abstract base class <code>Entity</code>. Ant itself has two subclasses: QueenAnt and WorkerAnt. This is a key OOP feature — expect questions on inheritance, overriding and polymorphism.</div>
+  </div>
+
+  <div class="uml-box">
+    <div style="font-family:'Space Mono',monospace; font-size:11px; color:var(--text-muted); margin-bottom:1rem;">▶ Full class hierarchy — arrows represent inheritance (extends)</div>
+
+    <!-- Entity -->
+    <div style="text-align:center; margin-bottom: 0.5rem;">
+      <div class="uml-class" style="display:inline-block;">
+        <div class="uml-class-header abstract">«abstract» Entity</div>
+        <div class="uml-section">
+          <div class="uml-attr">+ row: int</div>
+          <div class="uml-attr">+ column: int</div>
+          <div class="uml-attr">+ id: int</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-method">+ inSameLocation(e: Entity): bool</div>
+          <div class="uml-method">+ getRow(): int</div>
+          <div class="uml-method">+ getColumn(): int</div>
+          <div class="uml-method">+ getID(): int</div>
+          <div class="uml-method">+ advanceStage(...): void  <em style="font-size:10px;color:var(--text-muted)">[empty]</em></div>
+          <div class="uml-method">+ getDetails(): String  <em style="font-size:10px;color:var(--text-muted)">[empty]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; font-size:1.4rem; color:var(--border); margin: 0.2rem 0;">┌──────────┬──────────┬──────────┐</div>
+    <div style="text-align:center; font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">▼ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▼ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▼ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▼</div>
+
+    <!-- Tier 2 -->
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; margin-bottom:0.5rem;">
+      <div class="uml-class">
+        <div class="uml-class-header concrete">Cell</div>
+        <div class="uml-section">
+          <div class="uml-attr">+ amountOfFood: int</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-override">↑ getDetails(): String</div>
+          <div class="uml-method">+ getAmountOfFood(): int</div>
+          <div class="uml-method">+ updateFoodInCell(change): void</div>
+        </div>
+      </div>
+
+      <div class="uml-class">
+        <div class="uml-class-header concrete">Ant</div>
+        <div class="uml-section">
+          <div class="uml-attr">+ nestRow, nestColumn: int</div>
+          <div class="uml-attr">+ amountOfFoodCarried: int</div>
+          <div class="uml-attr">+ foodCapacity: int</div>
+          <div class="uml-attr">+ stages: int</div>
+          <div class="uml-attr">+ typeOfAnt: String</div>
+          <div class="uml-attr">§ nextAntID: int  [static]</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-override">↑ advanceStage(...): void</div>
+          <div class="uml-override">↑ getDetails(): String</div>
+          <div class="uml-method">+ isAtOwnNest(): bool</div>
+          <div class="uml-method">+ getFoodCapacity(): int</div>
+          <div class="uml-method">+ getFoodCarried(): int</div>
+          <div class="uml-method">+ updateFoodCarried(change): void</div>
+          <div class="uml-method">+ getNestRow(): int</div>
+          <div class="uml-method">+ getNestColumn(): int</div>
+          <div class="uml-method">+ getTypeOfAnt(): String</div>
+          <div class="uml-method">+ chooseCellToMoveTo(...): void  [empty]</div>
+          <div class="uml-method">- changeCell(indicator, row, col): void</div>
+          <div class="uml-method">- chooseRandomNeighbour(list): int</div>
+        </div>
+      </div>
+
+      <div class="uml-class">
+        <div class="uml-class-header concrete">Nest</div>
+        <div class="uml-section">
+          <div class="uml-attr">+ foodLevel: int</div>
+          <div class="uml-attr">+ numberOfQueens: int</div>
+          <div class="uml-attr">§ nextNestID: int  [static]</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-override">↑ advanceStage(...): void</div>
+          <div class="uml-method">+ changeFood(change): void</div>
+          <div class="uml-method">+ getFoodLevel(): int</div>
+        </div>
+      </div>
+
+      <div class="uml-class">
+        <div class="uml-class-header concrete">Pheromone</div>
+        <div class="uml-section">
+          <div class="uml-attr">+ strength: int</div>
+          <div class="uml-attr">+ pheromoneDecay: int</div>
+          <div class="uml-attr">+ belongsTo: int  [ant ID]</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-override">↑ advanceStage(...): void</div>
+          <div class="uml-method">+ updateStrength(change): void</div>
+          <div class="uml-method">+ getStrength(): int</div>
+          <div class="uml-method">+ getBelongsTo(): int</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; font-size:0.9rem; color:var(--text-muted); margin: 0.3rem 0;">▼ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▼</div>
+
+    <!-- Tier 3 -->
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; padding-left:22%;">
+      <div class="uml-class">
+        <div class="uml-class-header leaf">QueenAnt</div>
+        <div class="uml-section" style="color:var(--text-muted); font-size:11px;">typeOfAnt = "queen"<br>foodCapacity = 0 (can't carry)</div>
+        <div class="uml-section"><em style="font-size:11px;color:var(--text-muted)">no overrides</em></div>
+      </div>
+
+      <div class="uml-class">
+        <div class="uml-class-header leaf">WorkerAnt</div>
+        <div class="uml-section" style="color:var(--text-muted); font-size:11px;">typeOfAnt = "worker"<br>foodCapacity = 30</div>
+        <div class="uml-section">
+          <div class="uml-override">↑ getDetails(): String</div>
+          <div class="uml-override">↑ chooseCellToMoveTo(...): void</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid var(--border);">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; color:var(--text-muted); margin-bottom:0.5rem;">▶ Simulation class (not extending Entity — it IS the controller)</div>
+      <div class="uml-class" style="display:inline-block; min-width:350px;">
+        <div class="uml-class-header concrete">Simulation</div>
+        <div class="uml-section">
+          <div class="uml-attr">+ grid: ArrayList&lt;Cell&gt;</div>
+          <div class="uml-attr">+ ants: ArrayList&lt;Ant&gt;</div>
+          <div class="uml-attr">+ pheromones: ArrayList&lt;Pheromone&gt;</div>
+          <div class="uml-attr">+ nests: ArrayList&lt;Nest&gt;</div>
+          <div class="uml-attr">+ numberOfRows, numberOfColumns: int</div>
+          <div class="uml-attr">+ startingFoodInNest, startingNumberOfFoodCells: int</div>
+          <div class="uml-attr">+ startingNumberOfNests, startingAntsInNest: int</div>
+          <div class="uml-attr">+ newPheromoneStrength, pheromoneDecay: int</div>
+        </div>
+        <div class="uml-section">
+          <div class="uml-method">+ setUpANestAt(row, col): void</div>
+          <div class="uml-method">+ addFoodToCell(row, col, qty): void</div>
+          <div class="uml-method">- getIndex(row, col): int</div>
+          <div class="uml-method">- getIndicesOfNeighbours(row, col): ArrayList&lt;Integer&gt;</div>
+          <div class="uml-method">- getIndexOfNeighbourWithStrongestPheromone(r, c): int</div>
+          <div class="uml-method">+ getNestInCell(c: Cell): Nest</div>
+          <div class="uml-method">+ updateAntsPheromoneInCell(a: Ant): void</div>
+          <div class="uml-method">+ getNumberOfAntsInCell(c: Cell): int</div>
+          <div class="uml-method">+ getNumberOfPheromonesInCell(c: Cell): int</div>
+          <div class="uml-method">+ getStrongestPheromoneInCell(c: Cell): int</div>
+          <div class="uml-method">+ getDetails(): String</div>
+          <div class="uml-method">+ getAreaDetails(sR,sC,eR,eC): String</div>
+          <div class="uml-method">+ getCellDetails(row, col): String</div>
+          <div class="uml-method">+ addFoodToNest(food, row, col): void</div>
+          <div class="uml-method">+ advanceStage(numberOfStages): void</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem; font-family:'Space Mono',monospace; font-size:10px; color:var(--text-muted);">
+      Legend: &nbsp;
+      <span class="uml-attr">■ attribute</span> &nbsp;
+      <span class="uml-method">■ method</span> &nbsp;
+      <span class="uml-override">↑ override</span> &nbsp;
+      § static
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="classes">Classes & Methods — Detailed Reference</div>
+
+  <!-- Entity -->
+  <div class="card card-green">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+      <h3 style="margin:0; color:var(--accent3)">Entity <span class="badge badge-yellow">Base Class</span> <span class="badge badge-blue">abstract behaviour</span></h3>
+    </div>
+    <p style="margin-top:0.5rem; font-size:14px;">The root of the object hierarchy. Holds a grid position (row, column) and an id. All objects that live on the grid extend Entity. The <code>advanceStage</code> and <code>getDetails</code> methods are defined but empty here — subclasses override them to provide meaningful behaviour (this is the <strong>Template Method / polymorphism</strong> pattern).</p>
+    <table>
+      <tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">Entity(startRow, startColumn)</td><td class="mono">int, int</td><td class="returns">—</td><td>Constructor. Sets initial grid position.</td></tr>
+      <tr><td class="mono">inSameLocation(e)</td><td class="mono">Entity</td><td class="returns">boolean</td><td>Returns true if this entity is in the same row and column as entity <code>e</code>. Used to search lists for ants/pheromones in a specific cell.</td></tr>
+      <tr><td class="mono">getRow()</td><td>—</td><td class="returns">int</td><td>Returns current row.</td></tr>
+      <tr><td class="mono">getColumn()</td><td>—</td><td class="returns">int</td><td>Returns current column.</td></tr>
+      <tr><td class="mono">getID()</td><td>—</td><td class="returns">int</td><td>Returns the unique id.</td></tr>
+      <tr><td class="mono">advanceStage(nests, ants, pheromones)</td><td>ArrayLists</td><td class="returns">void</td><td><em>Empty in base class.</em> Overridden by Ant, Nest and Pheromone to implement their stage logic.</td></tr>
+      <tr><td class="mono">getDetails()</td><td>—</td><td class="returns">String</td><td><em>Returns "" in base class.</em> Overridden by Cell, Ant and WorkerAnt to build display strings.</td></tr>
+    </table>
+  </div>
+
+  <!-- Cell -->
+  <div class="card card-blue">
+    <h3 style="margin:0; color:var(--accent2)">Cell <span class="badge badge-blue">extends Entity</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">Represents one square on the 2D grid. Stores how much food is present. Cells are created for every (row, column) combination at startup. Cells themselves don't move — they're a static container.</p>
+    <table>
+      <tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">Cell(startRow, startColumn)</td><td class="mono">int, int</td><td class="returns">—</td><td>Constructor. Creates cell at position; food starts at 0.</td></tr>
+      <tr><td class="mono">getAmountOfFood()</td><td>—</td><td class="returns">int</td><td>Returns how much food is in this cell.</td></tr>
+      <tr><td class="mono">updateFoodInCell(change)</td><td class="mono">int</td><td class="returns">void</td><td>Adds <code>change</code> to <code>amountOfFood</code>. Pass negative value to reduce. No lower-bound check here.</td></tr>
+      <tr><td class="mono">getDetails() <span class="override-badge">@Override</span></td><td>—</td><td class="returns">String</td><td>Returns food amount as a display string.</td></tr>
+    </table>
+  </div>
+
+  <!-- Ant -->
+  <div class="card card-accent">
+    <h3 style="margin:0; color:var(--accent)">Ant <span class="badge badge-blue">extends Entity</span> <span class="badge badge-yellow">superclass for ants</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">Base ant class. Tracks which nest the ant belongs to (nestRow, nestColumn), how much food it's carrying, how many stages it's been alive, and its food capacity. <code>chooseCellToMoveTo</code> is defined but empty here — <strong>WorkerAnt overrides it</strong> with real movement logic. QueenAnt does not override it (queens don't move).</p>
+    <p style="font-size:14px;">Uses a <strong>static counter</strong> <code>nextAntID</code> to give each ant a unique ID across the whole simulation.</p>
+    <table>
+      <tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">Ant(startRow, startColumn, nestInRow, nestInColumn)</td><td>4× int</td><td class="returns">—</td><td>Constructor. Assigns unique ID from static counter. Sets foodCapacity = 0, stages = 0.</td></tr>
+      <tr><td class="mono">isAtOwnNest()</td><td>—</td><td class="returns">boolean</td><td>Returns true if ant's current position equals its nest position. Used to decide whether to deposit food.</td></tr>
+      <tr><td class="mono">advanceStage(...) <span class="override-badge">@Override</span></td><td>ArrayLists</td><td class="returns">void</td><td>Simply increments <code>stages</code> counter. This records the ant's age.</td></tr>
+      <tr><td class="mono">getDetails() <span class="override-badge">@Override</span></td><td>—</td><td class="returns">String</td><td>Returns ant ID, type and stages alive.</td></tr>
+      <tr><td class="mono">updateFoodCarried(change)</td><td class="mono">int</td><td class="returns">void</td><td>Adds change to <code>amountOfFoodCarried</code>. Used to pick up and deposit food.</td></tr>
+      <tr><td class="mono">getFoodCapacity()</td><td>—</td><td class="returns">int</td><td>Returns maximum food this ant can carry (0 for queen, 30 for worker).</td></tr>
+      <tr><td class="mono">getFoodCarried()</td><td>—</td><td class="returns">int</td><td>Returns how much food is currently being carried.</td></tr>
+      <tr><td class="mono">getNestRow() / getNestColumn()</td><td>—</td><td class="returns">int</td><td>Returns the home nest coordinates.</td></tr>
+      <tr><td class="mono">getTypeOfAnt()</td><td>—</td><td class="returns">String</td><td>Returns "queen" or "worker".</td></tr>
+      <tr><td class="mono">chooseCellToMoveTo(...)</td><td>ArrayList, int</td><td class="returns">void</td><td><em>Empty in Ant base class.</em> WorkerAnt overrides this with the movement algorithm.</td></tr>
+      <tr><td class="mono">changeCell(newCellIndicator, row, col) <span class="static-badge">protected</span></td><td>int, IntWrapper×2</td><td class="returns">void</td><td>Translates a neighbour index (0–8) into a row/column change. Uses IntWrapper to pass by reference.</td></tr>
+      <tr><td class="mono">chooseRandomNeighbour(list) <span class="static-badge">protected</span></td><td>ArrayList&lt;Integer&gt;</td><td class="returns">int</td><td>Picks a random valid neighbour index (skips -1 entries which represent out-of-grid cells).</td></tr>
+    </table>
+  </div>
+
+  <!-- QueenAnt -->
+  <div class="card card-purple" style="padding: 1rem 1.6rem;">
+    <h3 style="margin:0; color:var(--accent5)">QueenAnt <span class="badge badge-blue">extends Ant</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">Sets <code>typeOfAnt = "queen"</code>. Does not override any methods — queens never move (foodCapacity stays 0, chooseCellToMoveTo stays empty). The queen's role is reproduced by the <code>Nest.advanceStage</code> method, not by the queen ant object itself.</p>
+  </div>
+
+  <!-- WorkerAnt -->
+  <div class="card card-red">
+    <h3 style="margin:0; color:var(--accent4)">WorkerAnt <span class="badge badge-blue">extends Ant</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">Sets <code>typeOfAnt = "worker"</code> and <code>foodCapacity = 30</code>. Overrides two methods. The <code>chooseCellToMoveTo</code> override is the core movement algorithm.</p>
+    <table>
+      <tr><th>Method</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">getDetails() <span class="override-badge">@Override</span></td><td class="returns">String</td><td>Extends parent to also show food carried and home nest position.</td></tr>
+      <tr><td class="mono">chooseCellToMoveTo(listOfNeighbours, indexOfStrongestPheromone) <span class="override-badge">@Override</span></td><td class="returns">void</td><td>
+        <strong>Three-way decision:</strong><br>
+        1. If <strong>carrying food</strong>: move one step closer to nest (reduce row/column difference by 1 in each axis).<br>
+        2. If <strong>no food &amp; no pheromone detected</strong>: choose a random valid neighbour.<br>
+        3. If <strong>no food &amp; pheromone detected</strong>: move to the neighbour with the strongest pheromone.
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- Nest -->
+  <div class="card card-green">
+    <h3 style="margin:0; color:var(--accent3)">Nest <span class="badge badge-blue">extends Entity</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">Tracks food reserves and how many queens are present. Has a static <code>nextNestID</code> counter (like ants). The <code>advanceStage</code> override contains the most complex logic in the program.</p>
+    <table>
+      <tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">Nest(startRow, startColumn, startFood)</td><td>3× int</td><td class="returns">—</td><td>Constructor. Sets food level, numberOfQueens = 1, assigns ID.</td></tr>
+      <tr><td class="mono">changeFood(change)</td><td class="mono">int</td><td class="returns">void</td><td>Adjusts food level. Has a lower bound of 0 (food never goes negative).</td></tr>
+      <tr><td class="mono">getFoodLevel()</td><td>—</td><td class="returns">int</td><td>Returns current food reserves.</td></tr>
+      <tr><td class="mono">advanceStage(...) <span class="override-badge">@Override</span></td><td>ArrayLists</td><td class="returns">void</td><td>Runs the colony feeding and reproduction/culling logic each stage (see Algorithm section below).</td></tr>
+    </table>
+  </div>
+
+  <!-- Pheromone -->
+  <div class="card card-purple">
+    <h3 style="margin:0; color:var(--accent5)">Pheromone <span class="badge badge-blue">extends Entity</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">Represents one pheromone trail marker left by a specific ant. Linked to its ant by <code>belongsTo</code> (the ant's ID). Decays by <code>pheromoneDecay</code> each stage; removed from the list when strength reaches 0.</p>
+    <table>
+      <tr><th>Method</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">Pheromone(row, col, belongsToAnt, initialStrength, decay)</td><td class="returns">—</td><td>Constructor. Sets position, owning ant ID, initial strength and decay rate.</td></tr>
+      <tr><td class="mono">advanceStage(...) <span class="override-badge">@Override</span></td><td class="returns">void</td><td>Reduces strength by <code>pheromoneDecay</code>. Clamps to 0 (never negative).</td></tr>
+      <tr><td class="mono">updateStrength(change)</td><td class="returns">void</td><td>Adds to strength. Called when an ant visits a cell that already has its pheromone — the trail gets <em>reinforced</em> rather than creating a duplicate.</td></tr>
+      <tr><td class="mono">getStrength()</td><td class="returns">int</td><td>Returns current strength value.</td></tr>
+      <tr><td class="mono">getBelongsTo()</td><td class="returns">int</td><td>Returns the ID of the ant that owns this pheromone.</td></tr>
+    </table>
+  </div>
+
+  <!-- Simulation -->
+  <div class="card card-blue" style="border-left:3px solid var(--accent2)">
+    <h3 style="margin:0; color:var(--accent2)">Simulation <span class="badge badge-yellow">Controller Class</span></h3>
+    <p style="margin-top:0.5rem; font-size:14px;">The main organiser. Holds the grid, all ants, pheromones and nests. Reads simulation parameters from the ArrayList passed to its constructor. Contains the display, inspection and stage-advance logic.</p>
+    <table>
+      <tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Purpose</th></tr>
+      <tr><td class="mono">Simulation(simulationParameters)</td><td>ArrayList&lt;Integer&gt;</td><td class="returns">—</td><td>Constructor. Creates all cells (nested loop), sets up nests at fixed and random positions, adds food cells at random positions not overlapping nests.</td></tr>
+      <tr><td class="mono">setUpANestAt(row, col)</td><td class="mono">int, int</td><td class="returns">void</td><td>Creates a new Nest and adds one QueenAnt plus (startingAntsInNest - 1) WorkerAnts all at that position.</td></tr>
+      <tr><td class="mono">addFoodToCell(row, col, quantity)</td><td>3× int</td><td class="returns">void</td><td>Calls updateFoodInCell on the correct Cell using getIndex.</td></tr>
+      <tr><td class="mono">getIndex(row, col) <span class="static-badge">private</span></td><td class="mono">int, int</td><td class="returns">int</td><td>Converts 2D coordinates to a 1D ArrayList index: <code>(row-1) × numberOfColumns + (column-1)</code>. Critical formula — expect to be asked to evaluate or correct it.</td></tr>
+      <tr><td class="mono">getIndicesOfNeighbours(row, col) <span class="static-badge">private</span></td><td class="mono">int, int</td><td class="returns">ArrayList&lt;Integer&gt;</td><td>Returns a list of 8 values (for the 8 possible neighbours). Invalid cells (off-grid) stored as -1. Uses nested loop over {-1, 0, 1} × {-1, 0, 1} skipping (0,0).</td></tr>
+      <tr><td class="mono">getIndexOfNeighbourWithStrongestPheromone(row, col) <span class="static-badge">private</span></td><td class="mono">int, int</td><td class="returns">int</td><td>Iterates all neighbours; for each valid cell checks its strongest pheromone. Returns index of the cell with the maximum. Returns -1 if no pheromones found nearby.</td></tr>
+      <tr><td class="mono">getNestInCell(c)</td><td>Cell</td><td class="returns">Nest or null</td><td>Searches the nests list for one at the same location as Cell c. Returns null if none found.</td></tr>
+      <tr><td class="mono">updateAntsPheromoneInCell(a)</td><td>Ant</td><td class="returns">void</td><td>If the ant already has a pheromone in this cell, reinforce it. Otherwise create a new Pheromone object.</td></tr>
+      <tr><td class="mono">getNumberOfAntsInCell(c)</td><td>Cell</td><td class="returns">int</td><td>Counts ants at the same location as cell c.</td></tr>
+      <tr><td class="mono">getNumberOfPheromonesInCell(c)</td><td>Cell</td><td class="returns">int</td><td>Counts pheromones at the same location as cell c.</td></tr>
+      <tr><td class="mono">getStrongestPheromoneInCell(c)</td><td>Cell</td><td class="returns">int</td><td>Returns the highest strength pheromone value in cell c (0 if none).</td></tr>
+      <tr><td class="mono">getDetails()</td><td>—</td><td class="returns">String</td><td>Iterates every cell and builds a text summary showing nest, ant count, pheromone count and food for each.</td></tr>
+      <tr><td class="mono">getAreaDetails(sR, sC, eR, eC)</td><td>4× int</td><td class="returns">String</td><td>Same as getDetails but only for cells within the specified rectangular area.</td></tr>
+      <tr><td class="mono">getCellDetails(row, col)</td><td class="mono">int, int</td><td class="returns">String</td><td>Full details of one cell: food, any nest (with food level), each ant, and each pheromone with strength.</td></tr>
+      <tr><td class="mono">addFoodToNest(food, row, col)</td><td>3× int</td><td class="returns">void</td><td>Finds the nest at the given position and calls changeFood on it.</td></tr>
+      <tr><td class="mono">advanceStage(numberOfStages)</td><td class="mono">int</td><td class="returns">void</td><td>Outer loop runs numberOfStages times. Each stage: decay pheromones → remove dead ones → advance each ant → handle ant actions (deposit food / pick up food / move) → advance each nest.</td></tr>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="algorithms">Complex Algorithms Explained</div>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><strong>Exam focus:</strong> AQA always asks students to trace, explain or modify algorithms. These are the ones most likely to appear.</div>
+  </div>
+
+  <!-- Algo 1: getIndex -->
+  <div class="card card-accent">
+    <h3 style="margin-top:0; color:var(--accent)">1 — Grid Index Calculation: <code>getIndex(row, column)</code></h3>
+    <p>The 2D grid is stored as a flat (1D) ArrayList. This formula converts a (row, column) pair into the correct list index.</p>
+    <pre>private int getIndex(int row, int column) {
+    return (row - 1) * numberOfColumns + column - 1;
+}</pre>
+    <p><strong>Why row - 1 and column - 1?</strong> Because rows and columns are <em>1-indexed</em> (start at 1) but ArrayList positions are <em>0-indexed</em> (start at 0).</p>
+    <div class="card card-blue" style="margin-top:0.5rem; background: rgba(88,166,255,0.04)">
+      <h4 style="margin-top:0">Example: 5-column grid, get cell at row 3, column 2</h4>
+      <p style="font-family:'Space Mono',monospace; font-size:13px;">(3 - 1) × 5 + (2 - 1) = 2 × 5 + 1 = <strong style="color:var(--accent)">11</strong></p>
+      <p>So the cell is at index 11 in the ArrayList — which is the 12th element (0-based).</p>
+    </div>
+  </div>
+
+  <!-- Algo 2: getIndicesOfNeighbours -->
+  <div class="card card-blue">
+    <h3 style="margin-top:0; color:var(--accent2)">2 — Finding Neighbours: <code>getIndicesOfNeighbours(row, column)</code></h3>
+    <p>Finds the (up to 8) neighbouring cells of a given cell by trying all combinations of row and column offsets of {−1, 0, +1}. The combination (0, 0) is skipped (that's the cell itself).</p>
+    <pre>for (rowDirection : {-1, 0, 1}) {
+    for (columnDirection : {-1, 0, 1}) {
+        if (rowDirection != 0 || columnDirection != 0) {
+            // check if neighbourRow and neighbourColumn are in bounds
+            // if yes: add getIndex(neighbourRow, neighbourColumn)
+            // if no: add -1  (signals "off the grid")
+        }
+    }
+}</pre>
+    <div class="callout callout-info" style="margin-top:0.5rem;">
+      <span class="callout-icon">ℹ️</span>
+      <div class="callout-body"><strong>Important:</strong> The returned list always has 8 slots. Off-grid positions get -1. Code that uses this list always checks <code>if (index != -1)</code> before accessing the grid.</div>
+    </div>
+    <p>Corner cells (e.g. row 1, col 1) will have 3 valid neighbours and 5 entries of -1. Edge cells will have 5 valid neighbours.</p>
+  </div>
+
+  <!-- Algo 3: Worker movement -->
+  <div class="card card-red">
+    <h3 style="margin-top:0; color:var(--accent4)">3 — Worker Ant Movement: <code>WorkerAnt.chooseCellToMoveTo</code></h3>
+    <p>This is the most important algorithm in the program. Three-branch decision:</p>
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-content"><strong>Carrying food (amountOfFoodCarried &gt; 0):</strong> Move directly towards home nest — reduce the difference in row and column by 1 each stage. No random element. <em>Note: this is Manhattan-distance navigation, NOT diagonal movement.</em></div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-content"><strong>Empty-handed, no pheromone nearby (indexOfNeighbourWithStrongestPheromone == -1):</strong> Choose a random valid neighbour using <code>chooseRandomNeighbour</code>, then call <code>changeCell</code> to update position.</div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-content"><strong>Empty-handed, pheromone detected:</strong> Find the index within <code>listOfNeighbours</code> that corresponds to the strongest pheromone cell, then call <code>changeCell</code> to move there.</div></div>
+    <pre>// Branch 1: returning to nest with food
+if (amountOfFoodCarried &gt; 0) {
+    if (row &gt; nestRow)    row -= 1;
+    else if (row &lt; nestRow) row += 1;
+    if (column &gt; nestColumn)    column -= 1;
+    else if (column &lt; nestColumn) column += 1;
+}
+// Branch 2: random wander
+else if (indexOfNeighbourWithStrongestPheromone == -1) {
+    int indexToUse = chooseRandomNeighbour(listOfNeighbours);
+    changeCell(indexToUse, r, c);
+}
+// Branch 3: follow pheromone
+else {
+    int indexToUse = listOfNeighbours.indexOf(indexOfNeighbourWithStrongestPheromone);
+    changeCell(indexToUse, r, c);
+}</pre>
+    <div class="callout callout-warn" style="margin-top:0.5rem;">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body"><strong>Key observation — IntWrapper:</strong> Java passes objects by reference but primitives by value. To allow <code>changeCell</code> to modify row and column, a helper class <code>IntWrapper</code> is used — it wraps an int in an object so its value can be changed inside the method and seen outside. This is a common pattern when Java's pass-by-value would otherwise prevent modification.</div>
+    </div>
+  </div>
+
+  <!-- Algo 4: changeCell -->
+  <div class="card card-purple">
+    <h3 style="margin-top:0; color:var(--accent5)">4 — Cell Index to Direction: <code>changeCell(newCellIndicator, row, col)</code></h3>
+    <p>Converts a neighbour index (0–8, representing a position in the 3×3 grid of neighbours) into an actual row/column change. The mapping:</p>
+    <table>
+      <tr><th>Index</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4 (self—skipped)</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
+      <tr><td>Row change</td><td>−1</td><td>−1</td><td>−1</td><td>0</td><td>0</td><td>0</td><td>+1</td><td>+1</td><td>+1</td></tr>
+      <tr><td>Col change</td><td>−1</td><td>0</td><td>+1</td><td>−1</td><td>0</td><td>+1</td><td>−1</td><td>0</td><td>+1</td></tr>
+    </table>
+    <p>So: indices 0,1,2 → row decreases (go up); 6,7,8 → row increases (go down); 0,3,6 → column decreases (go left); 2,5,8 → column increases (go right).</p>
+  </div>
+
+  <!-- Algo 5: Nest advance -->
+  <div class="card card-green">
+    <h3 style="margin-top:0; color:var(--accent3)">5 — Nest Food &amp; Population: <code>Nest.advanceStage</code></h3>
+    <p>Called once per stage per nest. Handles feeding, starvation, culling and reproduction.</p>
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-content"><strong>Calculate food cost:</strong> For each ant belonging to this nest: queens cost 10 food, workers cost 2 food. Call <code>changeFood(-count)</code>.</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-content"><strong>Calculate ants to cull</strong> (<code>antsToCull</code>): starts at 0.<br>
+      — If food == 0 and there are workers: add 1<br>
+      — If food &lt; number of workers: add 1<br>
+      — If food &lt; workers × 5: add 1 (but cap at total workers)</div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-content"><strong>Culling:</strong> If antsToCull &gt; 0, randomly remove that many ants belonging to this nest. If a culled ant is a queen, decrement numberOfQueens.</div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-content"><strong>Reproduction (else branch — only if food ≥ workers × 5):</strong> For each queen: 50% chance (rNo1 &lt; 50) she reproduces. If reproducing: 2% chance (rNo2 &lt; 2) of new QueenAnt, 98% chance of new WorkerAnt.</div></div>
+    <div class="callout callout-warn" style="margin-top:0.5rem;">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body"><strong>Potential bug:</strong> The culling block is only entered when food &lt; workers × 5, but two of the three antsToCull increments are checked outside this condition. Ants could be culled when food &gt; 0 in some edge cases. The exam paper notes "there could be errors in the implementation."</div>
+    </div>
+  </div>
+
+  <!-- Algo 6: advanceStage Simulation -->
+  <div class="card card-accent">
+    <h3 style="margin-top:0; color:var(--accent)">6 — Main Stage Loop: <code>Simulation.advanceStage</code></h3>
+    <p>Processes one complete simulation stage. Order matters:</p>
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-content"><strong>Decay all pheromones.</strong> Any pheromone with strength = 0 is added to a delete list, then removed after the loop.</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-content"><strong>Advance each ant</strong> (increments stages counter).</div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-content"><strong>Per ant — three-way action check:</strong><br>
+      a. <strong>At own nest &amp; carrying food</strong> → deposit food to nest (addFoodToNest), clear food carried.<br>
+      b. <strong>Cell has food &amp; ant empty &amp; ant can carry food</strong> → pick up a random valid amount from the cell.<br>
+      c. <strong>Otherwise</strong> → if carrying food, lay pheromone; then call chooseCellToMoveTo to move.</div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-content"><strong>Advance each nest</strong> (feeding + reproduction/culling).</div></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="simulations">The Four Simulations</div>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <tr>
+        <th>Param</th>
+        <th>Sim 1</th>
+        <th>Sim 2</th>
+        <th>Sim 3</th>
+        <th>Sim 4</th>
+      </tr>
+      <tr><td>Grid</td><td>5 × 5</td><td>5 × 5</td><td>10 × 10</td><td>10 × 10</td></tr>
+      <tr><td>Nests</td><td>1</td><td>1</td><td>1</td><td>2</td></tr>
+      <tr><td>Starting food in nest</td><td>500</td><td>500</td><td>500</td><td>500</td></tr>
+      <tr><td>Food cells</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+      <tr><td>Ants per nest</td><td>5</td><td>5</td><td>9</td><td>6</td></tr>
+      <tr><td>New pheromone strength</td><td>1000</td><td>1000</td><td>1000</td><td>1000</td></tr>
+      <tr><td>Pheromone decay</td><td class="badge badge-yellow" style="display:table-cell; padding: 0.5rem 0.8rem;">50 / stage</td><td class="badge badge-red" style="display:table-cell; padding: 0.5rem 0.8rem;">100 / stage</td><td class="badge badge-green" style="display:table-cell; padding: 0.5rem 0.8rem;">25 / stage</td><td class="badge badge-green" style="display:table-cell; padding: 0.5rem 0.8rem;">25 / stage</td></tr>
+      <tr><td>Pheromone lasts (stages)</td><td>20</td><td>10</td><td>40</td><td>40</td></tr>
+    </table>
+  </div>
+  <p>Simulation 1 is fixed with nest at row 2, col 4. Additional nests (Sim 4) are placed randomly, as are all food cells (provided they don't land on a nest).</p>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="questions">Predicted Exam Questions</div>
+
+  <div class="callout callout-exam">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-body"><strong>Based on past paper patterns (2022, 2023, 2024).</strong> Section D questions always follow a three-tier structure: a small validation/amendment question (~4–5 marks), a new method/feature question (~9–12 marks), and a new subclass question (~12–14 marks), plus a separate question on a method that counts total marks to ~30.</div>
+  </div>
+
+  <h3>Tier 1 — Small amendments (validation / tracking)</h3>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">4–5 marks</span>
+      <div class="q-text">Modify <code>advanceStage</code> in <code>Simulation</code> (or the menu handler in <code>main</code>) so that the program keeps a count of how many stages have been run and displays this total each time a stage is advanced. Add input validation so that when the user enters a number of stages to advance by, it must be between 1 and 100 (inclusive); repeat until a valid value is entered.</div>
+      <span class="q-type">Validation / Tracking</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Add a stages counter variable. Use a do-while loop around the input. Display an error message for invalid inputs.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">4–5 marks</span>
+      <div class="q-text">Modify the menu in <code>main</code> so that menu option 3 (Inspect cell) validates the row and column entered by the user — they must be within the grid bounds. If an invalid value is entered, display an error message and ask again.</div>
+      <span class="q-type">Validation</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Wrap the input in a loop. Check <code>row &gt;= 1 &amp;&amp; row &lt;= numberOfRows</code>. The Simulation object doesn't expose its grid size directly — think about how to access numberOfRows.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">5–6 marks</span>
+      <div class="q-text">Modify the program to track and display the total amount of food collected by all worker ants across the entire simulation. This should be displayed when the user inspects overall details.</div>
+      <span class="q-type">Tracking</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Add a <code>totalFoodCollected</code> attribute to <code>Simulation</code>. Increment it in <code>advanceStage</code> when food is picked up (<code>foodObtained</code>). Include it in <code>getDetails()</code>.</div>
+  </div>
+
+  <h3>Tier 2 — New method / extended feature (~9–12 marks)</h3>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">9–11 marks</span>
+      <div class="q-text">Create a new method <code>getAntDetails()</code> in the <code>Simulation</code> class that returns a String containing details of every ant in the simulation — their type, position, age (stages), and food carried. Modify the menu to add a new option 6 that calls this method and displays the result.</div>
+      <span class="q-type">New Method</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Iterate through the <code>ants</code> ArrayList. Use <code>a.getDetails()</code> (which gives type and stages for all ants, plus food carried for workers). Add position using <code>a.getRow()</code> and <code>a.getColumn()</code>.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">10–12 marks</span>
+      <div class="q-text">Extend the simulation so that there is an "event" — a food drought. Create a method <code>removeFoodFromArea(startRow, startColumn, endRow, endColumn)</code> in <code>Simulation</code> that sets the food in every cell in the given area to zero. Add a new menu option to trigger this.</div>
+      <span class="q-type">New Feature</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Nested loop over the rows and columns of the area. Call <code>updateFoodInCell(-currentFood)</code> on each cell, where currentFood = <code>cell.getAmountOfFood()</code>. Use <code>getIndex</code> to access the correct cell.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">10–12 marks</span>
+      <div class="q-text">Add a method <code>countAntsInNest(Nest n)</code> in <code>Simulation</code> that returns how many ants currently belong to a given nest. Modify <code>getCellDetails</code> so that if a nest is present in the cell, it also displays the number of ants belonging to that nest.</div>
+      <span class="q-type">New Method</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Iterate the <code>ants</code> list; check <code>a.getNestRow() == n.getRow() &amp;&amp; a.getNestColumn() == n.getColumn()</code>.</div>
+  </div>
+
+  <h3>Tier 3 — New subclass (~12–14 marks)</h3>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">13–14 marks</span>
+      <div class="q-text">Create a new class <code>ScoutAnt</code> that extends <code>WorkerAnt</code>. A ScoutAnt has a food capacity of 0 (it never picks up food). Instead of following pheromones, it always moves randomly. When a ScoutAnt enters a cell containing food, it lays a pheromone with double the normal strength. Modify <code>setUpANestAt</code> to add one ScoutAnt per nest.</div>
+      <span class="q-type">New Subclass</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Override <code>chooseCellToMoveTo</code> — remove branches 1 and 3, always use branch 2 (random). Override <code>advanceStage</code> to check if the current cell has food, and call <code>updateAntsPheromoneInCell</code> with double strength (you may need to pass the Simulation reference or adjust the pheromone after the fact).</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">12–13 marks</span>
+      <div class="q-text">Create a new class <code>PoisonedCell</code> that extends <code>Cell</code>. A PoisonedCell contains food as normal, but any ant that picks up food from a PoisonedCell has its <code>foodCapacity</code> permanently reduced by 5. Override <code>getDetails</code> to show that the cell is poisoned. Modify the <code>Simulation</code> constructor so that one of the food cells is replaced by a PoisonedCell.</div>
+      <span class="q-type">New Subclass</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Extend Cell. Override <code>getDetails()</code> to add "POISONED" to the output. In <code>Simulation.advanceStage</code>, after food is collected, check if the cell is an instance of PoisonedCell and apply the penalty.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">12 marks</span>
+      <div class="q-text">Create a new class <code>SuperNest</code> that extends <code>Nest</code>. A SuperNest consumes food at half the normal rate (queens cost 5, workers cost 1). Override <code>advanceStage</code> to implement this. The food level of a SuperNest should never fall below 100 (the simulation maintains a reserve). Modify Simulation 4 to use a SuperNest for the second nest.</div>
+      <span class="q-type">New Subclass</span>
+    </div>
+    <div class="answer-box"><strong>Hint:</strong> Override <code>advanceStage</code> in SuperNest. Reuse logic from Nest but halve the costs. Add a check after <code>changeFood</code>: if <code>foodLevel &lt; 100</code> set <code>foodLevel = 100</code>.</div>
+  </div>
+
+  <h3>Theory questions about the skeleton code (Section C style)</h3>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">1 mark</span>
+      <div class="q-text">State the purpose of the <code>IntWrapper</code> class.</div>
+      <span class="q-type">OOP</span>
+    </div>
+    <div class="answer-box"><strong>Answer:</strong> Java passes primitive types (like int) by value, not by reference, so a method cannot modify the caller's variable. IntWrapper wraps an int in an object so its value field can be changed inside a method and the change is visible to the caller.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">2 marks</span>
+      <div class="q-text">Explain why the <code>QueenAnt</code> class does not override <code>chooseCellToMoveTo</code>.</div>
+      <span class="q-type">OOP</span>
+    </div>
+    <div class="answer-box"><strong>Answer:</strong> Queens do not move — they stay in their nest. The base class Ant's <code>chooseCellToMoveTo</code> is empty (does nothing), which is the correct behaviour for a queen. There is therefore no need to override it.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">1 mark</span>
+      <div class="q-text">State what value is stored in <code>listOfNeighbours</code> for a neighbour that is off the grid.</div>
+      <span class="q-type">Trace</span>
+    </div>
+    <div class="answer-box"><strong>Answer:</strong> -1</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">2 marks</span>
+      <div class="q-text">Explain what polymorphism means and give an example of it in the skeleton program.</div>
+      <span class="q-type">OOP Theory</span>
+    </div>
+    <div class="answer-box"><strong>Answer:</strong> Polymorphism means different objects respond differently to the same method call. Example: when <code>advanceStage</code> is called on an element in the <code>ants</code> ArrayList, a WorkerAnt executes its overriding version (which also handles food/movement), while a QueenAnt executes the Ant base class version (which only increments stages).</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">2 marks</span>
+      <div class="q-text">A pheromone can be reinforced rather than duplicated. Describe how the code achieves this.</div>
+      <span class="q-type">Algorithm</span>
+    </div>
+    <div class="answer-box"><strong>Answer:</strong> In <code>updateAntsPheromoneInCell</code>, the pheromones list is searched for one that is at the same location AND belongs to the same ant (matching ant ID using <code>getBelongsTo</code>). If found, its strength is increased using <code>updateStrength</code>. Only if no such pheromone is found is a new Pheromone object created and added to the list.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">3 marks</span>
+      <div class="q-text">Trace the formula <code>getIndex(row, column)</code> for a 5-column grid. Show the index returned for: (a) row 1, col 1 &nbsp; (b) row 2, col 3 &nbsp; (c) row 5, col 5.</div>
+      <span class="q-type">Trace</span>
+    </div>
+    <div class="answer-box"><strong>Answers:</strong> (a) (1-1)×5 + (1-1) = 0 &nbsp;|&nbsp; (b) (2-1)×5 + (3-1) = 7 &nbsp;|&nbsp; (c) (5-1)×5 + (5-1) = 24</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-header">
+      <span class="q-marks">3 marks</span>
+      <div class="q-text">Explain the three conditions that cause worker ants to be culled in <code>Nest.advanceStage</code>.</div>
+      <span class="q-type">Algorithm</span>
+    </div>
+    <div class="answer-box"><strong>Answer:</strong> (1) If food reaches 0 AND there are workers — 1 ant culled. (2) If food &lt; number of workers — 1 more ant culled. (3) If food &lt; workers × 5 — 1 more culled (but capped at total workers). The ants are chosen randomly from those belonging to that nest.</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title" id="patterns">Past Paper Section D Patterns (2022–2024)</div>
+
+  <div class="callout callout-tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><strong>Tip:</strong> Section D is always worth ~30 marks, spread across 3–4 questions. The pattern is very consistent across years. Understanding these patterns lets you practice the right type of change.</div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:1rem;">
+    <div class="card" style="border:1px solid var(--border);">
+      <div class="header-tag" style="font-size:10px;">2022 — Breakthrough (card game)</div>
+      <h4 style="margin-top:0.5rem; color:var(--accent)">Q11 (4+1 marks)</h4>
+      <p style="font-size:13px;">Validate user input (D or P) in an existing method using a loop with error message.</p>
+      <h4 style="color:var(--accent2)">Q12 (8+1 marks)</h4>
+      <p style="font-size:13px;">Create new method to count tool cards in deck; display count in PlayGame.</p>
+      <h4 style="color:var(--accent3)">Q13 (9+1 marks)</h4>
+      <p style="font-size:13px;">Implement a "blasting cap" one-use power — modify existing method + add new logic to PlayGame.</p>
+      <h4 style="color:var(--accent4)">Q14 (12+1 marks)</h4>
+      <p style="font-size:13px;">New subclass TrapCard extending DifficultyCard. Override Process method. Modify factory/loader.</p>
+    </div>
+    <div class="card" style="border:1px solid var(--border);">
+      <div class="header-tag" style="font-size:10px;">2023 — Dastan (board game)</div>
+      <h4 style="margin-top:0.5rem; color:var(--accent)">Q13 (4+1 marks)</h4>
+      <p style="font-size:13px;">Validate choice (1–5) in UseMoveOptionOffer with loop and error message.</p>
+      <h4 style="color:var(--accent2)">Q14 (9+1 marks)</h4>
+      <p style="font-size:13px;">New method ProcessBhukampa — randomly swap board squares 5 times, reduce score.</p>
+      <h4 style="color:var(--accent3)">Q15 (8+1 marks)</h4>
+      <p style="font-size:13px;">New subclass Gacaka (trap square) extending Square. Override SetPiece and GetPointsForOccupancy.</p>
+      <h4 style="color:var(--accent4)">Q16 (12+1 marks)</h4>
+      <p style="font-size:13px;">New method GetNoOfPossibleMoves in Player class — count legal moves for current player.</p>
+    </div>
+    <div class="card" style="border:1px solid var(--border);">
+      <div class="header-tag" style="font-size:10px;">2024 — Puzzle (grid puzzle)</div>
+      <h4 style="margin-top:0.5rem; color:var(--accent)">Q12 (5+1 marks)</h4>
+      <p style="font-size:13px;">Track average and highest score across multiple puzzle attempts. Modify Main.</p>
+      <h4 style="color:var(--accent2)">Q13 (11+1+1+1 marks)</h4>
+      <p style="font-size:13px;">New method ShiftCellsInRowLeft in Puzzle class. Modify AttemptPuzzle to add shift option.</p>
+      <h4 style="color:var(--accent4)">Q14 (13+1 marks)</h4>
+      <p style="font-size:13px;">New subclass CountdownCell extending BlockedCell. Constructor + UpdateCell override. Integrate into AttemptPuzzle.</p>
+    </div>
+  </div>
+
+  <div class="card card-accent">
+    <h3 style="margin-top:0; color:var(--accent)">What to Practise for 2026</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Almost certain to appear:</h4>
+        <ul style="font-size:14px; margin-left:1.2rem; line-height:2;">
+          <li>Input validation loop (small question, ~4 marks)</li>
+          <li>A new subclass with overriding (~12–13 marks)</li>
+          <li>A new method that traverses the <code>ants</code>, <code>pheromones</code> or <code>nests</code> list</li>
+          <li>Modifying <code>advanceStage</code> or <code>getDetails</code></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Key OOP skills to practise:</h4>
+        <ul style="font-size:14px; margin-left:1.2rem; line-height:2;">
+          <li>Writing a class that extends an existing class</li>
+          <li>Calling <code>super()</code> in a constructor</li>
+          <li>Using <code>@Override</code> correctly</li>
+          <li>Iterating an ArrayList and filtering by type</li>
+          <li>Using <code>instanceof</code> to check object type</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .page -->
+
+<footer>AQA A-Level Computer Science · Paper 1 · Summer 2026 · Ant Simulation · Student Reference Guide · For educational use</footer>
+
+</body>
+</html>

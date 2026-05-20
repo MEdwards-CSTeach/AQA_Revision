@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Structures – AQA CS 7517</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & ROOT ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --stacks-bg:#1A1A2E;   --stacks-acc:#E94560;   --stacks-mid:#A8A8B3; --stacks-card:#16213E;
+  --linear-bg:#065A82;   --linear-acc:#F7B731;   --linear-mid:#B0D4E8; --linear-card:#1C7293;
+  --circ-bg:#1A3C34;     --circ-acc:#00E5BE;     --circ-mid:#89C4BA;   --circ-card:#2D6A4F;
+  --prio-bg:#4A235A;     --prio-acc:#FF6B6B;     --prio-mid:#C39BD3;   --prio-card:#6C3483;
+  --hash-bg:#2C1810;     --hash-acc:#FF9800;     --hash-mid:#C8A882;   --hash-card:#5D2E0C;
+  --cover-bg:#0D0D0D;    --cover-acc:#00F5D4;
+  --font-head:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-code:'JetBrains Mono',monospace;
+  --radius:12px; --radius-sm:6px;
+  --transition:0.3s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  background:#0a0a0f;
+  color:#e8e8f0;
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── SCROLLBAR ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#555}
+
+/* ─── HERO ─────────────────────────────────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  background:var(--cover-bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:4rem 2rem;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(0,245,212,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-aqa{
+  font-family:var(--font-body);font-size:.85rem;font-weight:600;letter-spacing:.2em;
+  color:var(--cover-acc);text-transform:uppercase;opacity:.7;margin-bottom:1.5rem;
+}
+.hero h1{
+  font-family:var(--font-head);font-size:clamp(3rem,8vw,7rem);font-weight:800;
+  color:#fff;line-height:1;margin-bottom:.5rem;
+  text-shadow:0 0 80px rgba(0,245,212,.3);
+}
+.hero h1 span{color:var(--cover-acc)}
+.hero-sub{
+  font-size:clamp(1rem,2.5vw,1.4rem);color:rgba(255,255,255,.5);
+  font-weight:300;margin-bottom:3rem;letter-spacing:.02em;
+}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-bottom:3.5rem}
+.pill{
+  padding:.45rem 1.1rem;border-radius:99px;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:var(--transition);border:2px solid transparent;
+  text-decoration:none;
+}
+.pill-stacks  {background:var(--stacks-acc);color:#fff}
+.pill-linear  {background:var(--linear-acc);color:#1a1a1a}
+.pill-circ    {background:var(--circ-acc);color:#0a2a22}
+.pill-prio    {background:var(--prio-acc);color:#fff}
+.pill-hash    {background:var(--hash-acc);color:#1a1a1a}
+.pill:hover   {transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.hero-scroll  {color:rgba(255,255,255,.3);font-size:.8rem;letter-spacing:.1em;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ─── NAV ──────────────────────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,15,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:.7rem 2rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;
+}
+nav a{
+  font-size:.8rem;font-weight:600;padding:.3rem .8rem;border-radius:6px;
+  color:rgba(255,255,255,.5);text-decoration:none;transition:var(--transition);letter-spacing:.03em;
+}
+nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,.1)}
+.nav-logo{font-family:var(--font-head);font-size:.9rem;color:var(--cover-acc);margin-right:auto}
+
+/* ─── SECTION WRAPPER ───────────────────────────────────────────────────── */
+.section{padding:5rem 0;position:relative}
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+
+/* ─── SECTION HEADERS ───────────────────────────────────────────────────── */
+.sec-header{
+  display:flex;align-items:flex-start;gap:1.5rem;margin-bottom:3rem;
+  padding-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.sec-badge{
+  flex-shrink:0;width:56px;height:56px;border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;font-weight:800;font-family:var(--font-head);
+}
+.sec-label{font-size:.75rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:.3rem}
+.sec-title{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1}
+.sec-sub{font-size:1rem;opacity:.55;margin-top:.4rem;font-weight:300}
+
+/* Section backgrounds */
+.s-stacks {background:linear-gradient(180deg,rgba(26,26,46,.9) 0%,rgba(10,10,15,1) 100%)}
+.s-linear {background:linear-gradient(180deg,rgba(6,90,130,.15) 0%,rgba(10,10,15,1) 100%)}
+.s-circ   {background:linear-gradient(180deg,rgba(26,60,52,.2) 0%,rgba(10,10,15,1) 100%)}
+.s-prio   {background:linear-gradient(180deg,rgba(74,35,90,.2) 0%,rgba(10,10,15,1) 100%)}
+.s-hash   {background:linear-gradient(180deg,rgba(44,24,16,.3) 0%,rgba(10,10,15,1) 100%)}
+.s-summary{background:#0a0a0f}
+
+/* ─── CARD GRID ─────────────────────────────────────────────────────────── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-bottom:2.5rem}
+.card{
+  border-radius:var(--radius);padding:1.5rem;
+  border:1px solid rgba(255,255,255,.07);
+  transition:var(--transition);position:relative;overflow:hidden;
+}
+.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.15)}
+.card-icon{font-size:1.4rem;margin-bottom:.8rem}
+.card-title{font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:.6rem}
+.card ul{padding-left:1.2rem}
+.card li{font-size:.9rem;opacity:.8;margin-bottom:.25rem;line-height:1.5}
+.card p{font-size:.9rem;opacity:.8;line-height:1.6}
+
+/* ─── KEY POINT BOX ─────────────────────────────────────────────────────── */
+.key-point{
+  border-radius:var(--radius);padding:1.25rem 1.5rem;
+  margin-bottom:1.5rem;border-left:4px solid;
+  font-size:.95rem;line-height:1.65;
+}
+.key-point strong{font-family:var(--font-code);font-size:.9em}
+
+/* ─── WALKTHROUGH ───────────────────────────────────────────────────────── */
+.walkthrough{margin-bottom:2.5rem}
+.walkthrough h3{font-family:var(--font-head);font-size:1.1rem;font-weight:700;margin-bottom:1rem;opacity:.7}
+.wt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+.wt-step{
+  border-radius:var(--radius-sm);padding:1rem 1.25rem;
+  border:1px solid rgba(255,255,255,.08);
+  transition:var(--transition);
+}
+.wt-step:hover{border-color:rgba(255,255,255,.2)}
+.wt-op{font-family:var(--font-head);font-size:.85rem;font-weight:700;margin-bottom:.6rem}
+.wt-array{display:flex;gap:4px;margin-bottom:.5rem;flex-wrap:wrap}
+.wt-cell{
+  width:36px;height:36px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-code);font-size:.8rem;font-weight:700;
+  border:1px solid rgba(255,255,255,.2);position:relative;flex-shrink:0;
+}
+.wt-cell.active{color:#000}
+.wt-cell.empty{background:rgba(255,255,255,.04);color:rgba(255,255,255,.2)}
+.wt-label{font-size:.65rem;text-align:center;margin-top:2px;opacity:.6;height:12px}
+.wt-note{font-size:.8rem;opacity:.65;margin-top:.4rem;line-height:1.4;font-style:italic}
+.wt-warn{color:#ff6b6b;font-weight:600}
+
+/* ─── CODE BLOCK ─────────────────────────────────────────────────────────── */
+.code-tabs{margin-bottom:2rem}
+.tab-bar{display:flex;gap:0;margin-bottom:0;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;border:1px solid rgba(255,255,255,.1);border-bottom:none}
+.tab-btn{
+  padding:.5rem 1.2rem;font-size:.8rem;font-family:var(--font-code);font-weight:700;
+  background:rgba(255,255,255,.04);color:rgba(255,255,255,.4);border:none;cursor:pointer;
+  transition:var(--transition);letter-spacing:.05em;
+}
+.tab-btn.active{background:#111;color:#fff}
+.tab-btn:hover:not(.active){background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.code-panel{display:none}
+.code-panel.active{display:block}
+pre{
+  background:#0e0e14;border:1px solid rgba(255,255,255,.1);
+  border-radius:0 0 var(--radius) var(--radius);
+  padding:1.5rem;overflow-x:auto;margin:0;
+}
+code{font-family:var(--font-code);font-size:.82rem;line-height:1.7;color:#c9d1d9}
+
+/* Syntax highlighting */
+.kw{color:#ff79c6}.fn{color:#50fa7b}.st{color:#f1fa8c}
+.cm{color:#6272a4;font-style:italic}.ty{color:#8be9fd}.num{color:#bd93f9}
+
+/* Pseudocode */
+.pseudo-block{
+  background:#0e0e14;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);
+  padding:1.5rem;font-family:var(--font-code);font-size:.82rem;line-height:1.8;
+  color:#c9d1d9;margin-bottom:1.5rem;overflow-x:auto;
+}
+.ps-kw{color:#ff79c6}.ps-fn{color:#50fa7b}.ps-op{color:#ff9800}.ps-cm{color:#6272a4;font-style:italic}
+
+/* ─── EXAM TIP ────────────────────────────────────────────────────────── */
+.exam-tip{
+  background:rgba(255,248,220,.06);border:1px solid rgba(247,183,49,.3);
+  border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.5rem;
+}
+.exam-tip-title{font-family:var(--font-head);font-size:.85rem;font-weight:700;color:#F7B731;margin-bottom:.5rem}
+.exam-tip ul{padding-left:1.2rem}
+.exam-tip li{font-size:.9rem;opacity:.85;margin-bottom:.25rem}
+
+/* ─── HASH TABLE VISUAL ──────────────────────────────────────────────── */
+.hash-array{display:flex;gap:6px;flex-wrap:wrap;margin:1rem 0}
+.hash-cell{
+  width:72px;min-height:72px;border-radius:var(--radius-sm);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:1px solid rgba(255,152,0,.25);padding:.4rem;
+  font-family:var(--font-code);font-size:.82rem;text-align:center;
+  transition:var(--transition);
+}
+.hash-cell:hover{border-color:rgba(255,152,0,.6);background:rgba(255,152,0,.08)}
+.hash-cell .hi{font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:.2rem}
+.hash-cell .hv{font-weight:700;color:var(--hash-acc)}
+.hash-cell.empty .hv{color:rgba(255,255,255,.15)}
+.hash-cell.collide{border-color:#ff6b6b;background:rgba(255,107,107,.08)}
+.hash-cell.collide .hv{color:#ff6b6b}
+.hash-cell.rehashed{border-color:#00e5be;background:rgba(0,229,190,.08)}
+.hash-cell.rehashed .hv{color:#00e5be}
+
+/* ─── PRIORITY QUEUE VISUAL ──────────────────────────────────────────── */
+.pq-row{display:flex;gap:6px;margin:.5rem 0;align-items:center}
+.pq-item{
+  display:flex;flex-direction:column;align-items:center;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,107,107,.3);
+  border-radius:var(--radius-sm);padding:.4rem .7rem;
+  font-family:var(--font-code);font-size:.82rem;min-width:52px;text-align:center;
+}
+.pq-item.front{border-color:var(--prio-acc);background:rgba(255,107,107,.12)}
+.pq-item .pv{font-weight:700;font-size:.7rem;color:var(--prio-acc)}
+.pq-item .pn{font-weight:700}
+.pq-label{font-size:.75rem;opacity:.5;width:80px;flex-shrink:0}
+.pq-arrow{font-size:.8rem;opacity:.4}
+
+/* ─── SUMMARY TABLE ──────────────────────────────────────────────────── */
+.summary-table{width:100%;border-collapse:collapse;border-radius:var(--radius);overflow:hidden;margin-top:2rem}
+.summary-table th,.summary-table td{padding:.9rem 1rem;text-align:left;font-size:.88rem;border:1px solid rgba(255,255,255,.06)}
+.summary-table th{font-family:var(--font-head);font-weight:700;background:#111;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.summary-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.summary-table tr:hover td{background:rgba(255,255,255,.04)}
+.summary-table td:first-child{font-family:var(--font-head);font-weight:700}
+.summary-table td code{font-family:var(--font-code);font-size:.78rem;background:rgba(255,255,255,.08);padding:.1rem .35rem;border-radius:3px}
+.badge-lifo{color:var(--stacks-acc)}.badge-fifo{color:var(--linear-acc)}
+.badge-prio{color:var(--prio-acc)}.badge-none{color:var(--hash-mid)}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────── */
+footer{background:#050508;border-top:1px solid rgba(255,255,255,.06);padding:2.5rem;text-align:center;color:rgba(255,255,255,.3);font-size:.82rem}
+footer a{color:var(--cover-acc);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────────── */
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media(max-width:640px){
+  .sec-header{flex-direction:column}
+  .wt-grid{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  nav{padding:.5rem 1rem}
+  .container{padding:0 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <p class="hero-aqa">AQA Computer Science 7517 · 4.2 Fundamentals of Data Structures</p>
+  <h1>Data<br><span>Structures</span></h1>
+  <p class="hero-sub">Stacks · Queues · Hash Maps · Complete Revision Guide</p>
+  <div class="hero-pills">
+    <a href="#stacks"  class="pill pill-stacks">Stacks</a>
+    <a href="#linear"  class="pill pill-linear">Linear Queue</a>
+    <a href="#circular" class="pill pill-circ">Circular Queue</a>
+    <a href="#priority" class="pill pill-prio">Priority Queue</a>
+    <a href="#hashmap"  class="pill pill-hash">Hash Maps</a>
+    <a href="#summary"  class="pill" style="background:rgba(255,255,255,.1);color:#fff">Summary</a>
+  </div>
+  <p class="hero-scroll">↓ scroll to begin</p>
+</section>
+
+<!-- ─── NAV ───────────────────────────────────────────────────────────────── -->
+<nav id="main-nav">
+  <span class="nav-logo">DS Revision</span>
+  <a href="#stacks">Stacks</a>
+  <a href="#linear">Linear Q</a>
+  <a href="#circular">Circular Q</a>
+  <a href="#priority">Priority Q</a>
+  <a href="#hashmap">Hash Maps</a>
+  <a href="#summary">Summary</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION A – STACKS
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="section s-stacks" id="stacks">
+<div class="container">
+
+  <div class="sec-header fade-in">
+    <div class="sec-badge" style="background:var(--stacks-acc);color:#fff">A</div>
+    <div>
+      <p class="sec-label" style="color:var(--stacks-acc)">Section A</p>
+      <h2 class="sec-title" style="color:#fff">Stacks</h2>
+      <p class="sec-sub">LIFO · Push · Pop · Peek · Static &amp; Dynamic</p>
+    </div>
+  </div>
+
+  <div class="key-point fade-in" style="background:rgba(233,69,96,.1);border-color:var(--stacks-acc);color:#fff">
+    A <strong>stack</strong> is a <strong>Last In, First Out (LIFO)</strong> abstract data type. Items are added to and removed from the <strong>TOP</strong> only.
+  </div>
+
+  <div class="card-grid fade-in">
+    <div class="card" style="background:var(--stacks-card);border-color:rgba(233,69,96,.25)">
+      <div class="card-icon">📚</div>
+      <div class="card-title" style="color:var(--stacks-acc)">Real-World Analogies</div>
+      <ul>
+        <li>A stack of plates – add &amp; remove from the top</li>
+        <li>Browser back button – each page pushed; back pops</li>
+        <li>Undo function – each action pushed, undo pops</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--stacks-card);border-color:rgba(233,69,96,.25)">
+      <div class="card-icon">✅</div>
+      <div class="card-title" style="color:var(--stacks-acc)">Ideal Use Cases</div>
+      <ul>
+        <li>Expression evaluation (RPN calculators)</li>
+        <li>Reversing data / strings</li>
+        <li>Function call management (call stack)</li>
+        <li>Depth-first search (DFS)</li>
+        <li>Balancing brackets / parentheses</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--stacks-card);border-color:rgba(233,69,96,.25)">
+      <div class="card-icon">⚖️</div>
+      <div class="card-title" style="color:var(--stacks-acc)">Pros &amp; Cons</div>
+      <p style="color:#50fa7b;font-size:.85rem;font-weight:600;margin-bottom:.4rem">Pros</p>
+      <ul>
+        <li>Simple, fast O(1) push &amp; pop</li>
+        <li>Great for tracking state</li>
+        <li>Memory efficient</li>
+      </ul>
+      <p style="color:var(--stacks-acc);font-size:.85rem;font-weight:600;margin:.6rem 0 .4rem">Cons</p>
+      <ul>
+        <li>No random access to elements</li>
+        <li>Stack overflow if too deep (static)</li>
+        <li>Only top element directly accessible</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Operations -->
+  <h3 class="fade-in" style="font-family:var(--font-head);font-size:1.3rem;color:var(--stacks-acc);margin-bottom:1rem">Operations</h3>
+  <div class="card-grid fade-in" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+    <div class="card" style="background:#0e0e1a;border-color:rgba(233,69,96,.3);text-align:center">
+      <div class="card-title" style="color:var(--stacks-acc);font-family:var(--font-code);font-size:1rem">push(item)</div>
+      <p style="font-size:.85rem;opacity:.75">Add item to top. Check <code style="font-family:var(--font-code);color:#f1fa8c">isFull()</code> first.</p>
+    </div>
+    <div class="card" style="background:#0e0e1a;border-color:rgba(233,69,96,.3);text-align:center">
+      <div class="card-title" style="color:var(--stacks-acc);font-family:var(--font-code);font-size:1rem">pop()</div>
+      <p style="font-size:.85rem;opacity:.75">Remove &amp; return top. Check <code style="font-family:var(--font-code);color:#f1fa8c">isEmpty()</code> first.</p>
+    </div>
+    <div class="card" style="background:#0e0e1a;border-color:rgba(233,69,96,.3);text-align:center">
+      <div class="card-title" style="color:var(--stacks-acc);font-family:var(--font-code);font-size:1rem">peek()</div>
+      <p style="font-size:.85rem;opacity:.75">Return top WITHOUT removing. top pointer unchanged.</p>
+    </div>
+    <div class="card" style="background:#0e0e1a;border-color:rgba(233,69,96,.3);text-align:center">
+      <div class="card-title" style="color:var(--stacks-acc);font-family:var(--font-code);font-size:1rem">isEmpty()</div>
+      <p style="font-size:.85rem;opacity:.75">Returns true when <code style="font-family:var(--font-code);color:#f1fa8c">top == -1</code></p>
+    </div>
+    <div class="card" style="background:#0e0e1a;border-color:rgba(233,69,96,.3);text-align:center">
+      <div class="card-title" style="color:var(--stacks-acc);font-family:var(--font-code);font-size:1rem">isFull()</div>
+      <p style="font-size:.85rem;opacity:.75">Returns true when <code style="font-family:var(--font-code);color:#f1fa8c">top == maxSize-1</code></p>
+    </div>
+  </div>
+
+  <!-- Walkthrough -->
+  <div class="walkthrough fade-in">
+    <h3 style="color:var(--stacks-acc)">Step-by-Step Walkthrough — capacity = 4, top starts at -1</h3>
+    <div class="wt-grid">
+
+      <div class="wt-step" style="background:var(--stacks-card)">
+        <div class="wt-op" style="color:var(--stacks-acc)">PUSH 10</div>
+        <div class="wt-array">
+          <div><div class="wt-cell active" style="background:var(--stacks-acc)">10</div><div class="wt-label">▲ top</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">top becomes 0. Item stored at stack[0].</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--stacks-card)">
+        <div class="wt-op" style="color:var(--stacks-acc)">PUSH 20</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">10</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:var(--stacks-acc)">20</div><div class="wt-label">▲ top</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">top becomes 1.</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--stacks-card)">
+        <div class="wt-op" style="color:var(--stacks-acc)">PUSH 30</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">10</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">20</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:var(--stacks-acc)">30</div><div class="wt-label">▲ top</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">top becomes 2.</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--stacks-card)">
+        <div class="wt-op" style="color:#ff4444">PUSH 40 — STACK FULL</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">10</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">20</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">30</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:#ff4444">40</div><div class="wt-label">▲ top</div></div>
+        </div>
+        <div class="wt-note wt-warn">top=3=maxSize-1 → isFull()=true. Push 50 would overflow!</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--stacks-card)">
+        <div class="wt-op" style="color:#FFAA00">POP — returns 40</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">10</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">20</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:var(--stacks-acc)">30</div><div class="wt-label">▲ top</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">Returns 40. top decremented to 2.</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--stacks-card)">
+        <div class="wt-op" style="color:#00AAFF">PEEK — returns 30</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">10</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:#2a2a4a;color:#fff">20</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:var(--stacks-acc)">30</div><div class="wt-label">▲ top</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">Returns 30. top stays at 2 — nothing removed.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Code -->
+  <div class="code-tabs fade-in">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'stk-pseudo')">Pseudocode</button>
+      <button class="tab-btn" onclick="switchTab(this,'stk-py')">Python</button>
+      <button class="tab-btn" onclick="switchTab(this,'stk-java')">Java</button>
+    </div>
+    <div id="stk-pseudo" class="code-panel active">
+<pre><code><span class="ps-fn">function</span> <span class="fn">push</span>(item):
+  <span class="ps-kw">if</span> top == maxSize - 1 <span class="ps-kw">then</span>
+    output <span class="st">"Stack full – overflow error"</span>
+  <span class="ps-kw">else</span>
+    top <span class="ps-op">←</span> top + 1
+    stack[top] <span class="ps-op">←</span> item
+
+<span class="ps-fn">function</span> <span class="fn">pop</span>():
+  <span class="ps-kw">if</span> top == -1 <span class="ps-kw">then</span>
+    output <span class="st">"Stack empty – underflow error"</span>
+  <span class="ps-kw">else</span>
+    item <span class="ps-op">←</span> stack[top]
+    top <span class="ps-op">←</span> top - 1
+    <span class="ps-kw">return</span> item
+
+<span class="ps-fn">function</span> <span class="fn">peek</span>():
+  <span class="ps-kw">if</span> top == -1 <span class="ps-kw">then</span> <span class="ps-kw">return</span> <span class="st">"empty"</span>
+  <span class="ps-kw">return</span> stack[top]
+
+<span class="ps-fn">function</span> <span class="fn">isEmpty</span>(): <span class="ps-kw">return</span> top == -1
+<span class="ps-fn">function</span> <span class="fn">isFull</span>():  <span class="ps-kw">return</span> top == maxSize - 1</code></pre>
+    </div>
+    <div id="stk-py" class="code-panel">
+<pre><code><span class="kw">class</span> <span class="ty">Stack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="ty">self</span>, max_size):
+        <span class="ty">self</span>.data = [<span class="kw">None</span>] * max_size
+        <span class="ty">self</span>.top = -<span class="num">1</span>
+        <span class="ty">self</span>.max_size = max_size
+
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="ty">self</span>):
+        <span class="kw">return</span> <span class="ty">self</span>.top == -<span class="num">1</span>
+
+    <span class="kw">def</span> <span class="fn">is_full</span>(<span class="ty">self</span>):
+        <span class="kw">return</span> <span class="ty">self</span>.top == <span class="ty">self</span>.max_size - <span class="num">1</span>
+
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="ty">self</span>, item):
+        <span class="kw">if</span> <span class="ty">self</span>.is_full():
+            <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Stack overflow"</span>)
+        <span class="ty">self</span>.top += <span class="num">1</span>
+        <span class="ty">self</span>.data[<span class="ty">self</span>.top] = item
+
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="ty">self</span>):
+        <span class="kw">if</span> <span class="ty">self</span>.is_empty():
+            <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Stack underflow"</span>)
+        item = <span class="ty">self</span>.data[<span class="ty">self</span>.top]
+        <span class="ty">self</span>.top -= <span class="num">1</span>
+        <span class="kw">return</span> item
+
+    <span class="kw">def</span> <span class="fn">peek</span>(<span class="ty">self</span>):
+        <span class="kw">if</span> <span class="ty">self</span>.is_empty():
+            <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Stack empty"</span>)
+        <span class="kw">return</span> <span class="ty">self</span>.data[<span class="ty">self</span>.top]</code></pre>
+    </div>
+    <div id="stk-java" class="code-panel">
+<pre><code><span class="kw">public class</span> <span class="ty">Stack</span> {
+    <span class="kw">private int</span>[] data;
+    <span class="kw">private int</span> top, maxSize;
+
+    <span class="kw">public</span> <span class="fn">Stack</span>(<span class="kw">int</span> maxSize) {
+        <span class="kw">this</span>.maxSize = maxSize;
+        data = <span class="kw">new int</span>[maxSize];
+        top = -<span class="num">1</span>;
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> top == -<span class="num">1</span>; }
+    <span class="kw">public boolean</span> <span class="fn">isFull</span>()  { <span class="kw">return</span> top == maxSize - <span class="num">1</span>; }
+
+    <span class="kw">public void</span> <span class="fn">push</span>(<span class="kw">int</span> item) {
+        <span class="kw">if</span> (<span class="fn">isFull</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Overflow"</span>);
+        data[++top] = item;
+    }
+
+    <span class="kw">public int</span> <span class="fn">pop</span>() {
+        <span class="kw">if</span> (<span class="fn">isEmpty</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Underflow"</span>);
+        <span class="kw">return</span> data[top--];
+    }
+
+    <span class="kw">public int</span> <span class="fn">peek</span>() {
+        <span class="kw">if</span> (<span class="fn">isEmpty</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Empty"</span>);
+        <span class="kw">return</span> data[top];
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="exam-tip fade-in">
+    <div class="exam-tip-title">💡 Exam Tips — Stacks</div>
+    <ul>
+      <li>Always check <code style="font-family:var(--font-code)">isEmpty()</code> before <code style="font-family:var(--font-code)">pop()</code> or <code style="font-family:var(--font-code)">peek()</code></li>
+      <li>Always check <code style="font-family:var(--font-code)">isFull()</code> before <code style="font-family:var(--font-code)">push()</code></li>
+      <li>top pointer INCREASES on push, DECREASES on pop</li>
+      <li>Dynamic stacks (linked lists) cannot overflow</li>
+      <li>To reverse a queue: pop items onto stack, then dequeue from stack back to queue</li>
+    </ul>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION B – LINEAR QUEUE
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="section s-linear" id="linear">
+<div class="container">
+
+  <div class="sec-header fade-in">
+    <div class="sec-badge" style="background:var(--linear-acc);color:#1a1a1a">B</div>
+    <div>
+      <p class="sec-label" style="color:var(--linear-acc)">Section B</p>
+      <h2 class="sec-title" style="color:#fff">Linear Queue</h2>
+      <p class="sec-sub">FIFO · Front &amp; Rear Pointers · Static Array</p>
+    </div>
+  </div>
+
+  <div class="key-point fade-in" style="background:rgba(247,183,49,.08);border-color:var(--linear-acc);color:#fff">
+    A <strong>queue</strong> is a <strong>First In, First Out (FIFO)</strong> structure. Items join at the <strong>REAR</strong> (enqueue) and leave from the <strong>FRONT</strong> (dequeue). Two pointers: <code style="font-family:var(--font-code);color:var(--linear-acc)">front</code> and <code style="font-family:var(--font-code);color:var(--linear-acc)">rear</code>.
+  </div>
+
+  <div class="card-grid fade-in">
+    <div class="card" style="background:var(--linear-card);border-color:rgba(247,183,49,.25)">
+      <div class="card-icon">📋</div>
+      <div class="card-title" style="color:var(--linear-acc)">How it Works</div>
+      <ul>
+        <li>Items join at REAR (enqueue)</li>
+        <li>Items leave from FRONT (dequeue)</li>
+        <li>Two pointers track front and rear</li>
+        <li>front advances on dequeue — freed space is NOT reused</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--linear-card);border-color:rgba(247,183,49,.25)">
+      <div class="card-icon">✅</div>
+      <div class="card-title" style="color:var(--linear-acc)">Good Use Cases</div>
+      <ul>
+        <li>Print spoolers (jobs wait their turn)</li>
+        <li>CPU scheduling (round-robin)</li>
+        <li>BFS graph traversal</li>
+        <li>Message queues / event buffers</li>
+        <li>Ticket booking systems</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--linear-card);border-color:rgba(247,183,49,.25)">
+      <div class="card-icon">⚖️</div>
+      <div class="card-title" style="color:var(--linear-acc)">Pros &amp; Cons</div>
+      <p style="color:#50fa7b;font-size:.85rem;font-weight:600;margin-bottom:.3rem">Pros</p>
+      <ul><li>Simple to understand &amp; implement</li><li>Fair FIFO ordering guaranteed</li><li>O(1) enqueue and dequeue</li></ul>
+      <p style="color:var(--linear-acc);font-size:.85rem;font-weight:600;margin:.6rem 0 .3rem">Cons</p>
+      <ul><li>Wasted space after dequeues</li><li>Reports FULL even with empty slots at start</li><li>Solution → use a circular queue</li></ul>
+    </div>
+  </div>
+
+  <!-- Walkthrough -->
+  <div class="walkthrough fade-in">
+    <h3 style="color:var(--linear-acc)">Walkthrough — size = 5 · front=−1, rear=−1 (empty)</h3>
+    <div class="wt-grid">
+
+      <div class="wt-step" style="background:var(--linear-card)">
+        <div class="wt-op" style="color:var(--linear-acc)">ENQUEUE A</div>
+        <div class="wt-array">
+          <div><div class="wt-cell active" style="background:var(--linear-acc);color:#000">A</div><div class="wt-label" style="color:var(--linear-acc)">F&amp;R</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">1</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">2</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">3</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">4</div></div>
+        </div>
+        <div class="wt-note">front=0, rear=0. A at index 0.</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--linear-card)">
+        <div class="wt-op" style="color:var(--linear-acc)">ENQUEUE B &amp; C</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:rgba(247,183,49,.2);color:var(--linear-acc)">A</div><div class="wt-label" style="color:var(--linear-acc)">F↑</div></div>
+          <div><div class="wt-cell" style="background:rgba(247,183,49,.15);color:#fff">B</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:var(--linear-acc);color:#000">C</div><div class="wt-label" style="color:var(--linear-acc)">R↑</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">3</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">4</div></div>
+        </div>
+        <div class="wt-note">front=0, rear=2.</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--linear-card)">
+        <div class="wt-op" style="color:#FFAA00">DEQUEUE — returns A</div>
+        <div class="wt-array">
+          <div><div class="wt-cell empty" style="border-color:#ff4444;border-style:dashed">✗</div><div class="wt-label" style="color:#ff4444">WASTED</div></div>
+          <div><div class="wt-cell active" style="background:var(--linear-acc);color:#000">B</div><div class="wt-label" style="color:var(--linear-acc)">F↑</div></div>
+          <div><div class="wt-cell" style="background:rgba(247,183,49,.15);color:#fff">C</div><div class="wt-label" style="color:var(--linear-acc)">R↑</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">3</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">4</div></div>
+        </div>
+        <div class="wt-note wt-warn">Index 0 freed but front advanced to 1. Space at 0 WASTED!</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--linear-card)">
+        <div class="wt-op" style="color:#ff4444">ENQUEUE D, E → FULL!</div>
+        <div class="wt-array">
+          <div><div class="wt-cell empty" style="border-color:#ff4444;border-style:dashed">✗</div><div class="wt-label" style="color:#ff4444">WASTED</div></div>
+          <div><div class="wt-cell" style="background:rgba(247,183,49,.15);color:#fff">B</div><div class="wt-label" style="color:var(--linear-acc)">F↑</div></div>
+          <div><div class="wt-cell" style="background:rgba(247,183,49,.15);color:#fff">C</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:rgba(247,183,49,.15);color:#fff">D</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:#ff4444;color:#fff">E</div><div class="wt-label" style="color:var(--linear-acc)">R↑</div></div>
+        </div>
+        <div class="wt-note wt-warn">rear=4=maxSize-1 → FULL! But index 0 is wasted. This is why we use circular queues.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Code -->
+  <div class="code-tabs fade-in">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'lq-py')">Python</button>
+      <button class="tab-btn" onclick="switchTab(this,'lq-java')">Java</button>
+    </div>
+    <div id="lq-py" class="code-panel active">
+<pre><code><span class="kw">class</span> <span class="ty">LinearQueue</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="ty">self</span>, size):
+        <span class="ty">self</span>.q = [<span class="kw">None</span>] * size
+        <span class="ty">self</span>.front = -<span class="num">1</span>
+        <span class="ty">self</span>.rear  = -<span class="num">1</span>
+        <span class="ty">self</span>.size  = size
+
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="ty">self</span>): <span class="kw">return</span> <span class="ty">self</span>.front == -<span class="num">1</span>
+    <span class="kw">def</span> <span class="fn">is_full</span>(<span class="ty">self</span>):  <span class="kw">return</span> <span class="ty">self</span>.rear == <span class="ty">self</span>.size - <span class="num">1</span>
+
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="ty">self</span>, item):
+        <span class="kw">if</span> <span class="ty">self</span>.is_full(): <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Queue full"</span>)
+        <span class="kw">if</span> <span class="ty">self</span>.is_empty(): <span class="ty">self</span>.front = <span class="num">0</span>
+        <span class="ty">self</span>.rear += <span class="num">1</span>
+        <span class="ty">self</span>.q[<span class="ty">self</span>.rear] = item
+
+    <span class="kw">def</span> <span class="fn">dequeue</span>(<span class="ty">self</span>):
+        <span class="kw">if</span> <span class="ty">self</span>.is_empty(): <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Queue empty"</span>)
+        item = <span class="ty">self</span>.q[<span class="ty">self</span>.front]
+        <span class="ty">self</span>.q[<span class="ty">self</span>.front] = <span class="kw">None</span>
+        <span class="kw">if</span> <span class="ty">self</span>.front == <span class="ty">self</span>.rear:
+            <span class="ty">self</span>.front = <span class="ty">self</span>.rear = -<span class="num">1</span>
+        <span class="kw">else</span>:
+            <span class="ty">self</span>.front += <span class="num">1</span>
+        <span class="kw">return</span> item</code></pre>
+    </div>
+    <div id="lq-java" class="code-panel">
+<pre><code><span class="kw">public class</span> <span class="ty">LinearQueue</span> {
+    <span class="kw">private</span> <span class="ty">String</span>[] q;
+    <span class="kw">private int</span> front, rear, size;
+
+    <span class="kw">public</span> <span class="fn">LinearQueue</span>(<span class="kw">int</span> size) {
+        <span class="kw">this</span>.size = size;
+        q = <span class="kw">new</span> <span class="ty">String</span>[size];
+        front = rear = -<span class="num">1</span>;
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> front == -<span class="num">1</span>; }
+    <span class="kw">public boolean</span> <span class="fn">isFull</span>()  { <span class="kw">return</span> rear == size - <span class="num">1</span>; }
+
+    <span class="kw">public void</span> <span class="fn">enqueue</span>(<span class="ty">String</span> item) {
+        <span class="kw">if</span> (<span class="fn">isFull</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Full"</span>);
+        <span class="kw">if</span> (<span class="fn">isEmpty</span>()) front = <span class="num">0</span>;
+        q[++rear] = item;
+    }
+
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">dequeue</span>() {
+        <span class="kw">if</span> (<span class="fn">isEmpty</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Empty"</span>);
+        <span class="ty">String</span> item = q[front];
+        q[front] = <span class="kw">null</span>;
+        <span class="kw">if</span> (front == rear) front = rear = -<span class="num">1</span>;
+        <span class="kw">else</span> front++;
+        <span class="kw">return</span> item;
+    }
+}</code></pre>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION C – CIRCULAR QUEUE
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="section s-circ" id="circular">
+<div class="container">
+
+  <div class="sec-header fade-in">
+    <div class="sec-badge" style="background:var(--circ-acc);color:#0a2a22">C</div>
+    <div>
+      <p class="sec-label" style="color:var(--circ-acc)">Section C</p>
+      <h2 class="sec-title" style="color:#fff">Circular Queue</h2>
+      <p class="sec-sub">Solving Wasted Space · Wrap-Around · Modulo Arithmetic</p>
+    </div>
+  </div>
+
+  <div class="key-point fade-in" style="background:rgba(0,229,190,.08);border-color:var(--circ-acc)">
+    <strong>The Key Formula:</strong><br>
+    <code style="font-family:var(--font-code);color:var(--circ-acc)">rear  = (rear  + 1) MOD maxSize</code> — on ENQUEUE<br>
+    <code style="font-family:var(--font-code);color:var(--circ-acc)">front = (front + 1) MOD maxSize</code> — on DEQUEUE<br>
+    <br>This creates a <strong>ring</strong> — when rear reaches the end it wraps back to index 0, reusing freed space.
+  </div>
+
+  <div class="card-grid fade-in">
+    <div class="card" style="background:var(--circ-card);border-color:rgba(0,229,190,.25)">
+      <div class="card-icon">🔴</div>
+      <div class="card-title" style="color:#ff6b6b">The Linear Queue Problem</div>
+      <p>After repeated enqueue/dequeue, rear advances to the end and the queue is reported FULL — even though empty slots exist at the front. Space is permanently wasted.</p>
+    </div>
+    <div class="card" style="background:var(--circ-card);border-color:rgba(0,229,190,.25)">
+      <div class="card-icon">✅</div>
+      <div class="card-title" style="color:var(--circ-acc)">The Circular Solution</div>
+      <p>The array acts as a ring. Rear wraps around using modulo. Freed space at the front is automatically reused when rear wraps back to those indices.</p>
+    </div>
+    <div class="card" style="background:var(--circ-card);border-color:rgba(0,229,190,.25)">
+      <div class="card-icon">🧮</div>
+      <div class="card-title" style="color:var(--circ-acc)">Full vs Empty — Critical!</div>
+      <p>⚠️ You <strong>cannot</strong> use <code style="font-family:var(--font-code)">front==rear</code> alone — this is true for both states!</p>
+      <p style="margin-top:.5rem"><strong>Use a size counter:</strong><br>
+      <code style="font-family:var(--font-code);color:var(--circ-acc)">isEmpty: size == 0</code><br>
+      <code style="font-family:var(--font-code);color:var(--circ-acc)">isFull:  size == maxSize</code></p>
+    </div>
+  </div>
+
+  <!-- CRITICAL Walkthrough -->
+  <div class="walkthrough fade-in">
+    <h3 style="color:var(--circ-acc)">⭐ Critical Walkthrough — size=5, front=0, rear=0, size=0</h3>
+    <div class="wt-grid">
+
+      <div class="wt-step" style="background:var(--circ-card)">
+        <div class="wt-op" style="color:var(--circ-acc)">ENQUEUE A → B → C</div>
+        <div class="wt-array">
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.15);color:var(--circ-acc)">A</div><div class="wt-label" style="color:var(--circ-acc)">F=0</div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.1);color:#ccc">B</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell active" style="background:var(--circ-acc);color:#0a2a22">C</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">3</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">4</div></div>
+        </div>
+        <div class="wt-note">After 3 enqueues: front=0, rear=3, size=3. Rear points to next empty slot.</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--circ-card)">
+        <div class="wt-op" style="color:#FFAA00">DEQUEUE — returns A</div>
+        <div class="wt-array">
+          <div><div class="wt-cell empty" style="border-color:var(--circ-acc);border-style:dashed">✓</div><div class="wt-label" style="color:var(--circ-acc)">FREE</div></div>
+          <div><div class="wt-cell active" style="background:var(--circ-acc);color:#0a2a22">B</div><div class="wt-label" style="color:var(--circ-acc)">F=1</div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.1);color:#ccc">C</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">3</div></div>
+          <div><div class="wt-cell empty">_</div><div class="wt-label">4</div></div>
+        </div>
+        <div class="wt-note">Returns A. front=(0+1)%5=1. size=2. Index 0 FREED and will be reused!</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--circ-card)">
+        <div class="wt-op" style="color:var(--circ-acc)">ENQUEUE D &amp; E</div>
+        <div class="wt-array">
+          <div><div class="wt-cell empty" style="border-color:var(--circ-acc);border-style:dashed">✓</div><div class="wt-label" style="color:var(--circ-acc)">FREE</div></div>
+          <div><div class="wt-cell active" style="background:rgba(0,229,190,.2);color:var(--circ-acc)">B</div><div class="wt-label" style="color:var(--circ-acc)">F=1</div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.1);color:#ccc">C</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.1);color:#ccc">D</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.15);color:var(--circ-acc)">E</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">rear=(4+1)%5=0 on next enqueue. Watch the WRAP!</div>
+      </div>
+
+      <div class="wt-step" style="background:var(--circ-card);border-color:var(--circ-acc);border-width:2px">
+        <div class="wt-op" style="color:var(--circ-acc)">ENQUEUE F — REAR WRAPS! ⭐</div>
+        <div class="wt-array">
+          <div><div class="wt-cell active" style="background:var(--circ-acc);color:#0a2a22">F</div><div class="wt-label" style="color:var(--circ-acc)">REUSED!</div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.2);color:var(--circ-acc)">B</div><div class="wt-label" style="color:var(--circ-acc)">F=1</div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.1);color:#ccc">C</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.1);color:#ccc">D</div><div class="wt-label"></div></div>
+          <div><div class="wt-cell" style="background:rgba(0,229,190,.15);color:var(--circ-acc)">E</div><div class="wt-label"></div></div>
+        </div>
+        <div class="wt-note">F stored at index 0 (was freed earlier)! rear=(4+1)%5=0. size=5=FULL. No space wasted!</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Common mistakes -->
+  <div class="key-point fade-in" style="background:rgba(255,107,107,.08);border-color:#ff6b6b">
+    <strong style="color:#ff6b6b">⚠️ Common Exam Mistakes (from AQA Examiner Reports):</strong><br>
+    1. Forgetting to check isEmpty() <em>before</em> dequeue<br>
+    2. Forgetting the MOD / % for wrap-around<br>
+    3. Describing a linear queue instead of circular<br>
+    4. Confusing front and rear pointer roles<br>
+    5. Not maintaining a size counter (using front==rear to test both full and empty)
+  </div>
+
+  <!-- Code -->
+  <div class="code-tabs fade-in">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'cq-pseudo')">Pseudocode</button>
+      <button class="tab-btn" onclick="switchTab(this,'cq-py')">Python</button>
+      <button class="tab-btn" onclick="switchTab(this,'cq-java')">Java</button>
+    </div>
+    <div id="cq-pseudo" class="code-panel active">
+<pre><code><span class="ps-fn">function</span> <span class="fn">enqueue</span>(item):
+  <span class="ps-kw">if</span> size == maxSize <span class="ps-kw">then</span>
+    output <span class="st">"Queue full"</span>
+  <span class="ps-kw">else</span>
+    queue[rear] <span class="ps-op">←</span> item
+    rear <span class="ps-op">←</span> (rear + 1) <span class="ps-op">MOD</span> maxSize   <span class="ps-cm">← THE KEY LINE</span>
+    size <span class="ps-op">←</span> size + 1
+
+<span class="ps-fn">function</span> <span class="fn">dequeue</span>():
+  <span class="ps-kw">if</span> size == 0 <span class="ps-kw">then</span>
+    output <span class="st">"Queue empty"</span>
+  <span class="ps-kw">else</span>
+    item <span class="ps-op">←</span> queue[front]
+    front <span class="ps-op">←</span> (front + 1) <span class="ps-op">MOD</span> maxSize  <span class="ps-cm">← AND THIS ONE</span>
+    size <span class="ps-op">←</span> size - 1
+    <span class="ps-kw">return</span> item
+
+<span class="ps-fn">function</span> <span class="fn">isEmpty</span>(): <span class="ps-kw">return</span> size == 0
+<span class="ps-fn">function</span> <span class="fn">isFull</span>():  <span class="ps-kw">return</span> size == maxSize</code></pre>
+    </div>
+    <div id="cq-py" class="code-panel">
+<pre><code><span class="kw">class</span> <span class="ty">CircularQueue</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="ty">self</span>, size):
+        <span class="ty">self</span>.q = [<span class="kw">None</span>] * size
+        <span class="ty">self</span>.max   = size
+        <span class="ty">self</span>.front = <span class="num">0</span>
+        <span class="ty">self</span>.rear  = <span class="num">0</span>
+        <span class="ty">self</span>.size  = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="ty">self</span>): <span class="kw">return</span> <span class="ty">self</span>.size == <span class="num">0</span>
+    <span class="kw">def</span> <span class="fn">is_full</span>(<span class="ty">self</span>):  <span class="kw">return</span> <span class="ty">self</span>.size == <span class="ty">self</span>.max
+
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="ty">self</span>, item):
+        <span class="kw">if</span> <span class="ty">self</span>.is_full(): <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Full"</span>)
+        <span class="ty">self</span>.q[<span class="ty">self</span>.rear] = item
+        <span class="ty">self</span>.rear = (<span class="ty">self</span>.rear + <span class="num">1</span>) % <span class="ty">self</span>.max   <span class="cm"># WRAP!</span>
+        <span class="ty">self</span>.size += <span class="num">1</span>
+
+    <span class="kw">def</span> <span class="fn">dequeue</span>(<span class="ty">self</span>):
+        <span class="kw">if</span> <span class="ty">self</span>.is_empty(): <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Empty"</span>)
+        item = <span class="ty">self</span>.q[<span class="ty">self</span>.front]
+        <span class="ty">self</span>.q[<span class="ty">self</span>.front] = <span class="kw">None</span>
+        <span class="ty">self</span>.front = (<span class="ty">self</span>.front + <span class="num">1</span>) % <span class="ty">self</span>.max  <span class="cm"># WRAP!</span>
+        <span class="ty">self</span>.size -= <span class="num">1</span>
+        <span class="kw">return</span> item</code></pre>
+    </div>
+    <div id="cq-java" class="code-panel">
+<pre><code><span class="kw">public class</span> <span class="ty">CircularQueue</span> {
+    <span class="kw">private</span> <span class="ty">String</span>[] q;
+    <span class="kw">private int</span> front, rear, size, max;
+
+    <span class="kw">public</span> <span class="fn">CircularQueue</span>(<span class="kw">int</span> max) {
+        <span class="kw">this</span>.max = max;
+        q = <span class="kw">new</span> <span class="ty">String</span>[max];
+        front = rear = size = <span class="num">0</span>;
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> size == <span class="num">0</span>; }
+    <span class="kw">public boolean</span> <span class="fn">isFull</span>()  { <span class="kw">return</span> size == max; }
+
+    <span class="kw">public void</span> <span class="fn">enqueue</span>(<span class="ty">String</span> item) {
+        <span class="kw">if</span> (<span class="fn">isFull</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Full"</span>);
+        q[rear] = item;
+        rear = (rear + <span class="num">1</span>) % max;  <span class="cm">// WRAP AROUND!</span>
+        size++;
+    }
+
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">dequeue</span>() {
+        <span class="kw">if</span> (<span class="fn">isEmpty</span>()) <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Empty"</span>);
+        <span class="ty">String</span> item = q[front];
+        q[front] = <span class="kw">null</span>;
+        front = (front + <span class="num">1</span>) % max;  <span class="cm">// WRAP AROUND!</span>
+        size--;
+        <span class="kw">return</span> item;
+    }
+}</code></pre>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION D – PRIORITY QUEUE
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="section s-prio" id="priority">
+<div class="container">
+
+  <div class="sec-header fade-in">
+    <div class="sec-badge" style="background:var(--prio-acc);color:#fff">D</div>
+    <div>
+      <p class="sec-label" style="color:var(--prio-acc)">Section D</p>
+      <h2 class="sec-title" style="color:#fff">Priority Queue</h2>
+      <p class="sec-sub">Items Ordered by Priority · Not by Arrival Time</p>
+    </div>
+  </div>
+
+  <div class="key-point fade-in" style="background:rgba(255,107,107,.08);border-color:var(--prio-acc)">
+    In a priority queue, items are dequeued in <strong>priority order</strong>, not arrival order. The item with the <strong>highest priority</strong> is always removed first. Items with equal priority are served FIFO.
+  </div>
+
+  <div class="card-grid fade-in">
+    <div class="card" style="background:var(--prio-card);border-color:rgba(255,107,107,.25)">
+      <div class="card-icon">📋</div>
+      <div class="card-title" style="color:var(--prio-acc)">How it Works</div>
+      <ul>
+        <li>Each item has a priority value</li>
+        <li>On dequeue: remove highest priority item</li>
+        <li>Implementation: sorted array (O(n) insert, O(1) remove)</li>
+        <li>Or: unsorted array (O(1) insert, O(n) remove)</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--prio-card);border-color:rgba(255,107,107,.25)">
+      <div class="card-icon">✅</div>
+      <div class="card-title" style="color:var(--prio-acc)">Ideal Use Cases</div>
+      <ul>
+        <li>A&amp;E hospital triage (critical patients first)</li>
+        <li>OS process scheduling (real-time tasks)</li>
+        <li>Network packet routing (QoS)</li>
+        <li>Dijkstra's shortest path algorithm</li>
+        <li>Print queues with job priorities</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--prio-card);border-color:rgba(255,107,107,.25)">
+      <div class="card-icon">⚖️</div>
+      <div class="card-title" style="color:var(--prio-acc)">Pros &amp; Cons</div>
+      <p style="color:#50fa7b;font-size:.85rem;font-weight:600;margin-bottom:.3rem">Pros</p>
+      <ul><li>Critical items processed first</li><li>Flexible ordering</li></ul>
+      <p style="color:var(--prio-acc);font-size:.85rem;font-weight:600;margin:.6rem 0 .3rem">Cons</p>
+      <ul><li>More complex than FIFO queue</li><li>Low-priority items may starve</li><li>Insertion O(n) for sorted array</li></ul>
+    </div>
+  </div>
+
+  <!-- PQ Walkthrough -->
+  <div class="walkthrough fade-in">
+    <h3 style="color:var(--prio-acc)">Walkthrough — Higher number = Higher Priority</h3>
+
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+      <div class="pq-row">
+        <span class="pq-label">enqueue B(2)</span>
+        <div class="pq-item front"><span class="pn">B</span><span class="pv">p=2</span></div>
+        <span style="font-size:.8rem;opacity:.5;margin-left:.5rem">Single item</span>
+      </div>
+      <div class="pq-row">
+        <span class="pq-label">enqueue A(5)</span>
+        <div class="pq-item front"><span class="pn">A</span><span class="pv">p=5</span></div>
+        <div class="pq-item"><span class="pn">B</span><span class="pv">p=2</span></div>
+        <span style="font-size:.8rem;opacity:.5;margin-left:.5rem">A inserted <em>before</em> B — higher priority</span>
+      </div>
+      <div class="pq-row">
+        <span class="pq-label">enqueue C(1)</span>
+        <div class="pq-item front"><span class="pn">A</span><span class="pv">p=5</span></div>
+        <div class="pq-item"><span class="pn">B</span><span class="pv">p=2</span></div>
+        <div class="pq-item"><span class="pn">C</span><span class="pv">p=1</span></div>
+        <span style="font-size:.8rem;opacity:.5;margin-left:.5rem">C lowest priority → end</span>
+      </div>
+      <div class="pq-row">
+        <span class="pq-label">enqueue D(3)</span>
+        <div class="pq-item front"><span class="pn">A</span><span class="pv">p=5</span></div>
+        <div class="pq-item"><span class="pn">D</span><span class="pv">p=3</span></div>
+        <div class="pq-item"><span class="pn">B</span><span class="pv">p=2</span></div>
+        <div class="pq-item"><span class="pn">C</span><span class="pv">p=1</span></div>
+        <span style="font-size:.8rem;opacity:.5;margin-left:.5rem">D between A and B</span>
+      </div>
+      <div class="pq-row">
+        <span class="pq-label" style="color:var(--prio-acc)">DEQUEUE →</span>
+        <div class="pq-item front" style="background:rgba(255,107,107,.25);border-color:#ff6b6b"><span class="pn" style="color:#ff6b6b">A(5)</span></div>
+        <span class="pq-arrow">removed</span>
+        <div class="pq-item"><span class="pn">D</span><span class="pv">p=3</span></div>
+        <div class="pq-item"><span class="pn">B</span><span class="pv">p=2</span></div>
+        <div class="pq-item"><span class="pn">C</span><span class="pv">p=1</span></div>
+      </div>
+      <div class="pq-row">
+        <span class="pq-label" style="color:var(--prio-acc)">DEQUEUE →</span>
+        <div class="pq-item front" style="background:rgba(255,107,107,.25);border-color:#ff6b6b"><span class="pn" style="color:#ff6b6b">D(3)</span></div>
+        <span class="pq-arrow">removed</span>
+        <div class="pq-item"><span class="pn">B</span><span class="pv">p=2</span></div>
+        <div class="pq-item"><span class="pn">C</span><span class="pv">p=1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-tabs fade-in">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'pq-py')">Python</button>
+    </div>
+    <div id="pq-py" class="code-panel active">
+<pre><code><span class="kw">class</span> <span class="ty">PriorityQueue</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="ty">self</span>):
+        <span class="ty">self</span>.q = []  <span class="cm"># list of (priority, item) tuples</span>
+
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="ty">self</span>, item, priority):
+        <span class="cm"># Insert in sorted position (descending priority)</span>
+        pos = <span class="num">0</span>
+        <span class="kw">while</span> pos < len(<span class="ty">self</span>.q) <span class="kw">and</span> <span class="ty">self</span>.q[pos][<span class="num">0</span>] >= priority:
+            pos += <span class="num">1</span>
+        <span class="ty">self</span>.q.insert(pos, (priority, item))
+
+    <span class="kw">def</span> <span class="fn">dequeue</span>(<span class="ty">self</span>):
+        <span class="kw">if not</span> <span class="ty">self</span>.q: <span class="kw">raise</span> <span class="ty">Exception</span>(<span class="st">"Empty"</span>)
+        <span class="kw">return</span> <span class="ty">self</span>.q.pop(<span class="num">0</span>)[<span class="num">1</span>]  <span class="cm"># remove from front</span>
+
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="ty">self</span>): <span class="kw">return</span> len(<span class="ty">self</span>.q) == <span class="num">0</span></code></pre>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION E – HASH MAPS
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="section s-hash" id="hashmap">
+<div class="container">
+
+  <div class="sec-header fade-in">
+    <div class="sec-badge" style="background:var(--hash-acc);color:#1a1a1a">E</div>
+    <div>
+      <p class="sec-label" style="color:var(--hash-acc)">Section E</p>
+      <h2 class="sec-title" style="color:#fff">Hash Maps &amp; Hash Tables</h2>
+      <p class="sec-sub">Key-Value Pairs · Hashing · Collisions · Rehashing</p>
+    </div>
+  </div>
+
+  <div class="key-point fade-in" style="background:rgba(255,152,0,.08);border-color:var(--hash-acc)">
+    A <strong>hash table</strong> maps <strong>keys to values</strong> using a <strong>hash function</strong> to compute an array index, enabling near <strong>O(1)</strong> average-case lookup, insertion and deletion.
+  </div>
+
+  <div class="card-grid fade-in">
+    <div class="card" style="background:var(--hash-card);border-color:rgba(255,152,0,.25)">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title" style="color:var(--hash-acc)">The Hashing Process</div>
+      <ul>
+        <li>Step 1: Take a key (e.g. "Alice")</li>
+        <li>Step 2: Apply hash function → index</li>
+        <li>Step 3: Store value at that index</li>
+        <li>Lookup: hash again → go directly → O(1)!</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--hash-card);border-color:rgba(255,152,0,.25)">
+      <div class="card-icon">✅</div>
+      <div class="card-title" style="color:var(--hash-acc)">Ideal Use Cases</div>
+      <ul>
+        <li>Dictionaries &amp; symbol tables</li>
+        <li>Database indexing</li>
+        <li>Caching (web / CPU)</li>
+        <li>Counting word frequency</li>
+        <li>Password storage (cryptographic hash)</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--hash-card);border-color:rgba(255,152,0,.25)">
+      <div class="card-icon">⚖️</div>
+      <div class="card-title" style="color:var(--hash-acc)">Pros &amp; Cons</div>
+      <p style="color:#50fa7b;font-size:.85rem;font-weight:600;margin-bottom:.3rem">Pros</p>
+      <ul><li>Average O(1) lookup, insert, delete</li><li>Very efficient for large datasets</li><li>Flexible key types</li></ul>
+      <p style="color:var(--hash-acc);font-size:.85rem;font-weight:600;margin:.6rem 0 .3rem">Cons</p>
+      <ul><li>Collisions degrade performance</li><li>Worst case O(n) with many collisions</li><li>No ordering of keys</li></ul>
+    </div>
+  </div>
+
+  <!-- Hash function walkthrough -->
+  <div class="walkthrough fade-in">
+    <h3 style="color:var(--hash-acc)">Hashing Walkthrough — h(key) = sum of ASCII values MOD 7</h3>
+
+    <div style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.5rem">
+      <div class="wt-step" style="background:var(--hash-card)">
+        <div class="wt-op" style="color:var(--hash-acc)">"cat"</div>
+        <p style="font-family:var(--font-code);font-size:.85rem;color:#ccc">c(99) + a(97) + t(116) = 312 &nbsp;&nbsp;→&nbsp;&nbsp; 312 MOD 7 = <strong style="color:var(--hash-acc)">4</strong> &nbsp;&nbsp;→ stored at index 4</p>
+      </div>
+      <div class="wt-step" style="background:var(--hash-card)">
+        <div class="wt-op" style="color:var(--hash-acc)">"dog"</div>
+        <p style="font-family:var(--font-code);font-size:.85rem;color:#ccc">d(100) + o(111) + g(103) = 314 &nbsp;&nbsp;→&nbsp;&nbsp; 314 MOD 7 = <strong style="color:var(--hash-acc)">6</strong> &nbsp;&nbsp;→ stored at index 6</p>
+      </div>
+      <div class="wt-step" style="background:var(--hash-card)">
+        <div class="wt-op" style="color:var(--hash-acc)">"bat"</div>
+        <p style="font-family:var(--font-code);font-size:.85rem;color:#ccc">b(98) + a(97) + t(116) = 311 &nbsp;&nbsp;→&nbsp;&nbsp; 311 MOD 7 = <strong style="color:var(--hash-acc)">3</strong> &nbsp;&nbsp;→ stored at index 3</p>
+      </div>
+      <div class="wt-step" style="background:var(--hash-card);border-color:#ff6b6b;border-width:2px">
+        <div class="wt-op" style="color:#ff6b6b">"hat" — COLLISION!</div>
+        <p style="font-family:var(--font-code);font-size:.85rem;color:#ccc">h(104) + a(97) + t(116) = 317 &nbsp;&nbsp;→&nbsp;&nbsp; 317 MOD 7 = <strong style="color:#ff6b6b">2</strong> &nbsp;&nbsp;→ index 2... but wait!</p>
+        <p style="font-size:.85rem;color:#ff8888;margin-top:.4rem">⚠️ Check walkthrough — "cat" was stored at index 4, not 2. But in the slides, index 2 is shown occupied — a collision occurs when the computed slot is already taken.</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--hash-acc);margin-bottom:1rem">Array State After Insertions</h3>
+    <div class="hash-array">
+      <div class="hash-cell empty"><span class="hi">0</span><div class="hv">—</div></div>
+      <div class="hash-cell empty"><span class="hi">1</span><div class="hv">—</div></div>
+      <div class="hash-cell empty"><span class="hi">2</span><div class="hv">—</div></div>
+      <div class="hash-cell"><span class="hi">3</span><div class="hv">bat</div></div>
+      <div class="hash-cell"><span class="hi">4</span><div class="hv">cat</div></div>
+      <div class="hash-cell empty"><span class="hi">5</span><div class="hv">—</div></div>
+      <div class="hash-cell"><span class="hi">6</span><div class="hv">dog</div></div>
+    </div>
+
+    <h3 style="color:var(--hash-acc);margin:1.5rem 0 .75rem">Rehashing — Linear Probing for "hat" (collides at occupied slot)</h3>
+    <div class="key-point" style="background:rgba(255,152,0,.08);border-color:var(--hash-acc)">
+      When a collision occurs: try <code style="font-family:var(--font-code)">(index + 1) MOD maxSize</code> → if still occupied, try <code style="font-family:var(--font-code)">(index + 2) MOD maxSize</code>, and so on until an empty slot is found.
+    </div>
+    <div class="hash-array" style="margin-top:1rem">
+      <div class="hash-cell empty"><span class="hi">0</span><div class="hv">—</div></div>
+      <div class="hash-cell empty"><span class="hi">1</span><div class="hv">—</div></div>
+      <div class="hash-cell empty"><span class="hi">2</span><div class="hv">—</div></div>
+      <div class="hash-cell"><span class="hi">3</span><div class="hv">bat</div></div>
+      <div class="hash-cell collide"><span class="hi">4</span><div class="hv">cat ✗</div></div>
+      <div class="hash-cell rehashed"><span class="hi">5</span><div class="hv">hat ✓</div></div>
+      <div class="hash-cell"><span class="hi">6</span><div class="hv">dog</div></div>
+    </div>
+    <p style="font-size:.85rem;color:var(--circ-acc);margin-top:.5rem">"hat" rehashed to index 5 via linear probing ✓</p>
+  </div>
+
+  <!-- Code -->
+  <div class="code-tabs fade-in">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'hm-py')">Python</button>
+      <button class="tab-btn" onclick="switchTab(this,'hm-java')">Java</button>
+    </div>
+    <div id="hm-py" class="code-panel active">
+<pre><code><span class="kw">class</span> <span class="ty">HashMap</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="ty">self</span>, size=<span class="num">7</span>):
+        <span class="ty">self</span>.size = size
+        <span class="ty">self</span>.keys = [<span class="kw">None</span>] * size
+        <span class="ty">self</span>.vals = [<span class="kw">None</span>] * size
+
+    <span class="kw">def</span> <span class="fn">_hash</span>(<span class="ty">self</span>, key):
+        <span class="kw">return</span> sum(ord(c) <span class="kw">for</span> c <span class="kw">in</span> str(key)) % <span class="ty">self</span>.size
+
+    <span class="kw">def</span> <span class="fn">put</span>(<span class="ty">self</span>, key, value):
+        idx = <span class="ty">self</span>._hash(key)
+        <span class="kw">while</span> <span class="ty">self</span>.keys[idx] <span class="kw">is not None</span>:
+            <span class="kw">if</span> <span class="ty">self</span>.keys[idx] == key:   <span class="cm"># update existing</span>
+                <span class="ty">self</span>.vals[idx] = value
+                <span class="kw">return</span>
+            idx = (idx + <span class="num">1</span>) % <span class="ty">self</span>.size  <span class="cm"># linear probe</span>
+        <span class="ty">self</span>.keys[idx] = key
+        <span class="ty">self</span>.vals[idx] = value
+
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="ty">self</span>, key):
+        idx = <span class="ty">self</span>._hash(key)
+        <span class="kw">while</span> <span class="ty">self</span>.keys[idx] <span class="kw">is not None</span>:
+            <span class="kw">if</span> <span class="ty">self</span>.keys[idx] == key:
+                <span class="kw">return</span> <span class="ty">self</span>.vals[idx]
+            idx = (idx + <span class="num">1</span>) % <span class="ty">self</span>.size
+        <span class="kw">return None</span>  <span class="cm"># not found</span></code></pre>
+    </div>
+    <div id="hm-java" class="code-panel">
+<pre><code><span class="kw">public class</span> <span class="ty">HashMap</span> {
+    <span class="kw">private</span> <span class="ty">String</span>[] keys, vals;
+    <span class="kw">private int</span> size;
+
+    <span class="kw">public</span> <span class="fn">HashMap</span>(<span class="kw">int</span> size) {
+        <span class="kw">this</span>.size = size;
+        keys = <span class="kw">new</span> <span class="ty">String</span>[size];
+        vals = <span class="kw">new</span> <span class="ty">String</span>[size];
+    }
+
+    <span class="kw">private int</span> <span class="fn">hash</span>(<span class="ty">String</span> key) {
+        <span class="kw">int</span> sum = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">char</span> c : key.toCharArray()) sum += (<span class="kw">int</span>) c;
+        <span class="kw">return</span> sum % size;
+    }
+
+    <span class="kw">public void</span> <span class="fn">put</span>(<span class="ty">String</span> k, <span class="ty">String</span> v) {
+        <span class="kw">int</span> idx = <span class="fn">hash</span>(k);
+        <span class="kw">while</span> (keys[idx] != <span class="kw">null</span>) {
+            <span class="kw">if</span> (keys[idx].equals(k)) { vals[idx] = v; <span class="kw">return</span>; }
+            idx = (idx + <span class="num">1</span>) % size;
+        }
+        keys[idx] = k; vals[idx] = v;
+    }
+
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">get</span>(<span class="ty">String</span> k) {
+        <span class="kw">int</span> idx = <span class="fn">hash</span>(k);
+        <span class="kw">while</span> (keys[idx] != <span class="kw">null</span>) {
+            <span class="kw">if</span> (keys[idx].equals(k)) <span class="kw">return</span> vals[idx];
+            idx = (idx + <span class="num">1</span>) % size;
+        }
+        <span class="kw">return null</span>;
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="exam-tip fade-in">
+    <div class="exam-tip-title">💡 Exam Tips — Hash Maps</div>
+    <ul>
+      <li>Know how to apply a hash function manually (e.g. ASCII sum MOD tableSize)</li>
+      <li>A <strong>collision</strong> = two different keys produce the same hash value</li>
+      <li><strong>Rehashing</strong> = finding the next available slot (linear probing)</li>
+      <li>The hash function determines WHERE data is stored</li>
+      <li>A <strong>dictionary</strong> is a key-value pair ADT — typically implemented using a hash table</li>
+    </ul>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SUMMARY
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="section s-summary" id="summary">
+<div class="container">
+
+  <div class="sec-header fade-in">
+    <div class="sec-badge" style="background:var(--cover-acc);color:#0a0a0a">★</div>
+    <div>
+      <p class="sec-label" style="color:var(--cover-acc)">Summary</p>
+      <h2 class="sec-title" style="color:#fff">Data Structure Comparison</h2>
+      <p class="sec-sub">AQA 7517 · Paper 1 Topic · 4.2 Fundamentals of Data Structures</p>
+    </div>
+  </div>
+
+  <div class="fade-in" style="overflow-x:auto">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Structure</th>
+          <th>Order</th>
+          <th>Key Operations</th>
+          <th>Full Check</th>
+          <th>Empty Check</th>
+          <th>Best Used For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--stacks-acc)">Stack</td>
+          <td><span class="badge-lifo">LIFO</span></td>
+          <td><code>push</code>, <code>pop</code>, <code>peek</code></td>
+          <td><code>top == max−1</code></td>
+          <td><code>top == −1</code></td>
+          <td>Undo, recursion, RPN</td>
+        </tr>
+        <tr>
+          <td style="color:var(--linear-acc)">Linear Queue</td>
+          <td><span class="badge-fifo">FIFO</span></td>
+          <td><code>enqueue</code>, <code>dequeue</code></td>
+          <td><code>rear == max−1</code></td>
+          <td><code>front == −1</code></td>
+          <td>Scheduling, BFS</td>
+        </tr>
+        <tr>
+          <td style="color:var(--circ-acc)">Circular Queue</td>
+          <td><span class="badge-fifo">FIFO</span></td>
+          <td><code>enqueue</code>, <code>dequeue</code></td>
+          <td><code>size == max</code></td>
+          <td><code>size == 0</code></td>
+          <td>Efficient memory reuse</td>
+        </tr>
+        <tr>
+          <td style="color:var(--prio-acc)">Priority Queue</td>
+          <td><span class="badge-prio">Priority</span></td>
+          <td><code>enqueue</code>, <code>dequeue</code></td>
+          <td><code>size == max</code></td>
+          <td><code>size == 0</code></td>
+          <td>OS scheduling, triage</td>
+        </tr>
+        <tr>
+          <td style="color:var(--hash-acc)">Hash Map</td>
+          <td><span class="badge-none">None</span></td>
+          <td><code>put</code>, <code>get</code>, <code>hash</code></td>
+          <td>load factor</td>
+          <td>all <code>None</code></td>
+          <td>Fast key-value lookup</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quick-fire reminders -->
+  <div class="card-grid fade-in" style="margin-top:2.5rem">
+    <div class="key-point" style="background:rgba(233,69,96,.08);border-color:var(--stacks-acc)">
+      <strong style="color:var(--stacks-acc)">Stack key formula:</strong><br>
+      Push: <code>top = top + 1</code><br>
+      Pop:&nbsp; <code>top = top - 1</code>
+    </div>
+    <div class="key-point" style="background:rgba(0,229,190,.08);border-color:var(--circ-acc)">
+      <strong style="color:var(--circ-acc)">Circular Queue wrap formula:</strong><br>
+      <code>rear  = (rear  + 1) MOD maxSize</code><br>
+      <code>front = (front + 1) MOD maxSize</code>
+    </div>
+    <div class="key-point" style="background:rgba(255,152,0,.08);border-color:var(--hash-acc)">
+      <strong style="color:var(--hash-acc)">Hash function example:</strong><br>
+      <code>h(key) = sum of ASCII values MOD tableSize</code><br>
+      Collision → linear probe: <code>(idx+1) MOD size</code>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
+<footer>
+  <p>AQA A-Level Computer Science 7517 &nbsp;·&nbsp; 4.2 Fundamentals of Data Structures &nbsp;·&nbsp; Revision Resource</p>
+  <p style="margin-top:.5rem">
+    <a href="https://www.aqa.org.uk/subjects/computer-science-and-it/a-level/computer-science-7517" target="_blank">AQA 7517 Specification</a>
+    &nbsp;·&nbsp;
+    <a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html" target="_blank">Interactive Visualisations</a>
+    &nbsp;·&nbsp;
+    <a href="https://visualgo.net/en" target="_blank">VisuAlgo</a>
+    &nbsp;·&nbsp;
+    <a href="https://isaaccomputerscience.org/topics/data_structures" target="_blank">Isaac CS</a>
+  </p>
+</footer>
+
+<!-- ─── JS ───────────────────────────────────────────────────────────────── -->
+<script>
+// Tab switching
+function switchTab(btn, panelId) {
+  const tabBar = btn.closest('.tab-bar');
+  const codeTabsEl = btn.closest('.code-tabs');
+  tabBar.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  codeTabsEl.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// Intersection Observer for fade-in
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(sec => { if (window.scrollY >= sec.offsetTop - 100) current = sec.id; });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+}, { passive: true });
+</script>
+
+</body>
+</html>
