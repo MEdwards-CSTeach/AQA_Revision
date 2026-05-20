@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.8 ELCP Revision – AQA A-Level Computer Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ethical: #7C3AED;
+    --ethical-light: #F3EEFF;
+    --ethical-mid: #C4B5FD;
+    --legal: #0369A1;
+    --legal-light: #E0F2FE;
+    --legal-mid: #7DD3FC;
+    --cultural: #059669;
+    --cultural-light: #ECFDF5;
+    --cultural-mid: #6EE7B7;
+    --privacy: #D97706;
+    --privacy-light: #FFFBEB;
+    --privacy-mid: #FCD34D;
+    --bg: #0F172A;
+    --surface: #1E293B;
+    --surface2: #273449;
+    --text: #F1F5F9;
+    --text-muted: #94A3B8;
+    --border: #334155;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(217,119,6,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  header p { color: var(--text-muted); font-size: 1rem; }
+
+  .elcp-badges {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .badge {
+    padding: 0.4rem 1.1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+  }
+  .badge-e { background: var(--ethical); color: #fff; }
+  .badge-l { background: var(--legal); color: #fff; }
+  .badge-c { background: var(--cultural); color: #fff; }
+  .badge-p { background: var(--privacy); color: var(--bg); }
+
+  nav.toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem auto;
+    max-width: 900px;
+  }
+  nav.toc h2 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+  nav.toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  nav.toc a { text-decoration: none; color: var(--text); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.3rem 0.8rem; font-size: 0.875rem; transition: all 0.2s; display: block; }
+  nav.toc a:hover { border-color: var(--ethical-mid); color: #fff; }
+
+  main { max-width: 960px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
+
+  .section { margin-bottom: 2.5rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .section-title { font-size: 1.5rem; font-weight: 700; }
+  .section-subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+  /* Ethical styling */
+  .ethical .section-icon { background: rgba(124,58,237,0.2); }
+  .ethical .section-title { color: var(--ethical-mid); }
+  .ethical .section-header { border-color: var(--ethical); }
+
+  /* Legal styling */
+  .legal .section-icon { background: rgba(3,105,161,0.2); }
+  .legal .section-title { color: var(--legal-mid); }
+  .legal .section-header { border-color: var(--legal); }
+
+  /* Cultural styling */
+  .cultural .section-icon { background: rgba(5,150,105,0.2); }
+  .cultural .section-title { color: var(--cultural-mid); }
+  .cultural .section-header { border-color: var(--cultural); }
+
+  /* Privacy styling */
+  .privacy .section-icon { background: rgba(217,119,6,0.2); }
+  .privacy .section-title { color: var(--privacy-mid); }
+  .privacy .section-header { border-color: var(--privacy); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-ethical { border-left: 4px solid var(--ethical); }
+  .card-legal { border-left: 4px solid var(--legal); }
+  .card-cultural { border-left: 4px solid var(--cultural); }
+  .card-privacy { border-left: 4px solid var(--privacy); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .ethical .card h3, .card-ethical h3 { color: var(--ethical-mid); }
+  .legal .card h3, .card-legal h3 { color: var(--legal-mid); }
+  .cultural .card h3, .card-cultural h3 { color: var(--cultural-mid); }
+  .privacy .card h3, .card-privacy h3 { color: var(--privacy-mid); }
+
+  ul.bullet { list-style: none; padding: 0; }
+  ul.bullet li { padding: 0.25rem 0 0.25rem 1.25rem; position: relative; font-size: 0.95rem; color: var(--text-muted); }
+  ul.bullet li::before { content: '→'; position: absolute; left: 0; }
+  .ethical ul.bullet li::before { color: var(--ethical); }
+  .legal ul.bullet li::before { color: var(--legal-mid); }
+  .cultural ul.bullet li::before { color: var(--cultural); }
+  .privacy ul.bullet li::before { color: var(--privacy); }
+  .card-ethical ul.bullet li::before { color: var(--ethical); }
+  .card-legal ul.bullet li::before { color: var(--legal-mid); }
+  .card-cultural ul.bullet li::before { color: var(--cultural); }
+  .card-privacy ul.bullet li::before { color: var(--privacy); }
+
+  /* Legislation blocks */
+  .legislation-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .legislation-header {
+    background: rgba(3,105,161,0.15);
+    border-bottom: 1px solid rgba(125,211,252,0.2);
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .legislation-tag {
+    background: var(--legal);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .legislation-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--legal-mid);
+  }
+  .legislation-body { padding: 1rem 1.5rem; }
+  .legislation-body ul.bullet li::before { color: var(--legal-mid); }
+  .legislation-body ul.bullet li { color: var(--text-muted); }
+
+  .challenge-box {
+    background: rgba(5,150,105,0.08);
+    border: 1px solid var(--cultural);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+  }
+  .challenge-box h3 { color: var(--cultural-mid); margin-bottom: 0.5rem; font-size: 0.95rem; }
+
+  .tip-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .tip-box .tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+  .four-pillars {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 640px) { .four-pillars { grid-template-columns: 1fr; } }
+  .pillar {
+    border-radius: 14px;
+    padding: 1.25rem;
+    border: 1px solid transparent;
+  }
+  .pillar-e { background: var(--ethical-light); border-color: var(--ethical); color: #1a0533; }
+  .pillar-l { background: var(--legal-light); border-color: var(--legal); color: #012842; }
+  .pillar-c { background: var(--cultural-light); border-color: var(--cultural); color: #022c1a; }
+  .pillar-p { background: var(--privacy-light); border-color: var(--privacy); color: #2a1a00; }
+  .pillar-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .pillar-question { font-size: 1rem; font-weight: 700; }
+  .pillar-desc { font-size: 0.875rem; margin-top: 0.3rem; opacity: 0.75; }
+
+  .exam-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+  }
+  .exam-table th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .exam-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--text-muted);
+  }
+  .exam-table tr:last-child td { border-bottom: none; }
+  .exam-table tr:hover td { background: var(--surface2); }
+  .exam-table td:first-child, .exam-table td:nth-child(2) { color: var(--text); font-weight: 500; }
+
+  .elcp-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 2px;
+  }
+  .elcp-tag.e { background: var(--ethical); color: #fff; }
+  .elcp-tag.l { background: var(--legal); color: #fff; }
+  .elcp-tag.c { background: var(--cultural); color: #fff; }
+  .elcp-tag.p { background: var(--privacy); color: var(--bg); }
+
+  .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .checklist { grid-template-columns: 1fr; } }
+  .check-group {
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid transparent;
+  }
+  .check-group.cg-e { background: rgba(124,58,237,0.07); border-color: rgba(124,58,237,0.4); }
+  .check-group.cg-l { background: rgba(3,105,161,0.07); border-color: rgba(3,105,161,0.4); }
+  .check-group.cg-c { background: rgba(5,150,105,0.07); border-color: rgba(5,150,105,0.4); }
+  .check-group.cg-p { background: rgba(217,119,6,0.07); border-color: rgba(217,119,6,0.4); }
+  .check-group-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; }
+  .cg-e .check-group-title { color: var(--ethical-mid); }
+  .cg-l .check-group-title { color: var(--legal-mid); }
+  .cg-c .check-group-title { color: var(--cultural-mid); }
+  .cg-p .check-group-title { color: var(--privacy-mid); }
+  .check-item { display: flex; gap: 0.6rem; font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.35rem; align-items: flex-start; }
+  .check-item::before { content: '✓'; flex-shrink: 0; font-weight: 700; }
+  .cg-e .check-item::before { color: var(--ethical); }
+  .cg-l .check-item::before { color: var(--legal-mid); }
+  .cg-c .check-item::before { color: var(--cultural); }
+  .cg-p .check-item::before { color: var(--privacy); }
+
+  .worked-example {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 1rem;
+  }
+  .we-scenario {
+    background: var(--surface2);
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .we-scenario strong { color: var(--text); }
+  .we-body { padding: 1rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .we-body { grid-template-columns: 1fr; } }
+  .we-item { border-radius: 10px; padding: 0.9rem 1rem; }
+  .we-e { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.3); }
+  .we-l { background: rgba(3,105,161,0.1); border: 1px solid rgba(3,105,161,0.3); }
+  .we-c { background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.3); }
+  .we-p { background: rgba(217,119,6,0.1); border: 1px solid rgba(217,119,6,0.3); }
+  .we-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .we-e .we-label { color: var(--ethical-mid); }
+  .we-l .we-label { color: var(--legal-mid); }
+  .we-c .we-label { color: var(--cultural-mid); }
+  .we-p .we-label { color: var(--privacy-mid); }
+  .we-item p { font-size: 0.875rem; color: var(--text-muted); }
+
+  .exam-strategy {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .strategy-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+  }
+  .strategy-letter {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .sl-e { background: var(--ethical); color: #fff; }
+  .sl-l { background: var(--legal); color: #fff; }
+  .sl-c { background: var(--cultural); color: #fff; }
+  .sl-p { background: var(--privacy); color: var(--bg); }
+  .strategy-text { font-size: 0.9rem; color: var(--text-muted); }
+
+  .qtype-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .qtype-grid { grid-template-columns: 1fr; } }
+  .qtype-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+  }
+  .qtype-title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+  .qtype-marks { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+  .qtype-card p { font-size: 0.875rem; color: var(--text-muted); }
+
+  .warn-box {
+    background: rgba(217,119,6,0.08);
+    border: 1px solid rgba(217,119,6,0.3);
+    border-radius: 10px;
+    padding: 0.9rem 1.25rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .warn-box strong { color: var(--privacy-mid); }
+
+  section[id] { scroll-margin-top: 1.5rem; }
+
+  h2.page-section {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 2.5rem 0 1rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">AQA A-Level Computer Science 7517 · Paper 2 · Topic 4.8</div>
+  <h1>ELCP Revision Resource</h1>
+  <p>Consequences of Uses of Computing</p>
+  <div class="elcp-badges">
+    <span class="badge badge-e">E — Ethical</span>
+    <span class="badge badge-l">L — Legal</span>
+    <span class="badge badge-c">C — Cultural</span>
+    <span class="badge badge-p">P — Privacy</span>
+  </div>
+</header>
+
+<main>
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#ethical">Ethical</a></li>
+      <li><a href="#legal">Legal</a></li>
+      <li><a href="#cultural">Cultural</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#strategy">Exam Strategy</a></li>
+      <li><a href="#qtypes">Question Types</a></li>
+      <li><a href="#worked">Worked Example</a></li>
+      <li><a href="#pastpapers">Past Papers</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+    </ul>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="section">
+    <h2 class="page-section">Overview</h2>
+    <div class="four-pillars">
+      <div class="pillar pillar-e">
+        <div class="pillar-label">Ethical</div>
+        <div class="pillar-question">What SHOULD happen?</div>
+        <div class="pillar-desc">Moral principles and values — right or wrong, regardless of law</div>
+      </div>
+      <div class="pillar pillar-l">
+        <div class="pillar-label">Legal</div>
+        <div class="pillar-question">What MUST happen?</div>
+        <div class="pillar-desc">Laws and regulations — what is legally required or prohibited</div>
+      </div>
+      <div class="pillar pillar-c">
+        <div class="pillar-label">Cultural</div>
+        <div class="pillar-question">Impact on society?</div>
+        <div class="pillar-desc">How computing affects communities, ways of life and access</div>
+      </div>
+      <div class="pillar pillar-p">
+        <div class="pillar-label">Privacy</div>
+        <div class="pillar-question">Who controls data?</div>
+        <div class="pillar-desc">Right to control personal information; protection from monitoring</div>
+      </div>
+    </div>
+    <div class="tip-box">
+      <span class="tip-icon">💡</span>
+      <span>The specification requires you to show awareness of current moral, social (ethical), legal and cultural opportunities and risks of computing, and apply ELCP thinking to real-world scenarios, case studies, and hypothetical situations.</span>
+    </div>
+  </section>
+
+  <!-- ETHICAL -->
+  <section id="ethical" class="section ethical">
+    <div class="section-header">
+      <div class="section-icon">⚖️</div>
+      <div>
+        <div class="section-title">Ethical Issues</div>
+        <div class="section-subtitle">What SHOULD happen? — Moral principles independent of law</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card card-ethical">
+        <h3>Key Concepts</h3>
+        <ul class="bullet">
+          <li>Algorithmic bias – unfair outcomes baked into code</li>
+          <li>Informed consent – do users truly understand what they agree to?</li>
+          <li>Power and responsibility of developers</li>
+          <li>Scale: software can cause global harm or global good</li>
+          <li>AI decision-making – who is morally responsible?</li>
+          <li>Surveillance capitalism – profiting from behavioural data</li>
+        </ul>
+      </div>
+      <div class="card card-ethical">
+        <h3>Real-World Examples</h3>
+        <ul class="bullet">
+          <li>Social media algorithms promoting harmful content</li>
+          <li>AI used in job recruitment filtering candidates unfairly</li>
+          <li>Facial recognition with racial bias</li>
+          <li>Self-driving cars – who is responsible in a collision?</li>
+          <li>News feed algorithms creating filter bubbles</li>
+          <li>Tech companies prioritising profit over user wellbeing</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tip-box">
+      <span class="tip-icon">💡</span>
+      <span><strong>Ethical ≠ Legal.</strong> Something can be legal but still unethical — e.g. selling user data legally but without full transparency.</span>
+    </div>
+  </section>
+
+  <!-- LEGAL -->
+  <section id="legal" class="section legal">
+    <div class="section-header">
+      <div class="section-icon">⚖️</div>
+      <div>
+        <div class="section-title">Legal Issues</div>
+        <div class="section-subtitle">What MUST happen? — Laws and enforceable obligations</div>
+      </div>
+    </div>
+
+    <div class="legislation-block">
+      <div class="legislation-header">
+        <span class="legislation-tag">Legislation</span>
+        <span class="legislation-name">Data Protection Act / GDPR</span>
+      </div>
+      <div class="legislation-body">
+        <ul class="bullet">
+          <li>Personal data must be collected lawfully with consent</li>
+          <li>Data must be kept accurate, secure, and not longer than needed</li>
+          <li>Individuals have the right to see data held about them</li>
+          <li>Data must only be used for the stated purpose</li>
+          <li>Data breaches must be reported within 72 hours</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="legislation-block">
+      <div class="legislation-header">
+        <span class="legislation-tag">Legislation</span>
+        <span class="legislation-name">Computer Misuse Act 1990</span>
+      </div>
+      <div class="legislation-body">
+        <ul class="bullet">
+          <li>Unauthorised access to computer systems</li>
+          <li>Unauthorised access with intent to commit further offences</li>
+          <li>Unauthorised modification of computer material (e.g. malware)</li>
+          <li>Applies to hacking, creating/distributing viruses</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="legislation-block">
+      <div class="legislation-header">
+        <span class="legislation-tag">Legislation</span>
+        <span class="legislation-name">Regulation of Investigatory Powers Act (RIPA)</span>
+      </div>
+      <div class="legislation-body">
+        <ul class="bullet">
+          <li>Controls surveillance and interception of communications</li>
+          <li>Limits who can lawfully intercept data transmissions</li>
+          <li>Covers monitoring of internet traffic and emails by authorities</li>
+          <li>Balances national security against individual privacy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="challenge-box">
+      <h3>⚠️ Challenges for Legislators</h3>
+      <ul class="bullet" style="color: var(--text-muted);">
+        <li>Technology evolves faster than law can keep up</li>
+        <li>Internet is global; laws are national</li>
+        <li>Encryption/VPN makes criminals hard to identify</li>
+        <li>Legislators often lack technical expertise</li>
+        <li>Tech companies lobby to protect their interests</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CULTURAL -->
+  <section id="cultural" class="section cultural">
+    <div class="section-header">
+      <div class="section-icon">🌍</div>
+      <div>
+        <div class="section-title">Cultural Issues</div>
+        <div class="section-subtitle">Impact on Society? — Communities, access, and social change</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card card-cultural">
+        <h3>Key Cultural Issues</h3>
+        <ul class="bullet">
+          <li>Digital divide – unequal access to technology</li>
+          <li>Technology creating / destroying jobs (automation)</li>
+          <li>Software embedding cultural values of its creators</li>
+          <li>Different cultural attitudes to privacy, copyright, surveillance</li>
+          <li>Social media changing communication norms</li>
+          <li>Over-reliance on technology / deskilling</li>
+        </ul>
+      </div>
+      <div class="card card-cultural">
+        <h3>Opportunities &amp; Risks</h3>
+        <ul class="bullet">
+          <li>Global communication and collaboration made possible</li>
+          <li>Open-source culture democratising software</li>
+          <li>E-learning expanding access to education worldwide</li>
+          <li>Fake news / misinformation spreading at scale</li>
+          <li>Cultural homogenisation – dominance of Western tech firms</li>
+          <li>Social isolation despite digital 'connection'</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tip-box">
+      <span class="tip-icon">💡</span>
+      <span>Remember: software and algorithms embed moral and cultural values. A developer's choices reflect their culture and priorities.</span>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section id="privacy" class="section privacy">
+    <div class="section-header">
+      <div class="section-icon">🔒</div>
+      <div>
+        <div class="section-title">Privacy Issues</div>
+        <div class="section-subtitle">Who Controls Data? — Personal information and monitoring</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card card-privacy">
+        <h3>Data Collection &amp; Consent</h3>
+        <ul class="bullet">
+          <li>Who collects data and for what purpose?</li>
+          <li>Was informed consent genuinely given?</li>
+          <li>Are users aware of what is being collected?</li>
+          <li>Can people opt out without losing access to a service?</li>
+        </ul>
+      </div>
+      <div class="card card-privacy">
+        <h3>Data Storage &amp; Security</h3>
+        <ul class="bullet">
+          <li>Where is data stored (country matters for law)?</li>
+          <li>Who has access to the stored data?</li>
+          <li>How long is data retained?</li>
+          <li>What happens if data is breached?</li>
+        </ul>
+      </div>
+      <div class="card card-privacy">
+        <h3>Surveillance &amp; Monitoring</h3>
+        <ul class="bullet">
+          <li>CCTV, facial recognition in public spaces</li>
+          <li>Employer monitoring of staff communications</li>
+          <li>Government surveillance of internet traffic</li>
+          <li>Behavioural tracking by advertisers</li>
+        </ul>
+      </div>
+      <div class="card card-privacy">
+        <h3>Data Sharing &amp; Ownership</h3>
+        <ul class="bullet">
+          <li>Who owns data – the person or the company?</li>
+          <li>Can companies share or sell personal data?</li>
+          <li>Right to be forgotten</li>
+          <li>International data transfer rules (GDPR restrictions)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXAM STRATEGY -->
+  <section id="strategy" class="section">
+    <h2 class="page-section">Exam Strategy</h2>
+    <div class="exam-strategy">
+      <div class="strategy-step">
+        <div class="strategy-letter sl-e">E</div>
+        <div class="strategy-text">Read the scenario first; underline the technology involved. Ask: 'What values are at stake? Who could be harmed?'</div>
+      </div>
+      <div class="strategy-step">
+        <div class="strategy-letter sl-l">L</div>
+        <div class="strategy-text">Identify relevant legislation by name (DPA/GDPR, CMA, RIPA). Name the law + explain which provision applies to this scenario.</div>
+      </div>
+      <div class="strategy-step">
+        <div class="strategy-letter sl-c">C</div>
+        <div class="strategy-text">Think about groups of people: workers, communities, countries. Who benefits? Who is disadvantaged? What changes for society?</div>
+      </div>
+      <div class="strategy-step">
+        <div class="strategy-letter sl-p">P</div>
+        <div class="strategy-text">Follow the data: who collects it, why, where it is stored, who accesses it, and whether consent was properly obtained.</div>
+      </div>
+    </div>
+    <div class="tip-box" style="margin-top:1rem;">
+      <span class="tip-icon">📋</span>
+      <span>General rules: Always tie your point back to the scenario context. Use ELCP as a checklist for extended questions. Name laws for legal points. For 'discuss' questions, show BOTH sides.</span>
+    </div>
+  </section>
+
+  <!-- QUESTION TYPES -->
+  <section id="qtypes" class="section">
+    <h2 class="page-section">Question Types &amp; How to Answer</h2>
+    <div class="qtype-grid">
+      <div class="qtype-card">
+        <div class="qtype-title">State / Name</div>
+        <div class="qtype-marks">[1–2 marks]</div>
+        <p>Give a fact. No explanation needed. E.g. 'Name a relevant piece of legislation' → 'Data Protection Act / GDPR'.</p>
+      </div>
+      <div class="qtype-card">
+        <div class="qtype-title">Explain / Describe</div>
+        <div class="qtype-marks">[2–4 marks]</div>
+        <p>Make a point THEN develop it with a reason or consequence tied to the scenario. One mark per explained point.</p>
+      </div>
+      <div class="qtype-card">
+        <div class="qtype-title">Discuss</div>
+        <div class="qtype-marks">[4–6 marks, levels]</div>
+        <p>Cover MULTIPLE perspectives. Use ELCP as headings. Show both benefits AND risks. Link each point to the scenario. Aim for Level 3: coherent argument with range of developed points.</p>
+      </div>
+      <div class="qtype-card">
+        <div class="qtype-title">Evaluate / Analyse</div>
+        <div class="qtype-marks">[4–6 marks, levels]</div>
+        <p>Like 'discuss' but reach a conclusion or judgement. Weigh up the evidence. Show you understand the complexity of the issue.</p>
+      </div>
+    </div>
+    <div class="warn-box">
+      <strong>⚠️ For level-marked questions:</strong> don't just list points – DEVELOP each one. 'Data may be stolen' → 'If data is stolen, users' financial details could be accessed by criminals, causing financial harm and loss of trust in the organisation.'
+    </div>
+  </section>
+
+  <!-- WORKED EXAMPLE -->
+  <section id="worked" class="section">
+    <h2 class="page-section">Worked Example – Applying ELCP to a Scenario</h2>
+    <div class="worked-example">
+      <div class="we-scenario">
+        <strong>Scenario:</strong> A supermarket introduces a loyalty card scheme. The system collects data on every purchase and uses algorithms to send personalised offers. Data is shared with third-party marketing companies.
+      </div>
+      <div class="we-body">
+        <div class="we-item we-e">
+          <div class="we-label">Ethical</div>
+          <p>Is it ethical to profile customers' purchasing habits without their full understanding? Should offers be targeted at vulnerable customers (e.g. promoting alcohol)? Algorithms may reveal sensitive information (e.g. inferring pregnancy from buying patterns).</p>
+        </div>
+        <div class="we-item we-l">
+          <div class="we-label">Legal</div>
+          <p>GDPR requires consent to collect personal data and limits how it is shared with third parties. Data must be kept securely and only used for the stated purpose. Customers have the right to access and delete their data.</p>
+        </div>
+        <div class="we-item we-c">
+          <div class="we-label">Cultural</div>
+          <p>Changes shopping culture – customers may feel pressured to participate to receive discounts. May disadvantage those without smartphones or internet access (digital divide). Could alter how society views commercial use of personal data.</p>
+        </div>
+        <div class="we-item we-p">
+          <div class="we-label">Privacy</div>
+          <p>Who owns the purchase data – the customer or the supermarket? Is consent genuinely informed? Sharing with third parties raises risk of data breach and loss of privacy. Where is data stored (jurisdiction matters for legal protection)?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAST PAPERS -->
+  <section id="pastpapers" class="section">
+    <h2 class="page-section">Past Paper Questions – 4.8 ELCP Topics</h2>
+    <div class="card" style="padding:0;overflow:hidden;border:1px solid var(--border);">
+      <table class="exam-table">
+        <thead>
+          <tr>
+            <th>Paper</th>
+            <th>Q</th>
+            <th>Topic Focus</th>
+            <th>ELCP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>June 2017</td><td>Q7</td><td>Google Street View cars intercepted WiFi data – discuss technical, legal &amp; ethical issues</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag p">P</span></td></tr>
+          <tr><td>June 2018</td><td>Q8</td><td>Challenges facing legislators in the digital age</td><td><span class="elcp-tag l">L</span><span class="elcp-tag c">C</span></td></tr>
+          <tr><td>June 2020</td><td>Q10</td><td>Social media algorithms selecting news stories – moral, ethical, and legal considerations</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag c">C</span></td></tr>
+          <tr><td>June 2021</td><td>Q (DB)</td><td>Big data scenario – ethical and legal issues of storing and using large amounts of personal data</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag p">P</span></td></tr>
+          <tr><td>June 2022</td><td>Q (Supermarket)</td><td>Supermarket loyalty card / RFID purchasing data – ethical and legal issues</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag p">P</span></td></tr>
+          <tr><td>June 2024</td><td>Q9</td><td>AI system used to diagnose medical conditions – discuss issues that might arise</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag c">C</span><span class="elcp-tag p">P</span></td></tr>
+          <tr><td>June 2025</td><td>Q4</td><td>It is difficult to write and enforce laws relating to the use of computers. Explain why. [3 marks]</td><td><span class="elcp-tag l">L</span></td></tr>
+          <tr><td>Nov 2020</td><td>Q10</td><td>Social media algorithm and news story selection – moral, ethical, and legal considerations</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag c">C</span></td></tr>
+          <tr><td>Nov 2021</td><td>Check paper</td><td>Review for any ELCP-related scenario or extended response question</td><td><span class="elcp-tag e">E</span><span class="elcp-tag l">L</span><span class="elcp-tag c">C</span><span class="elcp-tag p">P</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section id="checklist" class="section">
+    <h2 class="page-section">Before You Answer – Student Checklist</h2>
+    <div class="checklist">
+      <div class="check-group cg-e">
+        <div class="check-group-title">✓ ETHICAL</div>
+        <div class="check-item">Have I identified WHO could be harmed or who benefits?</div>
+        <div class="check-item">Have I considered whether this is right/fair, regardless of legality?</div>
+        <div class="check-item">Have I thought about the developer's responsibility and scale of impact?</div>
+      </div>
+      <div class="check-group cg-l">
+        <div class="check-group-title">✓ LEGAL</div>
+        <div class="check-item">Have I named a specific law? (DPA/GDPR, CMA, RIPA)</div>
+        <div class="check-item">Have I explained which provision of the law applies to this scenario?</div>
+        <div class="check-item">Have I mentioned challenges of enforcing the law (if relevant)?</div>
+      </div>
+      <div class="check-group cg-c">
+        <div class="check-group-title">✓ CULTURAL</div>
+        <div class="check-item">Have I considered the impact on groups/communities/society?</div>
+        <div class="check-item">Have I thought about the digital divide, job displacement, or social change?</div>
+        <div class="check-item">Have I considered cultural differences in attitudes to this issue?</div>
+      </div>
+      <div class="check-group cg-p">
+        <div class="check-group-title">✓ PRIVACY</div>
+        <div class="check-item">Have I traced: who collects data → why → how stored → who accesses it?</div>
+        <div class="check-item">Was consent properly obtained? Is the use proportionate?</div>
+        <div class="check-item">Have I considered data breaches, data sharing, and individuals' rights?</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

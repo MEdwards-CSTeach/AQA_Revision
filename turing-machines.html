@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.4.5 Turing Machines &amp; Halting Problem – AQA A-Level Computer Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0E1A;
+    --surface: #111827;
+    --surface2: #1C2537;
+    --border: #2D3A52;
+    --text: #E2E8F0;
+    --text-muted: #7C8FA6;
+    --accent: #F97316;
+    --accent-light: rgba(249,115,22,0.15);
+    --teal: #14B8A6;
+    --teal-light: rgba(20,184,166,0.12);
+    --gold: #EAB308;
+    --gold-light: rgba(234,179,8,0.12);
+    --red: #EF4444;
+    --green: #22C55E;
+    --green-light: rgba(34,197,94,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  header {
+    background: radial-gradient(ellipse at 30% 50%, rgba(249,115,22,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(20,184,166,0.08) 0%, transparent 60%),
+                var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+  }
+  .header-badge span { color: var(--accent); }
+  header h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.2; margin-bottom: 0.5rem; }
+  header h1 em { font-style: normal; color: var(--accent); }
+  header p { color: var(--text-muted); font-size: 1rem; }
+
+  main { max-width: 940px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  nav.toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  nav.toc h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+  nav.toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  nav.toc a { text-decoration: none; color: var(--text-muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.8rem; display: block; transition: all 0.2s; }
+  nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+  h2.sh { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin: 2.5rem 0 1rem; padding-left: 0.75rem; border-left: 3px solid var(--accent); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-teal { border-left: 4px solid var(--teal); }
+  .card-gold { border-left: 4px solid var(--gold); }
+  .card-green { border-left: 4px solid var(--green); }
+  .card-red { border-left: 4px solid var(--red); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  h3.ct { font-size: 1rem; font-weight: 700; margin-bottom: 0.65rem; }
+  .card-accent h3.ct { color: var(--accent); }
+  .card-teal h3.ct { color: var(--teal); }
+  .card-gold h3.ct { color: var(--gold); }
+  .card-green h3.ct { color: var(--green); }
+  .card-red h3.ct { color: var(--red); }
+
+  ul.bullet { list-style: none; }
+  ul.bullet li { padding: 0.2rem 0 0.2rem 1.2rem; position: relative; font-size: 0.9rem; color: var(--text-muted); }
+  ul.bullet li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+  .card-teal ul.bullet li::before { color: var(--teal); }
+  .card-gold ul.bullet li::before { color: var(--gold); }
+  .card-green ul.bullet li::before { color: var(--green); }
+
+  /* TASH components */
+  .tash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .tash-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .tash-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .tash-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.2rem; }
+  .tash-title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+  .tash-desc { font-size: 0.825rem; color: var(--text-muted); }
+
+  /* Tape visualisation */
+  .tape-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .tape {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    min-width: max-content;
+  }
+  .tape-cell {
+    width: 52px; height: 52px;
+    border: 2px solid var(--border);
+    border-right: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--text-muted);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tape-cell:last-child { border-right: 2px solid var(--border); }
+  .tape-cell.active { background: rgba(249,115,22,0.2); border-color: var(--accent); color: var(--accent); }
+  .tape-cell.blank { color: var(--border); font-size: 0.8rem; }
+  .tape-head {
+    position: absolute;
+    bottom: -24px;
+    left: 50%; transform: translateX(-50%);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .tape-dots { color: var(--text-muted); margin: 0 0.5rem; font-size: 1.2rem; }
+
+  /* State diagram */
+  .state-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+  }
+  .states-row { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+  .state {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--text);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .state.start { border-color: var(--teal); color: var(--teal); }
+  .state.halt { border-color: var(--green); color: var(--green); border-width: 4px; }
+  .state-label { font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem; text-align: center; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .state-arrow { color: var(--accent); font-size: 1.5rem; }
+  .state-transition { font-size: 0.75rem; font-family: 'Space Mono', monospace; color: var(--accent); display: block; margin-top: -1.5rem; }
+
+  /* Trace table */
+  .trace-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; font-family: 'Space Mono', monospace; }
+  .trace-table th { background: var(--surface2); color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.6rem 0.9rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .trace-table td { padding: 0.55rem 0.9rem; border-bottom: 1px solid rgba(45,58,82,0.5); color: var(--text-muted); }
+  .trace-table tr:last-child td { border-bottom: none; }
+  .trace-table .highlight-row td { background: rgba(249,115,22,0.08); color: var(--text); }
+  .trace-tape { color: var(--teal); }
+  .trace-result { color: var(--green); font-weight: 700; }
+
+  /* Computable vs Non-Computable */
+  .comp-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 560px) { .comp-split { grid-template-columns: 1fr; } }
+  .comp-card { border-radius: 14px; padding: 1.25rem; border: 1px solid transparent; overflow: hidden; }
+  .comp-yes { background: var(--green-light); border-color: var(--green); }
+  .comp-no { background: rgba(239,68,68,0.08); border-color: var(--red); }
+  .comp-header { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+  .comp-yes .comp-header { color: var(--green); }
+  .comp-no .comp-header { color: var(--red); }
+  .comp-card ul.bullet li { font-size: 0.875rem; }
+  .comp-yes ul.bullet li::before { color: var(--green); }
+  .comp-no ul.bullet li::before { color: var(--red); }
+
+  /* Halting proof steps */
+  .proof-steps { display: flex; flex-direction: column; gap: 0; }
+  .proof-step {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+  }
+  .proof-num {
+    width: 52px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-bottom: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .proof-step:first-child .proof-num, .proof-step:first-child .proof-body { border-top-left-radius: 10px; }
+  .proof-step:first-child .proof-body { border-top-right-radius: 10px; }
+  .proof-step:last-child .proof-num, .proof-step:last-child .proof-body { border-bottom: 1px solid var(--border); }
+  .proof-step:last-child .proof-num { border-bottom-left-radius: 10px; }
+  .proof-step:last-child .proof-body { border-bottom-right-radius: 10px; }
+  .proof-body {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+  }
+  .proof-title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+  .proof-body p { font-size: 0.875rem; color: var(--text-muted); }
+  .proof-body code { font-family: 'Space Mono', monospace; font-size: 0.8rem; background: var(--surface2); padding: 0.1rem 0.4rem; border-radius: 4px; color: var(--teal); }
+
+  /* TM vs Real computer */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .compare-table th { background: var(--surface2); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.65rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .compare-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child { color: var(--text); font-weight: 600; }
+  .compare-table td:nth-child(2) { color: var(--accent); }
+  .compare-table td:nth-child(3) { color: var(--teal); }
+
+  /* Misconceptions */
+  .misconception { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; align-items: stretch; }
+  @media (max-width: 560px) { .misconception { grid-template-columns: 1fr; } }
+  .mis-wrong {
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .mis-wrong .label { font-size: 0.7rem; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+  .mis-right {
+    background: var(--green-light);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .mis-right .label { font-size: 0.7rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+
+  /* Exam questions */
+  .eq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .eq-marks { font-size: 0.75rem; font-family: 'Space Mono', monospace; background: var(--accent-light); color: var(--accent); padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.5rem; }
+  .eq-q { font-size: 0.9rem; color: var(--text); margin-bottom: 0.5rem; }
+  .eq-hint { font-size: 0.825rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem; }
+  .eq-hint::before { content: '💡 '; }
+
+  /* Memory joggers */
+  .memory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .mem-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .mem-acronym { font-family: 'Space Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+  .mem-expand { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* Resources */
+  .resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .res-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .res-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .res-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
+  .res-url { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--teal); margin-bottom: 0.3rem; }
+  .res-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+  .tip-box { background: var(--accent-light); border: 1px solid rgba(249,115,22,0.4); border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.875rem; color: var(--text-muted); margin: 0.75rem 0; display: flex; gap: 0.6rem; }
+  .jogger-box { background: var(--teal-light); border: 1px solid rgba(20,184,166,0.3); border-radius: 10px; padding: 0.75rem 1.1rem; font-size: 0.875rem; color: var(--text-muted); margin: 0.75rem 0; }
+  .jogger-box strong { color: var(--teal); }
+
+  section[id] { scroll-margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">AQA 7517 · Paper 1 · <span>4.4.5</span> · Year 13 Content</div>
+  <h1>Turing Machines &amp;<br><em>The Halting Problem</em></h1>
+  <p>A Model of Computation — Limits, Proofs, and Theory</p>
+</header>
+
+<main>
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="#definition">What is a TM?</a></li>
+      <li><a href="#components">Components (TASH)</a></li>
+      <li><a href="#tape">Tape &amp; Alphabet</a></li>
+      <li><a href="#states">States &amp; Rules</a></li>
+      <li><a href="#trace">Hand-Tracing</a></li>
+      <li><a href="#purpose">Purpose &amp; UTM</a></li>
+      <li><a href="#computable">Computable Problems</a></li>
+      <li><a href="#halting">Halting Problem</a></li>
+      <li><a href="#proof">Proof by Contradiction</a></li>
+      <li><a href="#misconceptions">Misconceptions</a></li>
+      <li><a href="#exam">Exam Questions</a></li>
+      <li><a href="#resources">Resources</a></li>
+    </ul>
+  </nav>
+
+  <!-- DEFINITION -->
+  <section id="definition">
+    <h2 class="sh">Definition</h2>
+    <div class="card card-accent">
+      <p style="font-size:1.05rem;color:var(--text);margin-bottom:0.75rem;">A Turing machine is a <strong>theoretical abstract machine</strong> that manipulates symbols on an infinite tape according to a fixed set of rules. It provides a formal model of what it means for a function to be <strong>computable</strong>.</p>
+      <p style="font-size:0.875rem;color:var(--text-muted);">Think of it as a computer with <em>one fixed program</em>.</p>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section id="components">
+    <h2 class="sh">Components — TASH</h2>
+    <div class="tash-grid">
+      <div class="tash-item">
+        <div class="tash-icon">📼</div>
+        <div>
+          <div class="tash-label">T</div>
+          <div class="tash-title">Tape</div>
+          <div class="tash-desc">Infinite strip of cells, each holding one symbol. Read/write memory AND input AND output all in one.</div>
+        </div>
+      </div>
+      <div class="tash-item">
+        <div class="tash-icon">🔤</div>
+        <div>
+          <div class="tash-label">A</div>
+          <div class="tash-title">Alphabet (Σ)</div>
+          <div class="tash-desc">Finite set of symbols the machine can read or write. Must include a blank symbol (shown as _ or □).</div>
+        </div>
+      </div>
+      <div class="tash-item">
+        <div class="tash-icon">⚙️</div>
+        <div>
+          <div class="tash-label">S</div>
+          <div class="tash-title">States</div>
+          <div class="tash-desc">Set of states the machine can be in, including one start state and at least one halt state.</div>
+        </div>
+      </div>
+      <div class="tash-item">
+        <div class="tash-icon">🔎</div>
+        <div>
+          <div class="tash-label">H</div>
+          <div class="tash-title">Head (Read/Write)</div>
+          <div class="tash-desc">Reads the current cell, writes a new symbol, then moves left or right one cell.</div>
+        </div>
+      </div>
+    </div>
+    <div class="jogger-box"><strong>🧠 TASH:</strong> Tape · Alphabet · States · Head — the four things that define a Turing machine.</div>
+  </section>
+
+  <!-- TAPE -->
+  <section id="tape">
+    <h2 class="sh">The Tape &amp; Alphabet</h2>
+    <div class="tape-container">
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;font-family:'Space Mono',monospace;">TAPE STATE: _ 1 0 1 1 0 _ _ _ _ ...</div>
+      <div class="tape">
+        <div class="tape-cell blank">_</div>
+        <div class="tape-cell">1</div>
+        <div class="tape-cell active">0<div class="tape-head">HEAD</div></div>
+        <div class="tape-cell">1</div>
+        <div class="tape-cell">1</div>
+        <div class="tape-cell">0</div>
+        <div class="tape-cell blank">_</div>
+        <div class="tape-cell blank">_</div>
+        <div class="tape-dots">→ ∞</div>
+      </div>
+      <div style="margin-top:1.75rem;font-size:0.8rem;color:var(--text-muted);">Cells numbered from 0. Head reads the active cell and can write a new symbol before moving left or right.</div>
+    </div>
+    <div class="card card-teal">
+      <h3 class="ct">⚠️ Common Misconception</h3>
+      <p style="font-size:0.9rem;color:var(--text-muted);">Students often think the tape is just a memory store like RAM. It is NOT. The tape is the <strong style="color:var(--text);">input AND the working memory AND the output</strong> all combined.</p>
+    </div>
+  </section>
+
+  <!-- STATES -->
+  <section id="states">
+    <h2 class="sh">States &amp; Transition Rules</h2>
+    <div class="two-col">
+      <div class="card card-accent">
+        <h3 class="ct">Transition Function δ</h3>
+        <div style="font-family:'Space Mono',monospace;font-size:0.875rem;color:var(--text-muted);line-height:2;">
+          δ(current state, read symbol)<br>
+          &nbsp;= (new state, write symbol, direction)<br><br>
+          <span style="color:var(--accent);">δ(q0, 0) = (q1, 1, R)</span><br>
+          <span style="color:var(--teal);">δ(q1, 1) = (qH, 1, R)</span>
+        </div>
+        <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--text-muted);">R = move right &nbsp;|&nbsp; L = move left<br>No outgoing transition = HALT</div>
+      </div>
+      <div class="card card-gold">
+        <h3 class="ct">Halting State</h3>
+        <p style="font-size:0.875rem;color:var(--text-muted);">A state with <strong style="color:var(--text);">NO outgoing transitions</strong>. The machine stops here. This is normal successful termination — NOT an error or crash.</p>
+        <div class="jogger-box" style="margin-top:0.75rem;"><strong>🧠 δ = 'Do':</strong> δ tells the machine what to DO next — (state, write, direction).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRACE -->
+  <section id="trace">
+    <h2 class="sh">Hand-Tracing — Worked Example</h2>
+    <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">Example: Increment a unary number (add 1 to a sequence of 1s)</p>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="trace-table">
+        <thead><tr><th>Step</th><th>State</th><th>Read</th><th>Write</th><th>Move</th><th>Tape (head position in [ ])</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>q0</td><td>1</td><td>1</td><td>R</td><td class="trace-tape">[1] 1 1 _ _</td></tr>
+          <tr><td>2</td><td>q0</td><td>1</td><td>1</td><td>R</td><td class="trace-tape">1 [1] 1 _ _</td></tr>
+          <tr><td>3</td><td>q0</td><td>1</td><td>1</td><td>R</td><td class="trace-tape">1 1 [1] _ _</td></tr>
+          <tr><td>4</td><td>q0</td><td>_</td><td>1</td><td>L</td><td class="trace-tape">1 1 1 [_] _</td></tr>
+          <tr class="highlight-row"><td>5</td><td>qH</td><td>—</td><td>—</td><td>HALT</td><td class="trace-result">1 1 1 1 _ ← Result!</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="two-col" style="margin-top:0.75rem;">
+      <div class="card card-teal">
+        <h3 class="ct">Transition rules used</h3>
+        <div style="font-family:'Space Mono',monospace;font-size:0.825rem;color:var(--text-muted);line-height:2;">
+          δ(q0, 1) = (q0, 1, R) &nbsp; ← scan right over 1s<br>
+          δ(q0, _) = (qH, 1, L) &nbsp; ← write 1 at end, halt
+        </div>
+      </div>
+      <div class="card card-gold">
+        <h3 class="ct">Exam Tip — Trace steps</h3>
+        <ul class="bullet">
+          <li>Show ALL steps in the trace</li>
+          <li>Use [ ] around the cell being read</li>
+          <li>Write the full tape at each step</li>
+        </ul>
+        <div class="jogger-box" style="margin-top:0.75rem;"><strong>🧠 SWM:</strong> State · Write · Move — check these three at each step.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PURPOSE -->
+  <section id="purpose">
+    <h2 class="sh">Why Turing Machines?</h2>
+    <div class="two-col">
+      <div class="card card-accent">
+        <h3 class="ct">Purpose of a Turing Machine</h3>
+        <ul class="bullet">
+          <li>Provide a formal mathematical model of computation</li>
+          <li>Define precisely what 'computable' means</li>
+          <li>Prove that some problems CANNOT be solved by any computer</li>
+          <li>Give a theoretical foundation for all of computer science</li>
+        </ul>
+      </div>
+      <div class="card card-teal">
+        <h3 class="ct">Universal Turing Machine (UTM)</h3>
+        <ul class="bullet">
+          <li>A UTM can simulate ANY other Turing machine</li>
+          <li>The target TM is described on the UTM's tape</li>
+          <li>This is the theoretical blueprint for the stored-program computer</li>
+          <li>One general machine can do everything a specialised machine can</li>
+        </ul>
+      </div>
+    </div>
+    <h2 class="sh">Turing Machine vs Real Computer</h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="compare-table">
+        <thead><tr><th>Feature</th><th>Turing Machine</th><th>Real Computer</th></tr></thead>
+        <tbody>
+          <tr><td>Memory</td><td>Infinite tape</td><td>Finite RAM/storage</td></tr>
+          <tr><td>Program</td><td>Fixed, single program</td><td>Many programs loaded from storage</td></tr>
+          <tr><td>Purpose</td><td>Theoretical / formal model</td><td>Practical general use</td></tr>
+          <tr><td>Speed</td><td>Not relevant (theoretical)</td><td>Measured in GHz</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip-box"><span>⚠️</span><span>A Turing machine is NOT faster or more powerful than a real computer. It is simpler and theoretical. A UTM IS a Turing machine — it cannot compute more than a standard TM.</span></div>
+  </section>
+
+  <!-- COMPUTABLE -->
+  <section id="computable">
+    <h2 class="sh">Computable vs Non-Computable Problems</h2>
+    <div class="comp-split">
+      <div class="comp-card comp-yes">
+        <div class="comp-header">✅ Computable Problems</div>
+        <ul class="bullet">
+          <li>Can be solved by a TM that always halts</li>
+          <li>Examples: sorting, searching, arithmetic, string manipulation</li>
+          <li>Equivalent to: can be solved by any modern computer given enough time/memory</li>
+        </ul>
+      </div>
+      <div class="comp-card comp-no">
+        <div class="comp-header">❌ Non-Computable Problems</div>
+        <ul class="bullet">
+          <li>No Turing machine can solve them for all possible inputs</li>
+          <li>UNDECIDABLE — not just slow, genuinely unsolvable</li>
+          <li>Examples: Halting Problem, Busy Beaver problem</li>
+          <li>Even with infinite time and memory — impossible</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card card-gold" style="margin-top:1rem;">
+      <h3 class="ct">Church-Turing Thesis</h3>
+      <p style="font-size:0.9rem;color:var(--text-muted);">"Any function that can be computed at all, can be computed by a Turing machine." — The definition of computability itself.</p>
+    </div>
+    <div class="jogger-box"><strong>🧠 Non-computable ≠ difficult.</strong> It means IMPOSSIBLE. If a TM can't solve it, NO computer can — ever, regardless of speed or memory.</div>
+  </section>
+
+  <!-- HALTING -->
+  <section id="halting">
+    <h2 class="sh">The Halting Problem</h2>
+    <div class="card card-red">
+      <h3 class="ct">Definition — Learn This Precisely</h3>
+      <p style="font-size:0.95rem;color:var(--text);line-height:1.7;">"The Halting Problem is the problem of determining, from a description of any computer program and its input, whether the program will eventually <strong>halt</strong> (stop running) or continue to run forever. Alan Turing proved in <strong>1936</strong> that no algorithm can solve this for all possible program-input pairs."</p>
+    </div>
+    <div class="two-col">
+      <div class="card card-accent">
+        <h3 class="ct">Why Does It Matter?</h3>
+        <ul class="bullet">
+          <li>Proves computers have fundamental, inescapable limits</li>
+          <li>No anti-virus/debugger can perfectly detect all infinite loops</li>
+          <li>Impacts program verification — we cannot write a perfect checker</li>
+          <li>Foundation of computability theory in CS</li>
+        </ul>
+      </div>
+      <div class="card card-teal">
+        <h3 class="ct">Significance for Computation</h3>
+        <ul class="bullet">
+          <li>Shows some problems are UNDECIDABLE, not just hard</li>
+          <li>The most famous non-computable problem</li>
+          <li>Turing used a TM to frame and prove this</li>
+          <li>Every real computer is bounded by what TMs can do</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <section id="proof">
+    <h2 class="sh">Proof: The Halting Problem is Unsolvable</h2>
+    <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;">Proof by contradiction — understand the argument, not every detail.</p>
+    <div class="proof-steps">
+      <div class="proof-step">
+        <div class="proof-num">1</div>
+        <div class="proof-body" style="border-top-left-radius:10px;border-top-right-radius:10px;">
+          <div class="proof-title">Assume a solver exists</div>
+          <p>Suppose there exists a program <code>H(P, I)</code> that returns "halts" if program P with input I halts, or "loops" if it runs forever.</p>
+        </div>
+      </div>
+      <div class="proof-step">
+        <div class="proof-num">2</div>
+        <div class="proof-body">
+          <div class="proof-title">Build a paradox machine D</div>
+          <p>Create program <code>D</code> that uses <code>H</code>: if H says P halts when given itself as input, D loops forever. If H says P loops, D halts.</p>
+        </div>
+      </div>
+      <div class="proof-step">
+        <div class="proof-num">3</div>
+        <div class="proof-body">
+          <div class="proof-title">Run D on itself</div>
+          <p>Ask: what does <code>D(D)</code> do?<br>
+          If D halts → H said D halts, so D must loop. <strong style="color:var(--red);">Contradiction!</strong><br>
+          If D loops → H said D loops, so D must halt. <strong style="color:var(--red);">Contradiction!</strong></p>
+        </div>
+      </div>
+      <div class="proof-step">
+        <div class="proof-num">4</div>
+        <div class="proof-body" style="border-bottom-left-radius:0;border-bottom-right-radius:0;">
+          <div class="proof-title">Conclusion</div>
+          <p>Either outcome is a contradiction. Therefore, our assumption is wrong — no such solver H can exist. The Halting Problem is <strong style="color:var(--green);">UNDECIDABLE</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="jogger-box" style="margin-top:0.5rem;"><strong>🧠 ACRC:</strong> Assume · Construct · Run · Contradiction — the four steps of the halting problem proof.</div>
+  </section>
+
+  <!-- MISCONCEPTIONS -->
+  <section id="misconceptions">
+    <h2 class="sh">Common Misconceptions</h2>
+
+    <div class="misconception">
+      <div class="mis-wrong"><div class="label">✗ Wrong</div>A Turing machine is an actual physical device.</div>
+      <div class="mis-right"><div class="label">✓ Correct</div>It is a theoretical/abstract model — it has never been physically built in its infinite form.</div>
+    </div>
+    <div class="misconception">
+      <div class="mis-wrong"><div class="label">✗ Wrong</div>Non-computable means too hard or too slow.</div>
+      <div class="mis-right"><div class="label">✓ Correct</div>Non-computable means IMPOSSIBLE. No computer, however fast, can ever solve it for all inputs.</div>
+    </div>
+    <div class="misconception">
+      <div class="mis-wrong"><div class="label">✗ Wrong</div>The Halting Problem just asks if a specific program stops.</div>
+      <div class="mis-right"><div class="label">✓ Correct</div>It asks if a GENERAL algorithm can decide this for ANY program with ANY input.</div>
+    </div>
+    <div class="misconception">
+      <div class="mis-wrong"><div class="label">✗ Wrong</div>The halt state is like a crash or error.</div>
+      <div class="mis-right"><div class="label">✓ Correct</div>Halting is normal termination — the machine completes successfully and stops.</div>
+    </div>
+    <div class="misconception">
+      <div class="mis-wrong"><div class="label">✗ Wrong</div>A UTM is more powerful than a Turing machine.</div>
+      <div class="mis-right"><div class="label">✓ Correct</div>A UTM IS a Turing machine. It can simulate others but cannot compute more than a TM.</div>
+    </div>
+  </section>
+
+  <!-- EXAM QUESTIONS -->
+  <section id="exam">
+    <h2 class="sh">Exam Practice Questions</h2>
+    <div class="eq-card">
+      <span class="eq-marks">[2 marks]</span>
+      <div class="eq-q">State what is meant by a 'halting state' in a Turing machine.</div>
+      <div class="eq-hint">State with no outgoing transitions; machine stops.</div>
+    </div>
+    <div class="eq-card">
+      <span class="eq-marks">[3 marks]</span>
+      <div class="eq-q">Explain, using an example, the difference between a computable and a non-computable problem.</div>
+      <div class="eq-hint">Computable = TM halts with answer (e.g. sorting); Non-computable = no TM can solve for all inputs (e.g. Halting Problem).</div>
+    </div>
+    <div class="eq-card">
+      <span class="eq-marks">[4 marks]</span>
+      <div class="eq-q">Describe the Halting Problem and explain its significance for computation.</div>
+      <div class="eq-hint">Define HP; state Turing proved no algorithm can solve it; conclude some problems fundamentally cannot be solved by computers.</div>
+    </div>
+    <div class="eq-card">
+      <span class="eq-marks">[2 marks]</span>
+      <div class="eq-q">Give two components of a Turing machine and describe the role of each.</div>
+      <div class="eq-hint">Any 2 of: tape (read/write memory); read-write head (reads/writes, moves); states (track computation phase); alphabet (valid symbols).</div>
+    </div>
+    <div class="tip-box"><span>📝</span><span>'Describe' and 'Explain' questions want WHY, not just WHAT. Always link to consequences.</span></div>
+
+    <h2 class="sh">Memory Joggers</h2>
+    <div class="memory-grid">
+      <div class="mem-card">
+        <div class="mem-acronym">TASH</div>
+        <div class="mem-expand">Tape · Alphabet · States · Head</div>
+        <div class="mem-expand" style="margin-top:0.25rem;">Components of a Turing machine</div>
+      </div>
+      <div class="mem-card">
+        <div class="mem-acronym">SWM</div>
+        <div class="mem-expand">State · Write · Move</div>
+        <div class="mem-expand" style="margin-top:0.25rem;">What to record at each trace step</div>
+      </div>
+      <div class="mem-card">
+        <div class="mem-acronym">ACRC</div>
+        <div class="mem-expand">Assume · Construct · Run · Contradiction</div>
+        <div class="mem-expand" style="margin-top:0.25rem;">Four steps of the Halting Problem proof</div>
+      </div>
+      <div class="mem-card">
+        <div class="mem-acronym">δ = DO</div>
+        <div class="mem-expand">δ tells the machine what to DO next:</div>
+        <div class="mem-expand" style="margin-top:0.25rem;">(new state, write symbol, direction)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section id="resources">
+    <h2 class="sh">Online Activities &amp; Further Resources</h2>
+    <div class="resource-grid">
+      <div class="res-card"><div class="res-icon">🎮</div><div><div class="res-title">Turing Machine Simulator</div><div class="res-url">turingmachinesimulator.com</div><div class="res-desc">Build and run your own Turing machines step by step. Great for hand-trace practice.</div></div></div>
+      <div class="res-card"><div class="res-icon">📹</div><div><div class="res-title">Computerphile – Turing Machine</div><div class="res-url">youtube.com/@Computerphile</div><div class="res-desc">Search 'Computerphile Turing Machine' — clear visual explanation of TMs and the Halting Problem.</div></div></div>
+      <div class="res-card"><div class="res-icon">🖥️</div><div><div class="res-title">Morphett's TM Simulator</div><div class="res-url">morphett.info/turing</div><div class="res-desc">Online simulator with pre-built examples. Trace through programs and see the tape update live.</div></div></div>
+      <div class="res-card"><div class="res-icon">📚</div><div><div class="res-title">Isaac Computer Science</div><div class="res-url">isaaccomputerscience.org</div><div class="res-desc">AQA-aligned notes, questions and quizzes on Turing machines and the Halting Problem.</div></div></div>
+    </div>
+    <div class="tip-box" style="margin-top:1rem;"><span>🔄</span><span>Best revision strategy: Simulate a TM by hand → Check with online tool → Write the definition from memory → Repeat.</span></div>
+  </section>
+
+</main>
+
+</body>
+</html>
