@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA Computer Science 7517 — Revision Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f0ece4;
+    --surface:   #faf8f4;
+    --surface2:  #f5f1e8;
+    --border:    #ddd8cc;
+    --border2:   #ccc7ba;
+    --text:      #1e1c18;
+    --muted:     #6b6456;
+    /* Per-section accent colours — vivid & distinct */
+    --p1:        #2563eb;   /* strong blue  — Paper 1 */
+    --p1-light:  #dbeafe;
+    --p1-mid:    #93c5fd;
+    --p2:        #d97706;   /* vivid amber — Paper 2 */
+    --p2-light:  #fef3c7;
+    --p2-mid:    #fcd34d;
+    --gen:       #059669;   /* rich green  — General */
+    --gen-light: #d1fae5;
+    --gen-mid:   #6ee7b7;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 4rem 2rem 3.5rem;
+    overflow: hidden;
+    border-bottom: 2px solid var(--border2);
+    background: var(--surface);
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 10% 70%, rgba(37,99,235,0.10) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(217,119,6,0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 100%, rgba(5,150,105,0.07) 0%, transparent 45%);
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .site-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--p1);
+    background: var(--p1-light);
+    border: 1px solid var(--p1-mid);
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 1.4rem;
+  }
+  .site-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--p1);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    color: var(--text);
+    margin-bottom: .7rem;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--p1); }
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.4rem;
+  }
+  .meta-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .meta-pill .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--border2);
+  }
+
+  /* ── NAV TABS ── */
+  .tab-bar {
+    border-bottom: 2px solid var(--border2);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .tab-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+  }
+  .tab-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: .78rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+    margin-bottom: -2px;
+    font-weight: 500;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--tab-colour); border-bottom-color: var(--tab-colour); }
+  .tab-btn[data-tab="p1"]  { --tab-colour: var(--p1); }
+  .tab-btn[data-tab="p2"]  { --tab-colour: var(--p2); }
+  .tab-btn[data-tab="gen"] { --tab-colour: var(--gen); }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* ── PAPER SECTIONS ── */
+  .paper-section { display: none; }
+  .paper-section.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+  }
+  .section-header h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: .76rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── PAPER INTRO BANNER ── */
+  .paper-banner {
+    border-radius: 12px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2rem;
+    border: 1.5px solid var(--banner-colour, var(--border));
+    background: var(--banner-bg, #fff);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .banner-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--banner-colour);
+    flex-shrink: 0;
+    box-shadow: 0 0 16px var(--banner-colour);
+  }
+  .banner-text strong {
+    display: block;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: .2rem;
+  }
+  .banner-text span {
+    font-size: .86rem;
+    color: var(--muted);
+  }
+
+  /* Paper 1 banner */
+  #p1 .paper-banner  { --banner-colour: var(--p1);  --banner-bg: var(--p1-light); }
+  /* Paper 2 banner */
+  #p2 .paper-banner  { --banner-colour: var(--p2);  --banner-bg: var(--p2-light); }
+  /* General banner */
+  #gen .paper-banner { --banner-colour: var(--gen); --banner-bg: var(--gen-light); }
+
+  /* ── CARD GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.3rem;
+    margin-bottom: 4rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.7rem 1.9rem 1.6rem;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+    position: relative;
+    cursor: pointer;
+    transition: transform .2s ease, border-color .25s ease, box-shadow .25s ease, background .2s ease;
+    overflow: hidden;
+    text-decoration: none;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--card-colour);
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-colour);
+    background: #fff;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.09);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-category {
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--card-colour);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .card-category::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--card-colour);
+  }
+  .card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    line-height: 1.25;
+    color: var(--text);
+    transition: color .2s;
+  }
+  .card p {
+    font-size: .92rem;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: .3rem;
+  }
+  .card-tags { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .05em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.05);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .card-arrow {
+    font-size: 1.2rem;
+    color: var(--border2);
+    transition: color .2s, transform .2s;
+  }
+  .card:hover .card-arrow {
+    color: var(--card-colour);
+    transform: translate(2px, -2px);
+  }
+
+  /* ── EXAM STRIP ── */
+  .exam-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1.5px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+  .exam-cell { background: var(--surface); padding: 1.3rem 1.6rem; }
+  .exam-cell .label {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .3rem;
+  }
+  .exam-cell .value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .exam-cell .sub { font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+
+  /* ── HOW TO USE ── */
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+  .how-item {
+    display: flex;
+    gap: .85rem;
+    align-items: flex-start;
+    padding: 1.2rem 1.4rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+  }
+  .how-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--p1);
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: .45;
+  }
+  .how-body { font-size: .9rem; color: var(--muted); line-height: 1.55; }
+  .how-body strong { display: block; color: var(--text); font-size: .95rem; margin-bottom: .2rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1.5px solid var(--border);
+    padding: 1.8rem 2rem;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: .76rem;
+    letter-spacing: .06em;
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card { animation: fadeUp .4s ease both; }
+  .card:nth-child(1) { animation-delay: .04s; }
+  .card:nth-child(2) { animation-delay: .08s; }
+  .card:nth-child(3) { animation-delay: .12s; }
+  .card:nth-child(4) { animation-delay: .16s; }
+  .card:nth-child(5) { animation-delay: .20s; }
+  .card:nth-child(6) { animation-delay: .24s; }
+  .card:nth-child(7) { animation-delay: .28s; }
+  .card:nth-child(8) { animation-delay: .32s; }
+  .card:nth-child(9) { animation-delay: .36s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="site-label">AQA CS 7517 &mdash; Revision Hub</div>
+    <h1>Your A-level<br><em>Computer Science</em><br>revision resources.</h1>
+    <div class="header-meta">
+      <span class="meta-pill">Specification 7517</span>
+      <span class="meta-pill"><span class="dot"></span> Paper 1 &amp; Paper 2</span>
+      <span class="meta-pill"><span class="dot"></span> 2026 Exams</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── STICKY TAB BAR ── -->
+<nav class="tab-bar" aria-label="Paper sections">
+  <div class="tab-inner">
+    <button class="tab-btn active" data-tab="p1">📘 Paper 1</button>
+    <button class="tab-btn"        data-tab="p2">📙 Paper 2</button>
+    <button class="tab-btn"        data-tab="gen">📗 General</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══════════════════════════════════════
+       EXAM OVERVIEW (always visible)
+  ══════════════════════════════════════ -->
+  <div class="section-header"><h2>Exam overview</h2></div>
+  <div class="exam-strip">
+    <div class="exam-cell">
+      <div class="label">Paper 1</div>
+      <div class="value">On-screen</div>
+      <div class="sub">2 hrs 30 min &mdash; 100 marks</div>
+    </div>
+    <div class="exam-cell">
+      <div class="label">Paper 2</div>
+      <div class="value">Written</div>
+      <div class="sub">2 hrs 30 min &mdash; 100 marks</div>
+    </div>
+    <div class="exam-cell">
+      <div class="label">2026 Prelim Material</div>
+      <div class="value">Ant Simulation</div>
+      <div class="sub">Released by AQA ahead of Paper 1</div>
+    </div>
+    <div class="exam-cell">
+      <div class="label">Programming language</div>
+      <div class="value">Your choice</div>
+      <div class="sub">Python, Java, C#, VB, etc.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAPER 1
+  ══════════════════════════════════════ -->
+  <section class="paper-section active" id="p1">
+    <div class="paper-banner">
+      <div class="banner-dot"></div>
+      <div class="banner-text">
+        <strong>Paper 1 — On-screen Programming</strong>
+        <span>2 hrs 30 min &bull; 100 marks &bull; Skeleton code + Section B coding tasks</span>
+      </div>
+    </div>
+    <div class="section-header"><h2>Paper 1 resources</h2></div>
+    <div class="card-grid">
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='OOP-key-terms.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='OOP-key-terms.html'">
+        <div class="card-category">Key Terms</div>
+        <h3>OOP Key Terms</h3>
+        <p>Essential object-oriented programming vocabulary — classes, objects, inheritance, encapsulation, polymorphism, and abstraction — with clear definitions and examples.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">OOP</span><span class="tag">Definitions</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='section-b-technique.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='section-b-technique.html'">
+        <div class="card-category">Exam Technique</div>
+        <h3>Section B Technique</h3>
+        <p>How to approach the on-screen coding tasks in Section B — structuring solutions, reading the skeleton code, and maximising marks under time pressure.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Section B</span><span class="tag">Coding</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='AQA_2026_AntSimulation_StudentGuide.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='AQA_2026_AntSimulation_StudentGuide.html'">
+        <div class="card-category">Preliminary Material</div>
+        <h3>Ant Simulation Student Guide</h3>
+        <p>Complete breakdown of the 2026 Paper 1 preliminary material — classes, methods, algorithms, and exam-ready annotations.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Prelim</span><span class="tag">2026</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='Data_Structures_Revision_Part1.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='Data_Structures_Revision_Part1.html'">
+        <div class="card-category">Data Structures</div>
+        <h3>Data Structures Revision — Part 1</h3>
+        <p>Stacks, queues, linked lists, trees, and graphs — how they work, when to use them, and how to implement them in code.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Stacks</span><span class="tag">Queues</span><span class="tag">Trees</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='AQA_CS_4_4_2_4_4_3_Regular_ContextFree.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='AQA_CS_4_4_2_4_4_3_Regular_ContextFree.html'">
+        <div class="card-category">Theory of Computation</div>
+        <h3>Regular &amp; Context-Free Languages</h3>
+        <p>Sets and set notation, regular expressions and metacharacters, BNF production rules, and syntax diagrams — with worked examples throughout.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Sets</span><span class="tag">BNF</span><span class="tag">Regex</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='BigO_Revision.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='BigO_Revision.html'">
+        <div class="card-category">Algorithms</div>
+        <h3>Big O Notation Revision</h3>
+        <p>Time and space complexity — O(1), O(n), O(log n), O(n²) and beyond. How to analyse algorithm efficiency and compare approaches with confidence.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Complexity</span><span class="tag">Big O</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='abstraction-types.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='abstraction-types.html'">
+        <div class="card-category">Thinking Skills</div>
+        <h3>Types of Abstraction</h3>
+        <p>Procedural, data, and representational abstraction explained — why abstraction is central to computational thinking and how to apply it in exam answers.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Abstraction</span><span class="tag">Comp. Thinking</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p1);"
+               onclick="location.href='turing-machines.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='turing-machines.html'">
+        <div class="card-category">Theory of Computation</div>
+        <h3>Turing Machines</h3>
+        <p>How Turing machines work, transition functions, state diagrams, and the Church-Turing thesis — a clear guide to one of the most important ideas in computing.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Turing</span><span class="tag">Computability</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       PAPER 2
+  ══════════════════════════════════════ -->
+  <section class="paper-section" id="p2">
+    <div class="paper-banner">
+      <div class="banner-dot"></div>
+      <div class="banner-text">
+        <strong>Paper 2 — Written Theory</strong>
+        <span>2 hrs 30 min &bull; 100 marks &bull; Covers theory, systems, and algorithms</span>
+      </div>
+    </div>
+    <div class="section-header"><h2>Paper 2 resources</h2></div>
+    <div class="card-grid">
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='Paper2-key-terms.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='Paper2-key-terms.html'">
+        <div class="card-category">Key Terms</div>
+        <h3>Paper 2 Key Terms</h3>
+        <p>Comprehensive glossary of theory topics — from number systems and Boolean logic to operating systems, networks, and the limits of computation.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Theory</span><span class="tag">Definitions</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='DB_Design_and_Normalisation.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='DB_Design_and_Normalisation.html'">
+        <div class="card-category">Databases</div>
+        <h3>DB Design &amp; Normalisation</h3>
+        <p>Entity-relationship modelling, relational database design, and normalisation through 1NF, 2NF, and 3NF — with worked examples and common exam questions.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">SQL</span><span class="tag">Normalisation</span><span class="tag">ER Diagrams</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='elcp-revision.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='elcp-revision.html'">
+        <div class="card-category">Legislation</div>
+        <h3>ELCP Revision</h3>
+        <p>Ethical, legal, cultural, and privacy considerations in computing — covering key legislation and real-world scenarios that appear in Paper 2 questions.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Ethics</span><span class="tag">Law</span><span class="tag">Privacy</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='networking-tcpip.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='networking-tcpip.html'">
+        <div class="card-category">Networking</div>
+        <h3>Networking &amp; TCP/IP</h3>
+        <p>Protocols, packet switching, the TCP/IP stack, IP addressing, subnetting, and the hardware that makes the internet work — all mapped to the AQA specification.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">TCP/IP</span><span class="tag">Protocols</span><span class="tag">Internet</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='4_7_Computer_Organisation.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='4_7_Computer_Organisation.html'">
+        <div class="card-category">Computer Organisation</div>
+        <h3>4.7 Computer Organisation</h3>
+        <p>The processor, fetch-decode-execute cycle, registers, buses, memory hierarchy, and how the CPU interacts with the rest of the system.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">CPU</span><span class="tag">FDE Cycle</span><span class="tag">Memory</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='4_7_4_External_Hardware.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='4_7_4_External_Hardware.html'">
+        <div class="card-category">Hardware</div>
+        <h3>4.7.4 External Hardware</h3>
+        <p>Input, output, and storage devices — how they work, how they connect to the system, and the trade-offs between different types of storage technology.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">I/O</span><span class="tag">Storage</span><span class="tag">Devices</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='4_9_3_2_Internet_Security.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='4_9_3_2_Internet_Security.html'">
+        <div class="card-category">Security</div>
+        <h3>4.9.3.2 Internet Security</h3>
+        <p>Common attack types, encryption, firewalls, digital certificates, and best-practice defences — everything needed to answer security questions with precision.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Encryption</span><span class="tag">Attacks</span><span class="tag">Firewalls</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='4_12_Functional_Programming.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='4_12_Functional_Programming.html'">
+        <div class="card-category">Programming Paradigms</div>
+        <h3>4.12 Functional Programming</h3>
+        <p>First-class functions, higher-order functions, map, filter, reduce, partial application, and why functional programming avoids side effects.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Functions</span><span class="tag">Map/Filter</span><span class="tag">Lambda</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--p2);"
+               onclick="location.href='Logic_Circuits_Boolean_Algebra.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='Logic_Circuits_Boolean_Algebra.html'">
+        <div class="card-category">Logic &amp; Boolean</div>
+        <h3>Logic Circuits &amp; Boolean Algebra</h3>
+        <p>AND, OR, NOT, NAND, NOR, XOR gates, truth tables, simplification with Boolean algebra and Karnaugh maps, and building logic circuits from expressions.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Logic Gates</span><span class="tag">Truth Tables</span><span class="tag">K-Maps</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       GENERAL
+  ══════════════════════════════════════ -->
+  <section class="paper-section" id="gen">
+    <div class="paper-banner">
+      <div class="banner-dot"></div>
+      <div class="banner-text">
+        <strong>General — Exam Skills &amp; Analysis</strong>
+        <span>Resources that apply across both papers</span>
+      </div>
+    </div>
+    <div class="section-header"><h2>General resources</h2></div>
+    <div class="card-grid">
+
+      <article class="card" style="--card-colour: var(--gen);"
+               onclick="location.href='AQA_CS_Exam_techniques.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='AQA_CS_Exam_techniques.html'">
+        <div class="card-category">Exam Technique</div>
+        <h3>Exam Technique Guide</h3>
+        <p>Command terms, mark-scheme logic, timing strategies, and the common traps that lose students marks year after year.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Paper 1</span><span class="tag">Paper 2</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+      <article class="card" style="--card-colour: var(--gen);"
+               onclick="location.href='AQA_CS_Examiner_Error_Analysis.html'" role="link" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='AQA_CS_Examiner_Error_Analysis.html'">
+        <div class="card-category">Examiner Analysis</div>
+        <h3>Examiner Error Analysis 2022–2024</h3>
+        <p>Real errors from real candidates, drawn from AQA examiner reports. Know what the examiners actually see — and how to avoid those mistakes.</p>
+        <div class="card-footer">
+          <div class="card-tags"><span class="tag">Paper 1</span><span class="tag">Paper 2</span></div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       HOW TO USE THIS HUB
+  ══════════════════════════════════════ -->
+  <div class="section-header"><h2>How to use this hub</h2></div>
+  <div class="how-grid">
+    <div class="how-item">
+      <div class="how-num">1</div>
+      <div class="how-body">
+        <strong>Start with Exam Technique</strong>
+        Read this first — it changes how you approach every other topic.
+      </div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">2</div>
+      <div class="how-body">
+        <strong>Study the Error Analysis</strong>
+        Know the mistakes others made so you don't repeat them.
+      </div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">3</div>
+      <div class="how-body">
+        <strong>Master the Prelim Material</strong>
+        Paper 1 requires deep familiarity with the skeleton code before the exam.
+      </div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">4</div>
+      <div class="how-body">
+        <strong>Revisit regularly</strong>
+        New resources are added as the exam approaches. Check back often.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  AQA Computer Science 7517 &mdash; Revision Hub &nbsp;|&nbsp; For student use only
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('.paper-section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      sections.forEach(s => {
+        s.classList.toggle('active', s.id === target);
+        if (s.id === target) {
+          s.querySelectorAll('.card').forEach(c => {
+            c.style.animation = 'none';
+            c.offsetHeight; // reflow
+            c.style.animation = '';
+          });
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
