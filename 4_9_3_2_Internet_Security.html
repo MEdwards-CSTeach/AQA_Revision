@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.9.3.2 Internet Security — AQA CS Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fb; --card: #ffffff; --navy: #1a3c6e; --navy-light: #2a5298;
+    --text: #1e2a3a; --muted: #5a6a7e; --border: #d0d8e4;
+    --s1: #eef4fb; --s2: #edfaf4; --s3: #fff8ec; --s4: #f3eeff;
+    --s5: #fdedf0; --s6: #e8f8f8; --s7: #fef9e8;
+    --warn-bg: #fff8e1; --warn-border: #e6a817;
+    --tip-bg: #e8f5e9; --tip-border: #388e3c;
+    --misconc-bg: #fce4ec; --misconc-border: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; font-size: 15px; line-height: 1.65; background: var(--bg); color: var(--text); }
+  header { background: var(--navy); color: white; padding: 2rem 2.5rem 1.5rem; border-bottom: 4px solid #4a90d9; }
+  header .tag { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #8cb8e8; margin-bottom: 0.4rem; }
+  header h1 { font-family: 'Source Serif 4', serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  header p { color: #b8d0ee; font-size: 14px; }
+  .toc { background: white; border-bottom: 1px solid var(--border); padding: 0.8rem 2.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .toc span { font-size: 12px; color: var(--muted); margin-right: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .toc a { font-size: 13px; color: var(--navy-light); text-decoration: none; padding: 0.25rem 0.7rem; border-radius: 20px; border: 1px solid #c8d8ee; background: #f0f5fb; transition: background 0.15s; }
+  .toc a:hover { background: #deeaf8; }
+  main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { border-radius: 10px; margin-bottom: 1.8rem; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .section-header { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-header .spec-ref { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-left: auto; }
+  .section-header h2 { font-family: 'Source Serif 4', serif; font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+  .section-body { padding: 1.2rem 1.5rem 1.5rem; background: white; }
+  .s1 .section-header { background: var(--s1); border-bottom: 2px solid #b8d4f0; }
+  .s2 .section-header { background: var(--s2); border-bottom: 2px solid #a0d8be; }
+  .s3 .section-header { background: var(--s3); border-bottom: 2px solid #f0c878; }
+  .s4 .section-header { background: var(--s4); border-bottom: 2px solid #c8a8f0; }
+  .s5 .section-header { background: var(--s5); border-bottom: 2px solid #f0a0b0; }
+  .s6 .section-header { background: var(--s6); border-bottom: 2px solid #80ccd0; }
+  .s7 .section-header { background: var(--s7); border-bottom: 2px solid #e0c840; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin: 1rem 0; }
+  .card { background: var(--bg); border-radius: 8px; padding: 1rem 1.1rem; border-left: 4px solid var(--navy-light); }
+  .card h3 { font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+  .card p, .card li { font-size: 14px; }
+  .card ul, .card ol { padding-left: 1.2rem; }
+  .card li { margin-bottom: 0.2rem; }
+  .card.green { border-left-color: #388e3c; }
+  .card.amber { border-left-color: #e6a817; }
+  .card.purple { border-left-color: #7b3fa0; }
+  .card.teal  { border-left-color: #00838f; }
+  .card.rose  { border-left-color: #c62828; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+  th { background: var(--navy); color: white; padding: 0.6rem 0.8rem; text-align: left; }
+  td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #e0e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5f8fc; }
+  .steps { list-style: none; padding: 0; margin: 1rem 0; }
+  .steps li { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.6rem 0; border-bottom: 1px solid #eef; }
+  .steps li:last-child { border-bottom: none; }
+  .step-num { background: var(--navy); color: white; border-radius: 50%; width: 26px; height: 26px; min-width: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .step-body { flex: 1; }
+  .step-body strong { display: block; font-size: 14px; margin-bottom: 0.1rem; }
+  .step-body span { font-size: 13px; color: var(--muted); }
+  .warn { background: var(--warn-bg); border-left: 4px solid var(--warn-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .tip { background: var(--tip-bg); border-left: 4px solid var(--tip-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .misconc { background: var(--misconc-bg); border-left: 4px solid var(--misconc-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .warn .label, .tip .label, .misconc .label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; display: block; }
+  .warn .label { color: #b07800; } .tip .label { color: #2a7a34; } .misconc .label { color: #a01010; }
+  .mnemonic { background: #f0f5fb; border: 1px dashed #4a90d9; border-radius: 6px; padding: 0.7rem 1rem; font-size: 14px; margin: 0.8rem 0; }
+  .mnemonic .label { font-weight: 700; color: var(--navy); }
+  code { font-family: 'JetBrains Mono', monospace; background: #f0f3f8; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; color: #1a3c6e; }
+  p { margin-bottom: 0.6rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.6rem; }
+  li { margin-bottom: 0.25rem; font-size: 14px; }
+  h3 { font-family: 'Source Serif 4', serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); margin: 1rem 0 0.4rem; }
+  .activity { background: #f0f5fb; border: 1px solid #b8d4f0; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .activity h3 { color: var(--navy); margin-top: 0; }
+  .activity .answers { background: white; border: 1px solid #d0d8e4; border-radius: 6px; padding: 0.8rem 1rem; margin-top: 0.6rem; font-size: 13px; }
+  .q-block { background: var(--bg); border-radius: 8px; padding: 1rem; margin: 0.8rem 0; border: 1px solid var(--border); }
+  .q-block .q-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+  .q-block .marks { float: right; background: var(--navy); color: white; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 12px; font-weight: 700; }
+  @media(max-width:640px){ .grid-2,.grid-3 { grid-template-columns:1fr; } header h1 { font-size:1.5rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">AQA A-Level Computer Science 7517 · Paper 2 · Section 4.9.3.2</div>
+  <h1>🔒 Internet Security</h1>
+  <p>Firewalls &nbsp;·&nbsp; Encryption &nbsp;·&nbsp; Digital Certificates &amp; Signatures &nbsp;·&nbsp; Malware &nbsp;·&nbsp; Countermeasures</p>
+</header>
+
+<nav class="toc">
+  <span>Jump to:</span>
+  <a href="#firewalls">Firewalls</a>
+  <a href="#encryption">Encryption</a>
+  <a href="#key-exchange">Key Exchange</a>
+  <a href="#certificates">Digital Certificates</a>
+  <a href="#signatures">Digital Signatures</a>
+  <a href="#malware">Malware</a>
+  <a href="#countermeasures">Countermeasures</a>
+  <a href="#exam-practice">Exam Practice</a>
+  <a href="#exam-tips">Top Tips</a>
+</nav>
+
+<main>
+
+<!-- FIREWALLS -->
+<div class="section s1" id="firewalls">
+  <div class="section-header">
+    <h2>🔒 Section 1 — Firewalls</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <p>A firewall monitors and controls incoming and outgoing network traffic based on predetermined rules.</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Packet Filtering</h3>
+        <p>Examines packet headers. Blocks/allows based on rules about:</p>
+        <ul>
+          <li>Source/destination IP address</li>
+          <li>Port number</li>
+          <li>Protocol type</li>
+        </ul>
+        <p style="margin-top:0.5rem; font-size:13px; color:var(--muted);">💡 Rules can block specific ports (e.g. block port 25 to prevent spam)</p>
+      </div>
+      <div class="card green">
+        <h3>Stateful Inspection</h3>
+        <p>Tracks the state of active connections. Only allows packets that belong to an established, legitimate connection.</p>
+        <p style="margin-top:0.5rem; font-size:13px; color:var(--muted);">💡 More secure than packet filtering alone — blocks unsolicited incoming packets</p>
+      </div>
+      <div class="card amber">
+        <h3>Proxy Server</h3>
+        <p>Acts as an intermediary. Internal computers never communicate directly with the internet — all requests go through the proxy first.</p>
+        <p style="margin-top:0.5rem; font-size:13px; color:var(--muted);">💡 Hides internal IP addresses; can cache and filter content</p>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Exam tip</span>
+      "Explain 4 ways a firewall can protect a LAN" — give a <strong>different mechanism each time</strong>; don't repeat firewall types for more than 1 mark each.
+    </div>
+
+    <div class="activity">
+      <h3>✏️ Activity 1 — Firewall Sorting Task (5 mins)</h3>
+      <p style="font-size:14px;">Match each statement to the correct firewall method: <strong>Packet Filtering / Stateful Inspection / Proxy Server</strong></p>
+      <table>
+        <tr><th>Statement</th><th>Answer</th></tr>
+        <tr><td>A. Checks whether incoming data is part of an already-established connection.</td><td>Stateful Inspection</td></tr>
+        <tr><td>B. Blocks traffic from a specific IP address range.</td><td>Packet Filtering</td></tr>
+        <tr><td>C. All requests to the internet are made on behalf of internal computers.</td><td>Proxy Server</td></tr>
+        <tr><td>D. Prevents packets from reaching the internal network unless they match an allowed port.</td><td>Packet Filtering</td></tr>
+        <tr><td>E. Conceals the real IP addresses of computers on the LAN.</td><td>Proxy Server</td></tr>
+        <tr><td>F. Maintains a table of active sessions and validates each packet against it.</td><td>Stateful Inspection</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ENCRYPTION -->
+<div class="section s2" id="encryption">
+  <div class="section-header">
+    <h2>🔐 Section 2 — Encryption</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Symmetric Encryption</h3>
+        <p><strong>Same key</strong> used to encrypt and decrypt</p>
+        <ul>
+          <li>✅ Fast — suited to large data</li>
+          <li>✅ Simple to implement</li>
+          <li>❌ Key distribution problem: How do you securely share the key in the first place?</li>
+        </ul>
+        <p style="margin-top:0.5rem; font-size:13px; font-style:italic;">Example: AES</p>
+      </div>
+      <div class="card green">
+        <h3>Asymmetric Encryption</h3>
+        <p><strong>Different key pair</strong> (public + private)</p>
+        <ul>
+          <li><strong>Public key:</strong> shared openly</li>
+          <li><strong>Private key:</strong> kept secret</li>
+          <li>Encrypt with receiver's PUBLIC key</li>
+          <li>Decrypt with receiver's PRIVATE key</li>
+          <li>❌ Slow — not suited for large data</li>
+          <li>✅ Solves key distribution problem</li>
+        </ul>
+        <p style="margin-top:0.5rem; font-size:13px; font-style:italic;">Example: RSA</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KEY EXCHANGE -->
+<div class="section s3" id="key-exchange">
+  <div class="section-header">
+    <h2>🔑 Key Exchange in Practice (HTTPS)</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <p>Both encryption methods are combined — asymmetric is used to securely share a symmetric key:</p>
+    <ol class="steps">
+      <li><span class="step-num">1</span><div class="step-body"><strong>Server sends its public key to the client</strong><span>The public key is included in the server's digital certificate</span></div></li>
+      <li><span class="step-num">2</span><div class="step-body"><strong>Client generates a random symmetric session key</strong><span>This will be used for the bulk of the encrypted communication</span></div></li>
+      <li><span class="step-num">3</span><div class="step-body"><strong>Client encrypts the session key using the server's PUBLIC key</strong><span>Only the server can decrypt this — it's the only one with the matching private key</span></div></li>
+      <li><span class="step-num">4</span><div class="step-body"><strong>Encrypted session key sent to the server</strong><span>Even if intercepted, it cannot be read without the server's private key</span></div></li>
+      <li><span class="step-num">5</span><div class="step-body"><strong>Server decrypts using its PRIVATE key</strong><span>Now both parties know the symmetric session key</span></div></li>
+      <li><span class="step-num">6</span><div class="step-body"><strong>Both now use the symmetric session key for fast encryption</strong><span>All subsequent communication is fast symmetric encryption</span></div></li>
+    </ol>
+    <div class="warn">
+      <span class="label">⚠️ Exam tip</span>
+      Asymmetric encryption is <strong>SLOW</strong> — it's used only to share the session key, not to encrypt the whole message.
+    </div>
+  </div>
+</div>
+
+<!-- DIGITAL CERTIFICATES -->
+<div class="section s4" id="certificates">
+  <div class="section-header">
+    <h2>📜 Section 3 — Digital Certificates</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <p>A digital certificate <strong>proves that a public key really does belong to the claimed entity</strong>.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Certificate Contains</h3>
+        <ul>
+          <li>Owner's public key</li>
+          <li>Owner's name / domain</li>
+          <li>Issuing Certificate Authority (CA)</li>
+          <li>Expiry date</li>
+          <li>Digital signature of the CA</li>
+          <li>Serial number</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>Obtaining a Certificate</h3>
+          <ol style="padding-left:1.2rem;">
+            <li>Entity generates a public/private key pair</li>
+            <li>Sends public key + identity details to a Certificate Authority (CA)</li>
+            <li>CA verifies identity, then signs and issues the certificate</li>
+          </ol>
+        </div>
+        <div class="card amber" style="margin-top:0.8rem;">
+          <h3>Using / Verifying a Certificate</h3>
+          <ol style="padding-left:1.2rem;">
+            <li>Client receives server's certificate</li>
+            <li>Client checks CA's digital signature (CA's public key is built into the browser)</li>
+            <li>If valid → client trusts the public key → encrypted communication begins (HTTPS)</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="label">💡 Exam tip</span>
+      The CA's public key is <strong>pre-installed in browsers</strong> — this is how they verify the certificate without contacting the CA each time.
+    </div>
+  </div>
+</div>
+
+<!-- DIGITAL SIGNATURES -->
+<div class="section s5" id="signatures">
+  <div class="section-header">
+    <h2>✍️ Digital Signatures — How They Work</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <p><strong>Purpose:</strong> Prove the message came from the claimed sender and was not tampered with.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>📤 SENDER (A) — Signing</h3>
+        <ol style="padding-left:1.2rem;">
+          <li><strong>Hash the message</strong> — creates a message digest</li>
+          <li><strong>Encrypt the hash</strong> using sender's <strong>PRIVATE key</strong> → This is the digital signature</li>
+          <li><strong>Send message + signature</strong> (message encrypted with receiver's PUBLIC key)</li>
+        </ol>
+      </div>
+      <div class="card green">
+        <h3>📥 RECEIVER (B) — Verifying</h3>
+        <ol style="padding-left:1.2rem;">
+          <li><strong>Decrypt message</strong> using receiver's PRIVATE key</li>
+          <li><strong>Decrypt the signature</strong> using sender's PUBLIC key → Gets original hash</li>
+          <li><strong>Hash the received message</strong> independently</li>
+          <li><strong>Compare hashes</strong> — If they match → authentic &amp; unaltered</li>
+        </ol>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Key distinction</span>
+      The sender signs with their <strong>PRIVATE key</strong>. The receiver verifies with the sender's <strong>PUBLIC key</strong>. A hash is <strong>one-way</strong> — it cannot be reversed. Encryption CAN be reversed with the correct key.
+    </div>
+
+    <div class="activity">
+      <h3>✏️ Activity 2 — True or False?</h3>
+      <table>
+        <tr><th>Statement</th><th>Answer</th><th>Reason</th></tr>
+        <tr><td>A public key can decrypt a message encrypted with the matching private key.</td><td>TRUE</td><td>That's how digital signatures work — sender encrypts hash with private key; receiver decrypts with public key</td></tr>
+        <tr><td>Symmetric encryption uses two different keys.</td><td>FALSE</td><td>Symmetric uses the SAME key for both encryption and decryption</td></tr>
+        <tr><td>A digital certificate is issued by a Certificate Authority (CA).</td><td>TRUE</td><td>The CA signs the certificate to vouch for the public key's owner</td></tr>
+        <tr><td>Asymmetric encryption is faster than symmetric encryption.</td><td>FALSE</td><td>Asymmetric is SLOWER; symmetric is used for bulk data</td></tr>
+        <tr><td>A digital signature proves a message has not been altered in transit.</td><td>TRUE</td><td>If the hashes match, the message is unaltered</td></tr>
+        <tr><td>The private key should be shared publicly so others can encrypt messages to you.</td><td>FALSE</td><td>The PUBLIC key is shared; the PRIVATE key must be kept secret</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MALWARE -->
+<div class="section s6" id="malware">
+  <div class="section-header">
+    <h2>🐛 Section 4 — Malware</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-3">
+      <div class="card rose">
+        <h3>🦠 Virus</h3>
+        <p><strong>How it works:</strong> Attaches itself to a legitimate program or file. Spreads when the infected file is shared.</p>
+        <p><strong>Vulnerability exploited:</strong> Users opening infected email attachments or running infected files.</p>
+        <p style="margin-top:0.5rem; font-size:13px; font-weight:600; color:#c62828;">Requires human action to spread</p>
+      </div>
+      <div class="card amber">
+        <h3>🪱 Worm</h3>
+        <p><strong>How it works:</strong> Self-replicating — spreads automatically across networks without needing to attach to a file.</p>
+        <p><strong>Vulnerability exploited:</strong> Network vulnerabilities and software bugs. Can cause network congestion.</p>
+        <p style="margin-top:0.5rem; font-size:13px; font-weight:600; color:#e6a817;">Spreads without human action</p>
+      </div>
+      <div class="card purple">
+        <h3>🐴 Trojan</h3>
+        <p><strong>How it works:</strong> Disguises itself as legitimate software. Does not self-replicate.</p>
+        <p><strong>Vulnerability exploited:</strong> Users' trust — tricks users into installing it voluntarily (social engineering).</p>
+        <p style="margin-top:0.5rem; font-size:13px; font-weight:600; color:#7b3fa0;">Does not self-replicate</p>
+      </div>
+    </div>
+
+    <div class="activity" style="margin-top:1rem;">
+      <h3>✏️ Activity 3 — Malware Scenarios</h3>
+      <table>
+        <tr><th>Scenario</th><th>Malware Type</th><th>Countermeasure</th></tr>
+        <tr><td>A user downloads a free game from an unofficial website. After installing, their banking details are stolen, but the game appears to work normally.</td><td>Trojan</td><td>Restrict installation of software from unverified sources</td></tr>
+        <tr><td>A company's network suddenly slows to a crawl. Investigation reveals thousands of copies of a program spreading itself from computer to computer through a known OS vulnerability.</td><td>Worm</td><td>Keep OS and software updated to patch vulnerabilities</td></tr>
+        <tr><td>An employee opens a spreadsheet sent by email. Hidden code inside it runs whenever the file is opened and emails itself to everyone in their contacts.</td><td>Virus</td><td>Disable macros in documents from external sources / spam filter</td></tr>
+        <tr><td>A developer's code allows a user to type more characters than a buffer can hold, causing the program to crash or behave unexpectedly.</td><td>Buffer overflow vulnerability</td><td>Validate input; prevent buffer overruns in code</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- COUNTERMEASURES -->
+<div class="section s7" id="countermeasures">
+  <div class="section-header">
+    <h2>🛡️ Section 5 — Countermeasures</h2>
+    <span class="spec-ref">4.9.3.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-3">
+      <div class="card">
+        <h3>🧪 Code Quality</h3>
+        <ul>
+          <li>Prevent <strong>buffer overflows</strong> — validate input so programs cannot write to unallocated memory</li>
+          <li>Code reviews — independent checking by another programmer</li>
+          <li>Security testing — test for vulnerabilities before release</li>
+          <li>Use code analysis software to detect flaws</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>👁️ Monitoring</h3>
+        <ul>
+          <li>Firewall — block packets from high-risk sources; stateful inspection</li>
+          <li>Proxy server — checks downloaded files before they reach users</li>
+          <li>Spam filters — block suspicious emails and attachments</li>
+          <li>Web filters — check sites against known malware lists</li>
+          <li>Digital certificates — verify source of downloads</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>🔒 Protection</h3>
+        <ul>
+          <li>Auto-update OS and apps to patch vulnerabilities</li>
+          <li>Use a sandbox/VM to safely execute unknown programs</li>
+          <li>Set access rights to minimise damage from malware</li>
+          <li>Disable macros in documents from external sources</li>
+          <li>Encrypt sensitive files; take offline backups</li>
+        </ul>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Exam tip</span>
+      The question will often specify monitoring/protection/code quality — answer within <strong>THAT category</strong> and always describe <strong>HOW</strong>, not just name the measure.
+    </div>
+  </div>
+</div>
+
+<!-- EXAM PRACTICE -->
+<div class="section s1" id="exam-practice">
+  <div class="section-header">
+    <h2>✏️ Exam Practice Questions</h2>
+  </div>
+  <div class="section-body">
+    <h3>Short Answer Questions</h3>
+    <div class="q-block">
+      <div class="q-label">STATE <span class="marks">1 mark</span></div>
+      <p style="font-size:14px;">1. State the difference between a symmetric and an asymmetric cipher.</p>
+    </div>
+    <div class="q-block">
+      <div class="q-label">DEFINE <span class="marks">2 marks</span></div>
+      <p style="font-size:14px;">2. Define the terms 'digital certificate' and 'Certificate Authority (CA)'.</p>
+    </div>
+    <div class="q-block">
+      <div class="q-label">STATE <span class="marks">1 mark</span></div>
+      <p style="font-size:14px;">3. State one vulnerability that a worm typically exploits to spread across a network.</p>
+    </div>
+    <div class="q-block">
+      <div class="q-label">DESCRIBE <span class="marks">2 marks</span></div>
+      <p style="font-size:14px;">4. Describe how a proxy server firewall protects computers on a LAN.</p>
+    </div>
+    <div class="q-block">
+      <div class="q-label">STATE <span class="marks">1 mark</span></div>
+      <p style="font-size:14px;">5. State one way that code quality can be improved to reduce the risk of malware.</p>
+    </div>
+
+    <h3 style="margin-top:1.2rem;">Extended Answer Questions</h3>
+    <div class="q-block">
+      <div class="q-label">EXPLAIN <span class="marks">4 marks</span></div>
+      <p style="font-size:14px;">Q6. A router on a school network also acts as a firewall. Explain four different ways that a firewall can protect computers on the school network.</p>
+    </div>
+    <div class="q-block">
+      <div class="q-label">DESCRIBE <span class="marks">6 marks</span></div>
+      <p style="font-size:14px;">Q7. Computer A wishes to send a confidential email to Computer B using asymmetric encryption and a digital signature. Describe how Computer A will encrypt the message and create the digital signature, and how Computer B will decrypt the message and verify the signature. Refer to specific keys used in your response.</p>
+    </div>
+    <div class="q-block">
+      <div class="q-label">DISCUSS <span class="marks">4 marks</span></div>
+      <p style="font-size:14px;">Q8. A software company has received reports that their application is spreading a virus to users' computers. Discuss four measures the company could take, from the areas of code quality, monitoring, and protection, to reduce the threat posed by viruses. For each measure, describe how it would help.</p>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM TIPS -->
+<div class="section s2" id="exam-tips">
+  <div class="section-header">
+    <h2>⚠️ Top Exam Tips</h2>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>📌 Always describe HOW</h3>
+        <p>Naming "firewall" or "antivirus" without explaining how it works earns zero. Always say what it <strong>DOES</strong>.</p>
+      </div>
+      <div class="card green">
+        <h3>📌 Symmetric ≠ Asymmetric</h3>
+        <p>Symmetric = same key both ends. Asymmetric = public key encrypts, private key decrypts. Don't mix them up.</p>
+      </div>
+      <div class="card amber">
+        <h3>📌 Digital Signature = private key</h3>
+        <p>The sender signs with their <strong>PRIVATE key</strong>. The receiver verifies with the sender's <strong>PUBLIC key</strong>.</p>
+      </div>
+      <div class="card purple">
+        <h3>📌 Hashing ≠ Encryption</h3>
+        <p>A hash is <strong>one-way</strong> — it cannot be reversed. Encryption CAN be reversed with the correct key.</p>
+      </div>
+      <div class="card teal">
+        <h3>📌 Don't repeat marks</h3>
+        <p>If asked for 4 different firewall methods, give 4 different ones. Multiple points about "packet filtering" = 1 mark max.</p>
+      </div>
+      <div class="card rose">
+        <h3>📌 Read the category</h3>
+        <p>If the question says "from the area of code quality" — stay in that category. Answering with monitoring measures won't score.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</body>
+</html>

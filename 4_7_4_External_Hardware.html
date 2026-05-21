@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.7.4 External Hardware Devices — AQA CS Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fb;
+    --card: #ffffff;
+    --navy: #1a3c6e;
+    --navy-light: #2a5298;
+    --text: #1e2a3a;
+    --muted: #5a6a7e;
+    --border: #d0d8e4;
+    --s1: #eef4fb;
+    --s2: #edfaf4;
+    --s3: #fff8ec;
+    --s4: #f3eeff;
+    --s5: #fdedf0;
+    --s6: #e8f8f8;
+    --s7: #fef9e8;
+    --warn-bg: #fff8e1;
+    --warn-border: #e6a817;
+    --tip-bg: #e8f5e9;
+    --tip-border: #388e3c;
+    --misconc-bg: #fce4ec;
+    --misconc-border: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; font-size: 15px; line-height: 1.65; background: var(--bg); color: var(--text); }
+  header { background: var(--navy); color: white; padding: 2rem 2.5rem 1.5rem; border-bottom: 4px solid #4a90d9; }
+  header .tag { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #8cb8e8; margin-bottom: 0.4rem; }
+  header h1 { font-family: 'Source Serif 4', serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  header p { color: #b8d0ee; font-size: 14px; }
+  .toc { background: white; border-bottom: 1px solid var(--border); padding: 0.8rem 2.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .toc span { font-size: 12px; color: var(--muted); margin-right: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .toc a { font-size: 13px; color: var(--navy-light); text-decoration: none; padding: 0.25rem 0.7rem; border-radius: 20px; border: 1px solid #c8d8ee; background: #f0f5fb; transition: background 0.15s; }
+  .toc a:hover { background: #deeaf8; }
+  main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { border-radius: 10px; margin-bottom: 1.8rem; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .section-header { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-header .spec-ref { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-left: auto; }
+  .section-header h2 { font-family: 'Source Serif 4', serif; font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+  .section-body { padding: 1.2rem 1.5rem 1.5rem; background: white; }
+  .s1 .section-header { background: var(--s1); border-bottom: 2px solid #b8d4f0; }
+  .s2 .section-header { background: var(--s2); border-bottom: 2px solid #a0d8be; }
+  .s3 .section-header { background: var(--s3); border-bottom: 2px solid #f0c878; }
+  .s4 .section-header { background: var(--s4); border-bottom: 2px solid #c8a8f0; }
+  .s5 .section-header { background: var(--s5); border-bottom: 2px solid #f0a0b0; }
+  .s6 .section-header { background: var(--s6); border-bottom: 2px solid #80ccd0; }
+  .s7 .section-header { background: var(--s7); border-bottom: 2px solid #e0c840; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin: 1rem 0; }
+  .card { background: var(--bg); border-radius: 8px; padding: 1rem 1.1rem; border-left: 4px solid var(--navy-light); }
+  .card h3 { font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+  .card p, .card li { font-size: 14px; }
+  .card ul { padding-left: 1.2rem; }
+  .card li { margin-bottom: 0.2rem; }
+  .card.green { border-left-color: #388e3c; }
+  .card.amber { border-left-color: #e6a817; }
+  .card.purple { border-left-color: #7b3fa0; }
+  .card.teal  { border-left-color: #00838f; }
+  .card.rose  { border-left-color: #c62828; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+  th { background: var(--navy); color: white; padding: 0.6rem 0.8rem; text-align: left; }
+  td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #e0e8f0; }
+  tr:nth-child(even) td { background: #f5f8fc; }
+  .steps { list-style: none; padding: 0; margin: 1rem 0; }
+  .steps li { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.6rem 0; border-bottom: 1px solid #eef; }
+  .steps li:last-child { border-bottom: none; }
+  .step-num { background: var(--navy); color: white; border-radius: 50%; width: 26px; height: 26px; min-width: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .step-body { flex: 1; }
+  .step-body strong { display: block; font-size: 14px; margin-bottom: 0.1rem; }
+  .step-body span { font-size: 13px; color: var(--muted); }
+  .warn { background: var(--warn-bg); border-left: 4px solid var(--warn-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .tip { background: var(--tip-bg); border-left: 4px solid var(--tip-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .misconc { background: var(--misconc-bg); border-left: 4px solid var(--misconc-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .warn .label, .tip .label, .misconc .label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; display: block; }
+  .warn .label { color: #b07800; }
+  .tip .label { color: #2a7a34; }
+  .misconc .label { color: #a01010; }
+  .mnemonic { background: #f0f5fb; border: 1px dashed #4a90d9; border-radius: 6px; padding: 0.7rem 1rem; font-size: 14px; margin: 0.8rem 0; }
+  .mnemonic .label { font-weight: 700; color: var(--navy); }
+  code { font-family: 'JetBrains Mono', monospace; background: #f0f3f8; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; color: #1a3c6e; }
+  p { margin-bottom: 0.6rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.6rem; }
+  li { margin-bottom: 0.25rem; font-size: 14px; }
+  h3 { font-family: 'Source Serif 4', serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); margin: 1rem 0 0.4rem; }
+  @media(max-width:640px){ .grid-2,.grid-3 { grid-template-columns:1fr; } header h1 { font-size:1.5rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">AQA A-Level Computer Science 7517 · Paper 2</div>
+  <h1>4.7.4 External Hardware Devices</h1>
+  <p>Input/Output Devices &nbsp;·&nbsp; Secondary Storage &nbsp;·&nbsp; All diagrams show principles of operation</p>
+</header>
+
+<nav class="toc">
+  <span>Jump to:</span>
+  <a href="#barcode">Barcode Reader</a>
+  <a href="#rfid">RFID</a>
+  <a href="#camera">Digital Camera</a>
+  <a href="#laser">Laser Printer</a>
+  <a href="#why-storage">Why Secondary Storage?</a>
+  <a href="#hdd">HDD</a>
+  <a href="#optical">Optical Disk</a>
+  <a href="#ssd">SSD</a>
+  <a href="#compare">Comparison</a>
+  <a href="#mnemonics">Mnemonics</a>
+</nav>
+
+<main>
+
+<!-- LEARNING OBJECTIVES -->
+<div class="section s1">
+  <div class="section-header">
+    <h2>🎯 Learning Objectives — What You Must Know</h2>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div>
+        <h3>4.7.4.1 — Input/Output Devices</h3>
+        <ul>
+          <li>Know the <strong>principles of operation</strong> of: barcode reader, digital camera, laser printer, RFID</li>
+          <li>Know the characteristics, purposes and <strong>suitability</strong> of each device</li>
+        </ul>
+      </div>
+      <div>
+        <h3>4.7.4.2 — Secondary Storage</h3>
+        <ul>
+          <li>Explain <strong>why secondary storage is needed</strong> in a computer system</li>
+          <li>Know the principles of operation of: HDD, optical disk, SSD</li>
+          <li><strong>Compare</strong> capacity, speed and suitability of different storage media</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BARCODE READER -->
+<div class="section s2" id="barcode">
+  <div class="section-header">
+    <h2>📊 Barcode Reader — Principles of Operation</h2>
+    <span class="spec-ref">4.7.4.1</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Method 1 — Laser</h3>
+        <ul>
+          <li>Laser fires and mirror sweeps beam across barcode</li>
+          <li>Black bars <strong>absorb</strong> light; white bars <strong>reflect</strong> light</li>
+          <li>Photodiode measures reflected light intensity</li>
+          <li>ADC converts the analogue signal to binary</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>Method 2 — CCD (Camera)</h3>
+        <ul>
+          <li>CCD/CMOS grid captures an image of the barcode</li>
+          <li>Each pixel measures light intensity</li>
+          <li>Voltage output from each pixel</li>
+          <li>ADC converts voltage to binary</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:0;">
+      <div class="card amber">
+        <h3>Suitability</h3>
+        <ul>
+          <li>✅ Fast, accurate</li>
+          <li>❌ Needs line-of-sight</li>
+          <li>❌ Cannot read damaged/dirty barcodes</li>
+        </ul>
+      </div>
+      <div class="card purple">
+        <h3>Typical Uses</h3>
+        <ul>
+          <li>Supermarket checkouts</li>
+          <li>Libraries</li>
+          <li>Warehouses</li>
+          <li>Hospitals</li>
+        </ul>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Key exam point</span>
+      Barcodes store a product <strong>NUMBER only</strong> — NOT the name, price or description. The till looks these up in a database.
+    </div>
+    <div class="tip">
+      <span class="label">💡 Exam tip</span>
+      You only need to describe <strong>ONE method</strong> in exams (laser OR camera). Know both exist!
+    </div>
+  </div>
+</div>
+
+<!-- RFID -->
+<div class="section s3" id="rfid">
+  <div class="section-header">
+    <h2>📡 RFID — Radio-Frequency Identification</h2>
+    <span class="spec-ref">4.7.4.1</span>
+  </div>
+  <div class="section-body">
+    <ol class="steps">
+      <li><span class="step-num">①</span><div class="step-body"><strong>Reader transmits</strong><span>Emits an electromagnetic field/signal</span></div></li>
+      <li><span class="step-num">②</span><div class="step-body"><strong>Tag energised</strong><span>Field induces current in passive tag's antenna (NO battery needed)</span></div></li>
+      <li><span class="step-num">③</span><div class="step-body"><strong>Tag sends data</strong><span>Tag transmits stored ID data via radio waves</span></div></li>
+      <li><span class="step-num">④</span><div class="step-body"><strong>Reader decodes</strong><span>Converts radio signal back to binary data</span></div></li>
+    </ol>
+    <div class="grid-2">
+      <div class="card green">
+        <h3>RFID vs Barcode</h3>
+        <ul>
+          <li>✅ No line-of-sight needed</li>
+          <li>✅ Can read multiple tags simultaneously</li>
+          <li>❌ Higher cost per tag than barcode</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Active vs Passive Tags</h3>
+        <ul>
+          <li><strong>Passive tag:</strong> NO battery — gets power from the reader's electromagnetic field</li>
+          <li><strong>Active tag:</strong> Has its own battery, longer range</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mnemonic"><span class="label">💡 Mnemonic:</span> <strong>RFID = Radio, Field, ID</strong> — Reader sends out a radio field → tag gets power → tag sends its ID back.</div>
+  </div>
+</div>
+
+<!-- DIGITAL CAMERA -->
+<div class="section s4" id="camera">
+  <div class="section-header">
+    <h2>📷 Digital Camera — Principles of Operation</h2>
+    <span class="spec-ref">4.7.4.1</span>
+  </div>
+  <div class="section-body">
+    <ol class="steps">
+      <li><span class="step-num">1</span><div class="step-body"><strong>Light → Lens</strong><span>Light from scene passes through the lens and is focused onto the sensor</span></div></li>
+      <li><span class="step-num">2</span><div class="step-body"><strong>CCD/CMOS Sensor</strong><span>Grid of millions of tiny pixel cells — each measures light intensity</span></div></li>
+      <li><span class="step-num">3</span><div class="step-body"><strong>Voltage output</strong><span>Each pixel produces a voltage proportional to light intensity received</span></div></li>
+      <li><span class="step-num">4</span><div class="step-body"><strong>ADC converts</strong><span>Analogue voltages converted to binary values by an Analogue-to-Digital Converter</span></div></li>
+      <li><span class="step-num">5</span><div class="step-body"><strong>Stored as bitmap</strong><span>Pixel colour values stored as a bitmap in flash memory (non-volatile)</span></div></li>
+    </ol>
+    <div class="warn">
+      <span class="label">⚠️ Resolution</span>
+      Resolution = megapixels (millions of pixels). More pixels = more detail captured <strong>but larger file size</strong>. NOT the same as "good lens quality".
+    </div>
+    <div class="mnemonic"><span class="label">💡 Mnemonic — LIVABS:</span> <strong>L</strong>ight → <strong>I</strong>mage (sensor) → <strong>V</strong>oltage → <strong>A</strong>DC → <strong>B</strong>inary → <strong>S</strong>tore</div>
+  </div>
+</div>
+
+<!-- LASER PRINTER -->
+<div class="section s5" id="laser">
+  <div class="section-header">
+    <h2>🖨️ Laser Printer — Principles of Operation</h2>
+    <span class="spec-ref">4.7.4.1</span>
+  </div>
+  <div class="section-body">
+    <ol class="steps">
+      <li><span class="step-num">①</span><div class="step-body"><strong>Build bitmap</strong><span>Bitmap of page built in printer's memory from page description</span></div></li>
+      <li><span class="step-num">②</span><div class="step-body"><strong>Charge drum (−)</strong><span>Negative charge applied uniformly to entire photosensitive drum</span></div></li>
+      <li><span class="step-num">③</span><div class="step-body"><strong>Laser fires</strong><span>Laser (via rotating mirror) neutralises charge where image will appear — the laser hits the DRUM, not the paper</span></div></li>
+      <li><span class="step-num">④</span><div class="step-body"><strong>Toner applied</strong><span>Negatively charged toner (fine powder) sticks to discharged (laser-hit) areas</span></div></li>
+      <li><span class="step-num">⑤</span><div class="step-body"><strong>Transfer to paper</strong><span>Positively charged transfer roller pulls toner from drum onto paper</span></div></li>
+      <li><span class="step-num">⑥</span><div class="step-body"><strong>Fuser heats</strong><span>Fuser (heater) permanently melts/fuses toner powder onto paper</span></div></li>
+    </ol>
+    <div class="warn">
+      <span class="label">⚠️ Critical exam point</span>
+      The laser <strong>NEVER touches the paper</strong>. Toner is a fine <strong>POWDER</strong> — NOT ink. The laser only hits the drum, not the paper.
+    </div>
+    <div class="mnemonic"><span class="label">💡 Mnemonic:</span> <strong>Big Charge, Laser Zaps, Toner Flies, Heat Fixes</strong> &nbsp;→&nbsp; Bitmap → Charge drum → Laser → Toner → Transfer → Fuse</div>
+  </div>
+</div>
+
+<!-- WHY SECONDARY STORAGE -->
+<div class="section s6" id="why-storage">
+  <div class="section-header">
+    <h2>💾 Why Do We Need Secondary Storage?</h2>
+    <span class="spec-ref">4.7.4.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>💡 RAM is volatile</h3>
+        <p>Loses all data when power is off. Without secondary storage, all files disappear every time you shut down.</p>
+      </div>
+      <div class="card green">
+        <h3>📁 Permanent storage</h3>
+        <p>The OS, applications and user files must persist between sessions — stored on secondary storage, loaded into RAM when needed.</p>
+      </div>
+      <div class="card amber">
+        <h3>📦 Vastly larger capacity</h3>
+        <p>Secondary storage provides terabytes of space vs a few gigabytes of RAM, storing entire libraries of programs and data.</p>
+      </div>
+      <div class="card purple">
+        <h3>🔋 Non-volatile</h3>
+        <p>Secondary storage retains data without a power supply — unlike volatile RAM which needs constant power.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="label">Key terms</span>
+      <strong>Non-volatile</strong> = keeps data without power. &nbsp;&nbsp; <strong>Volatile</strong> = loses data without power (e.g. RAM, cache).
+    </div>
+  </div>
+</div>
+
+<!-- HDD -->
+<div class="section s7" id="hdd">
+  <div class="section-header">
+    <h2>🗄️ Hard Disk Drive (HDD) — Principles of Operation</h2>
+    <span class="spec-ref">4.7.4.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div>
+        <h3>How it stores data</h3>
+        <ul>
+          <li>Spots on a magnetisable coating are magnetised in one direction = 0, other direction = 1</li>
+          <li>Multiple rigid platters stacked on a spindle — all coated in iron/cobalt-based material</li>
+          <li>Disk divided into concentric <strong>Tracks</strong> → each track divided into <strong>Sectors/Blocks</strong></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Reading data</h3>
+        <ul>
+          <li>Disk spins at high speed</li>
+          <li>Read/write head moves to correct track</li>
+          <li>Waits for correct sector to spin around</li>
+          <li>Senses magnetic field and converts to binary</li>
+        </ul>
+        <h3 style="margin-top:0.8rem;">Speed</h3>
+        <p style="font-size:14px;">Moderate — limited by <strong>mechanical movement</strong> (seek time + rotational delay)</p>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Critical fact</span>
+      The R/W head <strong>NEVER physically touches the platter</strong> — it floats nanometres above it on a cushion of air. Physical contact = "head crash" = data loss.
+    </div>
+    <div class="mnemonic"><span class="label">💡 Mnemonic:</span> Magnetise one way = 0; other way = 1. <strong>Tracks → Sectors → Head reads as disk spins.</strong></div>
+  </div>
+</div>
+
+<!-- OPTICAL -->
+<div class="section s1" id="optical">
+  <div class="section-header">
+    <h2>💿 Optical Disk — Principles of Operation</h2>
+    <span class="spec-ref">4.7.4.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Track structure</h3>
+        <p>Data on ONE continuous <strong>SPIRAL track</strong> (unlike HDD's concentric rings)</p>
+      </div>
+      <div class="card green">
+        <h3>Pits &amp; Lands</h3>
+        <p><strong>Pits</strong> = indentations pressed/burnt into track surface.<br>
+        <strong>Lands</strong> = flat areas between pits</p>
+      </div>
+      <div class="card amber">
+        <h3>TRANSITION = 1</h3>
+        <p>A <strong>change</strong> between land and pit (or pit and land) represents a binary <strong>1</strong></p>
+      </div>
+      <div class="card purple">
+        <h3>CONTINUATION = 0</h3>
+        <p>No transition (staying on a land or staying in a pit) represents a binary <strong>0</strong></p>
+      </div>
+    </div>
+    <h3>Reading</h3>
+    <ul>
+      <li>Laser fires and the disk spins</li>
+      <li>Light reflected back to a photodiode and converted to binary</li>
+    </ul>
+    <div class="misconc">
+      <span class="label">⚠️ Very common mistake!</span>
+      It's the <strong>TRANSITION</strong> between pit/land that = 1. NOT "pit = 1" and "land = 0". Many students get this wrong — learn it precisely!
+    </div>
+    <div class="mnemonic"><span class="label">💡 Mnemonic:</span> <strong>TRANSITION = 1</strong> (a change happens). <strong>CONTINUATION = 0</strong> (nothing changes).</div>
+  </div>
+</div>
+
+<!-- SSD -->
+<div class="section s2" id="ssd">
+  <div class="section-header">
+    <h2>⚡ Solid-State Drive (SSD) — Principles of Operation</h2>
+    <span class="spec-ref">4.7.4.2</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h3>Technology</h3>
+          <p>NAND flash memory — <strong>no moving parts</strong> at all</p>
+        </div>
+        <div class="card green" style="margin-top:0.8rem;">
+          <h3>Storage mechanism</h3>
+          <p>Floating gate transistors <strong>trap electrical charge (electrons)</strong> between oxide layers.<br>
+          Trapped charge = 1; no charge = 0. Retained without power — <strong>non-volatile</strong>.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card amber">
+          <h3>Organisation</h3>
+          <p>Data organised into <strong>Pages</strong> (4–16 KB). Many pages form one <strong>Block</strong>.</p>
+        </div>
+        <div class="card rose" style="margin-top:0.8rem;">
+          <h3>The critical rule</h3>
+          <p>Cannot overwrite a page directly. An entire <strong>BLOCK must be erased first</strong>, then the page written. A dedicated <strong>Controller chip</strong> manages wear levelling and erase-write cycles.</p>
+        </div>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Fundamental hardware constraint</span>
+      You <strong>CANNOT erase individual pages</strong> — the whole BLOCK must be erased. This is a fundamental constraint of NAND flash.
+    </div>
+    <div class="mnemonic"><span class="label">💡 Mnemonic:</span> <strong>Read any page. Write to empty pages. To overwrite: ERASE WHOLE BLOCK first, then write.</strong></div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section s3" id="compare">
+  <div class="section-header">
+    <h2>📊 Storage Device Comparison</h2>
+    <span class="spec-ref">4.7.4.2</span>
+  </div>
+  <div class="section-body">
+    <table>
+      <tr><th>Feature</th><th>Hard Disk (HDD)</th><th>Optical Disk</th><th>SSD</th></tr>
+      <tr><td>Mechanism</td><td>Magnetic (moving parts)</td><td>Laser/optical (spinning disc)</td><td>Electronic (no moving parts)</td></tr>
+      <tr><td>Speed</td><td>Moderate</td><td>Slowest</td><td><strong>Fastest ★</strong></td></tr>
+      <tr><td>Capacity</td><td>Very high (TBs)</td><td>Low–moderate (GBs)</td><td>High (GBs–TBs)</td></tr>
+      <tr><td>Cost per GB</td><td><strong>Cheapest ★</strong></td><td>Low per disc</td><td>Most expensive</td></tr>
+      <tr><td>Durability</td><td>Fragile (shock)</td><td>Scratch-sensitive</td><td><strong>Most robust ★</strong></td></tr>
+      <tr><td>Power use</td><td>Higher</td><td>Moderate</td><td><strong>Lower ★</strong></td></tr>
+      <tr><td>Noise</td><td>Audible (spinning)</td><td>Audible (spinning)</td><td><strong>Silent ★</strong></td></tr>
+      <tr><td>Typical use</td><td>Servers, desktop PCs</td><td>Distribution, archiving</td><td>Laptops, phones, fast PCs</td></tr>
+    </table>
+    <div class="tip">
+      <span class="label">💡 Exam tip</span>
+      Always <strong>justify</strong> storage choices using specific features. ★ shows best in class for that criterion. Don't just name a device — explain WHY it suits the application.
+    </div>
+  </div>
+</div>
+
+<!-- MNEMONICS -->
+<div class="section s4" id="mnemonics">
+  <div class="section-header">
+    <h2>🧠 Memory Joggers &amp; Key Mnemonics</h2>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="mnemonic" style="margin:0;">
+        <p class="label">Barcode Reader</p>
+        <p>"LASER: Light Aimed, Sense and Electronically Record"<br>Needs line-of-sight · 2 methods: laser &amp; CCD</p>
+      </div>
+      <div class="mnemonic" style="margin:0;">
+        <p class="label">RFID</p>
+        <p>"Radio, Field, ID"<br>Reader sends field → tag gets power (if passive) → tag sends ID</p>
+      </div>
+      <div class="mnemonic" style="margin:0;">
+        <p class="label">Digital Camera — LIVABS</p>
+        <p><strong>L</strong>ight → <strong>I</strong>mage (sensor) → <strong>V</strong>oltage → <strong>A</strong>DC → <strong>B</strong>inary → <strong>S</strong>tore</p>
+      </div>
+      <div class="mnemonic" style="margin:0;">
+        <p class="label">Laser Printer</p>
+        <p>"Big Charge, Laser Zaps, Toner Flies, Heat Fixes"<br>Bitmap → Charge drum → Laser → Toner → Transfer → Fuse</p>
+      </div>
+      <div class="mnemonic" style="margin:0;">
+        <p class="label">Optical Disk</p>
+        <p>"TRANSITION = 1, CONTINUATION = 0"<br>It is the CHANGE between pit/land that encodes a 1</p>
+      </div>
+      <div class="mnemonic" style="margin:0;">
+        <p class="label">SSD</p>
+        <p>"Read any page. Write to empty pages. Erase WHOLE block."<br>NAND flash · floating gate transistors · no moving parts</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</body>
+</html>

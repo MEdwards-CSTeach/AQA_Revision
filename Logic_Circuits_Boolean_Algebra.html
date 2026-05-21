@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logic Circuits &amp; Boolean Algebra — AQA CS Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fb; --card: #ffffff; --navy: #1a3c6e; --navy-light: #2a5298;
+    --text: #1e2a3a; --muted: #5a6a7e; --border: #d0d8e4;
+    --s1: #eef4fb; --s2: #edfaf4; --s3: #fff8ec; --s4: #f3eeff;
+    --s5: #fdedf0; --s6: #e8f8f8; --s7: #fef9e8;
+    --warn-bg: #fff8e1; --warn-border: #e6a817;
+    --tip-bg: #e8f5e9; --tip-border: #388e3c;
+    --misconc-bg: #fce4ec; --misconc-border: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; font-size: 15px; line-height: 1.65; background: var(--bg); color: var(--text); }
+  header { background: var(--navy); color: white; padding: 2rem 2.5rem 1.5rem; border-bottom: 4px solid #4a90d9; }
+  header .tag { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #8cb8e8; margin-bottom: 0.4rem; }
+  header h1 { font-family: 'Source Serif 4', serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  header p { color: #b8d0ee; font-size: 14px; }
+  .toc { background: white; border-bottom: 1px solid var(--border); padding: 0.8rem 2.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .toc span { font-size: 12px; color: var(--muted); margin-right: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .toc a { font-size: 13px; color: var(--navy-light); text-decoration: none; padding: 0.25rem 0.7rem; border-radius: 20px; border: 1px solid #c8d8ee; background: #f0f5fb; transition: background 0.15s; }
+  .toc a:hover { background: #deeaf8; }
+  main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { border-radius: 10px; margin-bottom: 1.8rem; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .section-header { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-header .spec-ref { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-left: auto; }
+  .section-header h2 { font-family: 'Source Serif 4', serif; font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+  .section-body { padding: 1.2rem 1.5rem 1.5rem; background: white; }
+  .s1 .section-header { background: var(--s1); border-bottom: 2px solid #b8d4f0; }
+  .s2 .section-header { background: var(--s2); border-bottom: 2px solid #a0d8be; }
+  .s3 .section-header { background: var(--s3); border-bottom: 2px solid #f0c878; }
+  .s4 .section-header { background: var(--s4); border-bottom: 2px solid #c8a8f0; }
+  .s5 .section-header { background: var(--s5); border-bottom: 2px solid #f0a0b0; }
+  .s6 .section-header { background: var(--s6); border-bottom: 2px solid #80ccd0; }
+  .s7 .section-header { background: var(--s7); border-bottom: 2px solid #e0c840; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin: 1rem 0; }
+  .grid-6 { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.8rem; margin: 1rem 0; }
+  .card { background: var(--bg); border-radius: 8px; padding: 1rem 1.1rem; border-left: 4px solid var(--navy-light); }
+  .card h3 { font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+  .card p, .card li { font-size: 14px; }
+  .card ul, .card ol { padding-left: 1.2rem; }
+  .card li { margin-bottom: 0.2rem; }
+  .card.green { border-left-color: #388e3c; }
+  .card.amber { border-left-color: #e6a817; }
+  .card.purple { border-left-color: #7b3fa0; }
+  .card.teal  { border-left-color: #00838f; }
+  .card.rose  { border-left-color: #c62828; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+  th { background: var(--navy); color: white; padding: 0.6rem 0.8rem; text-align: left; }
+  td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #e0e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5f8fc; }
+  .truth-table { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .truth-table th { text-align: center; }
+  .truth-table td { text-align: center; }
+  .warn { background: var(--warn-bg); border-left: 4px solid var(--warn-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .tip { background: var(--tip-bg); border-left: 4px solid var(--tip-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .misconc { background: var(--misconc-bg); border-left: 4px solid var(--misconc-border); padding: 0.7rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-size: 14px; }
+  .warn .label, .tip .label, .misconc .label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; display: block; }
+  .warn .label { color: #b07800; } .tip .label { color: #2a7a34; } .misconc .label { color: #a01010; }
+  code { font-family: 'JetBrains Mono', monospace; background: #f0f3f8; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; color: #1a3c6e; }
+  pre { font-family: 'JetBrains Mono', monospace; background: #f0f3f8; border: 1px solid #d0d8e4; border-radius: 6px; padding: 0.8rem 1rem; font-size: 13px; line-height: 1.7; color: #1a3c6e; overflow-x: auto; margin: 0.8rem 0; }
+  p { margin-bottom: 0.6rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.6rem; }
+  li { margin-bottom: 0.25rem; font-size: 14px; }
+  h3 { font-family: 'Source Serif 4', serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); margin: 1rem 0 0.4rem; }
+  .mnemonic { background: #f0f5fb; border: 1px dashed #4a90d9; border-radius: 6px; padding: 0.7rem 1rem; font-size: 14px; margin: 0.8rem 0; }
+  .mnemonic .label { font-weight: 700; color: var(--navy); }
+  .gate-card { background: var(--bg); border-radius: 8px; padding: 0.8rem 1rem; border: 1px solid var(--border); text-align: center; }
+  .gate-card .gate-name { font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 700; color: var(--navy); }
+  .gate-card .gate-expr { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #2a5298; margin: 0.2rem 0; }
+  .gate-card .gate-desc { font-size: 13px; color: var(--muted); }
+  .gate-card .gate-eg { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #388e3c; margin-top: 0.3rem; }
+  .simplify-step { display: flex; align-items: flex-start; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #eef; }
+  .simplify-step:last-child { border-bottom: none; }
+  .step-n { background: var(--navy); color: white; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 12px; font-weight: 700; min-width: 28px; text-align: center; margin-top: 0.1rem; }
+  .step-expr { font-family: 'JetBrains Mono', monospace; font-size: 13px; flex: 1; }
+  .step-law { font-size: 12px; color: var(--muted); font-style: italic; }
+  .q-block { background: var(--bg); border-radius: 8px; padding: 1rem; margin: 0.8rem 0; border: 1px solid var(--border); }
+  .q-block .q-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+  .q-block .marks { float: right; background: var(--navy); color: white; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 12px; font-weight: 700; }
+  .timing-table { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .timing-table th, .timing-table td { text-align: center; }
+  @media(max-width:640px){ .grid-2,.grid-3,.grid-6 { grid-template-columns:1fr; } header h1 { font-size:1.5rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">AQA A-Level Computer Science 7517 · Paper 2 Revision · ~30 Minutes</div>
+  <h1>⚡ Logic Circuits, Boolean Algebra &amp; Digital Components</h1>
+  <p>Logic Gates &nbsp;·&nbsp; Boolean Laws &nbsp;·&nbsp; D-Type Flip-Flops &nbsp;·&nbsp; Half &amp; Full Adders</p>
+</header>
+
+<nav class="toc">
+  <span>Jump to:</span>
+  <a href="#gates">Logic Gates</a>
+  <a href="#circuits">Drawing Circuits</a>
+  <a href="#laws">Boolean Laws</a>
+  <a href="#simplify">Simplification</a>
+  <a href="#flipflop">D-Type Flip-Flop</a>
+  <a href="#half-adder">Half Adder</a>
+  <a href="#full-adder">Full Adder</a>
+  <a href="#exam-q">Exam Questions</a>
+</nav>
+
+<main>
+
+<!-- SESSION PLAN -->
+<div class="section s1">
+  <div class="section-header"><h2>📋 Session Plan</h2></div>
+  <div class="section-body">
+    <table>
+      <tr><th>Topic</th><th>Time</th></tr>
+      <tr><td>Logic Gates &amp; Circuits</td><td>8 min</td></tr>
+      <tr><td>Boolean Algebra</td><td>7 min</td></tr>
+      <tr><td>D-Type Flip-Flops</td><td>7 min</td></tr>
+      <tr><td>Half &amp; Full Adders</td><td>6 min</td></tr>
+      <tr><td>Exam Practice</td><td>5 min</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- LOGIC GATES -->
+<div class="section s2" id="gates">
+  <div class="section-header">
+    <h2>⚡ Part 1 — Logic Gates Quick Reference</h2>
+  </div>
+  <div class="section-body">
+    <div class="grid-6">
+      <div class="gate-card">
+        <div class="gate-name">AND</div>
+        <div class="gate-expr">A · B</div>
+        <div class="gate-desc">1 only if A=1 AND B=1</div>
+        <div class="gate-eg">0·1=0 &nbsp; 1·1=1</div>
+      </div>
+      <div class="gate-card">
+        <div class="gate-name">OR</div>
+        <div class="gate-expr">A + B</div>
+        <div class="gate-desc">1 if A=1 OR B=1 (or both)</div>
+        <div class="gate-eg">0+1=1 &nbsp; 0+0=0</div>
+      </div>
+      <div class="gate-card">
+        <div class="gate-name">NOT</div>
+        <div class="gate-expr">Ā</div>
+        <div class="gate-desc">Inverts the input</div>
+        <div class="gate-eg">NOT 1 = 0</div>
+      </div>
+      <div class="gate-card">
+        <div class="gate-name">NAND</div>
+        <div class="gate-expr">A·B̄</div>
+        <div class="gate-desc">Opposite of AND</div>
+        <div class="gate-eg">1·1→0 &nbsp; 0·1→1</div>
+      </div>
+      <div class="gate-card">
+        <div class="gate-name">NOR</div>
+        <div class="gate-expr">A+B̄</div>
+        <div class="gate-desc">Opposite of OR</div>
+        <div class="gate-eg">1+0→0 &nbsp; 0+0→1</div>
+      </div>
+      <div class="gate-card">
+        <div class="gate-name">XOR</div>
+        <div class="gate-expr">A ⊕ B</div>
+        <div class="gate-desc">1 if inputs DIFFER</div>
+        <div class="gate-eg">0⊕1=1 &nbsp; 1⊕1=0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWING CIRCUITS -->
+<div class="section s3" id="circuits">
+  <div class="section-header">
+    <h2>✏️ Part 1 — Drawing Logic Circuits from Boolean Expressions</h2>
+  </div>
+  <div class="section-body">
+    <h3>Example: F = A · B + C̄</h3>
+    <div class="card" style="font-family:'JetBrains Mono', monospace; font-size:13px; margin:0.8rem 0;">
+      <p>Step 1: Identify the final operation (lowest precedence) — here it is OR (+)</p>
+      <p>Step 2: Work inwards: A·B needs an AND gate; C̄ needs a NOT gate</p>
+      <p>Step 3: Connect outputs of AND and NOT into the OR gate to produce F</p>
+      <pre style="background:transparent; border:none; padding:0.5rem 0; margin:0.5rem 0;">A ─┬─── AND ────┐
+B ─┘            ├─── OR ──→ F
+C ──── NOT ─────┘</pre>
+    </div>
+
+    <div class="warn">
+      <span class="label">⚠️ Operator precedence</span>
+      NOT first, then AND (·), then OR (+). Brackets override this order. 2024 paper feedback: many students ORed B+C before ANDing with D — <strong>wrong!</strong>
+    </div>
+
+    <div class="tip">
+      <span class="label">✏️ Student task (3 min)</span>
+      Draw the logic circuit for: <strong>F = (A + B) · C̄</strong><br>
+      Draw it in your notes. Label each gate. What are the inputs to the AND gate at the end?
+    </div>
+  </div>
+</div>
+
+<!-- BOOLEAN LAWS -->
+<div class="section s4" id="laws">
+  <div class="section-header">
+    <h2>∧ Part 2 — Boolean Algebra Laws You Must Know</h2>
+  </div>
+  <div class="section-body">
+    <table>
+      <tr><th>Law</th><th>AND form</th><th>OR form</th></tr>
+      <tr><td><strong>Identity</strong></td><td><code>A · 1 = A</code></td><td><code>A + 0 = A</code></td></tr>
+      <tr><td><strong>Null</strong></td><td><code>A · 0 = 0</code></td><td><code>A + 1 = 1</code></td></tr>
+      <tr><td><strong>Idempotent</strong></td><td><code>A · A = A</code></td><td><code>A + A = A</code></td></tr>
+      <tr><td><strong>Complement</strong></td><td><code>A · Ā = 0</code></td><td><code>A + Ā = 1</code></td></tr>
+      <tr><td><strong>Absorption</strong></td><td><code>A · (A+B) = A</code></td><td><code>A + (A·B) = A</code></td></tr>
+      <tr><td><strong>Commutative</strong></td><td><code>A · B = B · A</code></td><td><code>A + B = B + A</code></td></tr>
+      <tr><td><strong>Double NOT</strong></td><td colspan="2"><code>Ā̄ = A</code> (double negation cancels)</td></tr>
+      <tr><td><strong>De Morgan's</strong></td><td><code>A·B̄ = (Ā + B̄)</code></td><td><code>A+B̄ = (Ā · B̄)</code></td></tr>
+    </table>
+    <div class="mnemonic">
+      <span class="label">💡 De Morgan's — "Break the bar, change the operator"</span>
+      <p>To negate a whole expression: break the overline into separate NOTs, and switch · to + (or + to ·).</p>
+    </div>
+  </div>
+</div>
+
+<!-- SIMPLIFICATION -->
+<div class="section s5" id="simplify">
+  <div class="section-header">
+    <h2>🔢 Boolean Simplification — Worked Examples</h2>
+  </div>
+  <div class="section-body">
+    <h3>Example 1: Simplify F = A·B + A·B̄</h3>
+    <div class="simplify-step"><div class="step-n">1</div><div><div class="step-expr">F = A·B + A·B̄</div><div class="step-law">Original expression</div></div></div>
+    <div class="simplify-step"><div class="step-n">2</div><div><div class="step-expr">F = A·(B + B̄)</div><div class="step-law">Factorisation: A is common to both terms</div></div></div>
+    <div class="simplify-step"><div class="step-n">3</div><div><div class="step-expr">F = A · 1</div><div class="step-law">Complement law: B + B̄ = 1</div></div></div>
+    <div class="simplify-step"><div class="step-n">4</div><div><div class="step-expr">F = A</div><div class="step-law">Identity law: A · 1 = A</div></div></div>
+
+    <h3 style="margin-top:1.2rem;">Example 2: Simplify F = A·B·C + A·B·C̄ + A·B̄·C + A·B̄·C̄</h3>
+    <div class="simplify-step"><div class="step-n">1</div><div><div class="step-expr">F = A·B·C + A·B·C̄ + A·B̄·C + A·B̄·C̄</div><div class="step-law">Original</div></div></div>
+    <div class="simplify-step"><div class="step-n">2</div><div><div class="step-expr">F = A·(B·C + B·C̄ + B̄·C + B̄·C̄)</div><div class="step-law">Factor A from all terms</div></div></div>
+    <div class="simplify-step"><div class="step-n">3</div><div><div class="step-expr">F = A·(B(C+C̄) + B̄(C+C̄))</div><div class="step-law">Factor B from first two terms; B̄ from last two</div></div></div>
+    <div class="simplify-step"><div class="step-n">4</div><div><div class="step-expr">F = A·(B·1 + B̄·1)</div><div class="step-law">Complement law: C + C̄ = 1</div></div></div>
+    <div class="simplify-step"><div class="step-n">5</div><div><div class="step-expr">F = A·(B + B̄)</div><div class="step-law">Identity law: x·1 = x</div></div></div>
+    <div class="simplify-step"><div class="step-n">6</div><div><div class="step-expr">F = A·1 = A</div><div class="step-law">Complement law + Identity law</div></div></div>
+
+    <div class="tip">
+      <span class="label">💡 Exam tip</span>
+      Always <strong>name your laws</strong> at each step — examiners award marks for showing the reasoning, not just the final answer.
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <h3>✏️ Student Practice (4 min)</h3>
+      <p style="font-size:14px;"><strong>Q1:</strong> Simplify F = A·B + A·B + Ā·B &nbsp; (Hint: Start by factoring A from the first two terms)</p>
+      <p style="font-size:14px;"><strong>Q2:</strong> Simplify F = (A + B) · (A + B̄) &nbsp; (Hint: Expand the brackets, then look for complements)</p>
+      <p style="font-size:14px;"><strong>Q3:</strong> Apply De Morgan's to: Ā·B &nbsp; (Hint: "Break the bar, change the operator")</p>
+      <div class="mnemonic" style="margin-top:0.6rem;">
+        <span class="label">Answers:</span> Q1 = A + B &nbsp; | &nbsp; Q2 = A &nbsp; | &nbsp; Q3 = (A + B̄)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D-TYPE FLIP FLOP -->
+<div class="section s6" id="flipflop">
+  <div class="section-header">
+    <h2>⏱ Part 3 — D-Type Flip-Flop</h2>
+  </div>
+  <div class="section-body">
+    <p>A D-type flip-flop is a <strong>1-bit memory element</strong> — it stores one binary value.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Inputs &amp; Outputs</h3>
+        <ul>
+          <li><strong>D</strong> (Data input)</li>
+          <li><strong>CLK</strong> (Clock input)</li>
+          <li><strong>Q</strong> (Output)</li>
+          <li><strong>Q̄</strong> (Inverted output — always opposite of Q)</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>Rules of operation</h3>
+        <ol style="padding-left:1.2rem;">
+          <li>On a <strong>rising clock edge</strong>: Q takes the value of D</li>
+          <li>Between clock pulses: Q <strong>holds its current value</strong> (memory!)</li>
+          <li>Q̄ is always the complement (opposite) of Q</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="warn">
+      <span class="label">⚠️ Common mistake</span>
+      The flip-flop does <strong>NOT always toggle</strong>. It only changes if D has changed AND there is a rising clock edge.
+    </div>
+
+    <h3>Tracing the Output — Worked Example</h3>
+    <table class="timing-table">
+      <tr><th>Time</th><th>CLK edge</th><th>D value</th><th>Q (output)</th><th>Q̄</th></tr>
+      <tr><td>T1</td><td>Rising ↑</td><td>D = 1</td><td><strong>Q = 1</strong></td><td>Q̄ = 0</td></tr>
+      <tr><td>T2</td><td>No edge</td><td>D = 0</td><td><strong>Q = 1 (held)</strong></td><td>Q̄ = 0</td></tr>
+      <tr><td>T3</td><td>Rising ↑</td><td>D = 0</td><td><strong>Q = 0</strong></td><td>Q̄ = 1</td></tr>
+      <tr><td>T4</td><td>Rising ↑</td><td>D = 1</td><td><strong>Q = 1</strong></td><td>Q̄ = 0</td></tr>
+      <tr><td>T5</td><td>No edge</td><td>D = 1</td><td><strong>Q = 1 (held)</strong></td><td>Q̄ = 0</td></tr>
+    </table>
+    <div class="tip">
+      <span class="label">KEY RULE</span>
+      Q only updates on a <strong>RISING clock edge</strong>. Between pulses, Q holds its last value. This is what makes it a memory element.
+    </div>
+
+    <div class="card" style="margin-top:0.8rem;">
+      <h3>✏️ Student Task (3 min) — Complete the timing diagram</h3>
+      <table class="timing-table" style="margin-top:0.5rem;">
+        <tr><th>Clock cycle</th><th>CLK edge</th><th>D</th><th>Q = ?</th><th>Q̄ = ?</th></tr>
+        <tr><td>Cycle 1</td><td>Rising ↑</td><td>0</td><td>___</td><td>___</td></tr>
+        <tr><td>Cycle 2</td><td>No edge</td><td>1</td><td>___</td><td>___</td></tr>
+        <tr><td>Cycle 3</td><td>Rising ↑</td><td>1</td><td>___</td><td>___</td></tr>
+        <tr><td>Cycle 4</td><td>Rising ↑</td><td>0</td><td>___</td><td>___</td></tr>
+        <tr><td>Cycle 5</td><td>No edge</td><td>0</td><td>___</td><td>___</td></tr>
+      </table>
+      <div class="mnemonic" style="margin-top:0.6rem;">
+        <span class="label">Answers:</span> C1: Q=0, Q̄=1 &nbsp;|&nbsp; C2: Q=0 (held), Q̄=1 &nbsp;|&nbsp; C3: Q=1, Q̄=0 &nbsp;|&nbsp; C4: Q=0, Q̄=1 &nbsp;|&nbsp; C5: Q=0 (held), Q̄=1
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HALF ADDER -->
+<div class="section s7" id="half-adder">
+  <div class="section-header">
+    <h2>➕ Part 4a — Half Adder</h2>
+  </div>
+  <div class="section-body">
+    <p>A half adder adds two 1-bit numbers (A and B) and produces a Sum and a Carry.</p>
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h3>Boolean Expressions</h3>
+          <p><code>Sum  = A ⊕ B</code> &nbsp; (XOR gate)</p>
+          <p><code>Carry = A · B</code> &nbsp; (AND gate)</p>
+          <p style="margin-top:0.4rem; font-size:13px; color:var(--muted);">2 gates total: one XOR + one AND</p>
+        </div>
+        <div class="card green" style="margin-top:0.8rem;">
+          <h3>Circuit structure</h3>
+          <pre style="background:transparent; border:none; padding:0; font-size:13px;">A ─┬─ XOR ──→ Sum
+B ─┤
+   └─ AND ──→ Carry</pre>
+        </div>
+      </div>
+      <div>
+        <h3>Truth Table</h3>
+        <table class="truth-table">
+          <tr><th>A</th><th>B</th><th>Sum (A⊕B)</th><th>Carry (A·B)</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Limitation</span>
+      The half adder <strong>CANNOT handle a carry-in</strong>. That is why we need a full adder for multi-bit addition.
+    </div>
+  </div>
+</div>
+
+<!-- FULL ADDER -->
+<div class="section s1" id="full-adder">
+  <div class="section-header">
+    <h2>➕➕ Part 4b — Full Adder</h2>
+  </div>
+  <div class="section-body">
+    <p>A full adder adds three bits: A, B, and Carry-in (Cin). It is built from <strong>two half adders + one OR gate</strong>.</p>
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h3>Boolean Expressions</h3>
+          <p><code>Sum  = A ⊕ B ⊕ Cin</code></p>
+          <p><code>Cout = (A·B) + (Cin·(A⊕B))</code></p>
+          <p style="margin-top:0.4rem; font-size:13px; color:var(--muted);">Gates: 2× XOR, 2× AND, 1× OR (5 gates total)</p>
+        </div>
+        <div class="card green" style="margin-top:0.8rem;">
+          <h3>Structure</h3>
+          <pre style="background:transparent; border:none; padding:0; font-size:12px;">A, B → [Half Adder 1] → S1, C1
+S1, Cin → [Half Adder 2] → Sum, C2
+C1, C2 → [OR gate] → Cout</pre>
+        </div>
+      </div>
+      <div>
+        <h3>Truth Table (key rows)</h3>
+        <table class="truth-table">
+          <tr><th>A</th><th>B</th><th>Cin</th><th>Sum</th><th>Cout</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>Worked Trace: A=1, B=0, Cin=1</h3>
+    <div class="simplify-step"><div class="step-n">1</div><div><div class="step-expr">Half Adder 1: A=1, B=0</div><div class="step-law">S1 = A⊕B = 1⊕0 = 1 &nbsp;&nbsp; C1 = A·B = 1·0 = 0</div></div></div>
+    <div class="simplify-step"><div class="step-n">2</div><div><div class="step-expr">Half Adder 2: S1=1, Cin=1</div><div class="step-law">Sum = S1⊕Cin = 1⊕1 = 0 &nbsp;&nbsp; C2 = S1·Cin = 1·1 = 1</div></div></div>
+    <div class="simplify-step"><div class="step-n">3</div><div><div class="step-expr">OR gate: C1=0, C2=1</div><div class="step-law">Cout = C1 + C2 = 0 + 1 = 1</div></div></div>
+    <div class="simplify-step"><div class="step-n">4</div><div><div class="step-expr">Final result: Sum = 0, Cout = 1</div><div class="step-law">In binary: 1 + 0 + 1 = 10 (decimal 2) ✓</div></div></div>
+
+    <div class="card" style="margin-top:0.8rem;">
+      <h3>✏️ Task (3 min): Trace for A=1, B=1, Cin=1</h3>
+      <p style="font-size:14px;">Work through: 1) Calculate S1 and C1 from half adder 1 &nbsp; 2) Calculate Sum and C2 from half adder 2 &nbsp; 3) Calculate Cout from the OR gate</p>
+      <div class="mnemonic" style="margin-top:0.5rem;"><span class="label">Answer:</span> S1=0, C1=1, Sum=1, C2=0, Cout=1 &nbsp; → &nbsp; Sum=1, Cout=1 (binary 11 = decimal 3)</div>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM QUESTIONS -->
+<div class="section s3" id="exam-q">
+  <div class="section-header">
+    <h2>📝 Part 5 — Exam Practice Questions</h2>
+  </div>
+  <div class="section-body">
+    <div class="q-block">
+      <div class="q-label">Q1 <span class="marks">2 marks</span></div>
+      <p style="font-size:14px;">Draw a logic circuit for: F = (A · B) + (Ā · C). Label all gates.</p>
+      <div class="tip" style="margin-top:0.5rem;"><span class="label">Examiner tip</span>Operator precedence: NOT first, then AND, then OR. Label each gate clearly.</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Q2 <span class="marks">4 marks</span></div>
+      <p style="font-size:14px;">Simplify: F = A·B·C + A·B·C̄ + A·B̄·C + A·B̄·C̄. Show all steps and name each law used.</p>
+      <div class="tip" style="margin-top:0.5rem;"><span class="label">Answer</span>Factor A → A·(B·C + B·C̄ + B̄·C + B̄·C̄) → A·(B(C+C̄)+B̄(C+C̄)) → A·(B·1+B̄·1) → A·(B+B̄) → A·1 = <strong>A</strong></div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Q3 <span class="marks">2 marks</span></div>
+      <p style="font-size:14px;">A D-type flip-flop has Q=0. The clock fires twice: D=1 then D=1. State Q and Q̄ after each pulse.</p>
+      <div class="tip" style="margin-top:0.5rem;"><span class="label">Answer</span>Pulse 1: D=1 on rising edge → Q=1, Q̄=0. Pulse 2: D=1 on rising edge → Q=1, Q̄=0 (no change, D hasn't changed)</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Q4 <span class="marks">3 marks</span></div>
+      <p style="font-size:14px;">Trace the full adder for A=1, B=1, Cin=0. Show intermediate values S1, C1, C2, Sum, Cout.</p>
+      <div class="tip" style="margin-top:0.5rem;"><span class="label">Answer</span>S1=1⊕1=0, C1=1·1=1, Sum=0⊕0=0, C2=0·0=0, Cout=1+0=1. Result: <strong>Sum=0, Cout=1</strong> (binary 10 = decimal 2)</div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION SUMMARY -->
+<div class="section s2">
+  <div class="section-header"><h2>✅ Session Summary</h2></div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>⚡ Logic Gates</h3>
+        <p>AND, OR, NOT, NAND, NOR, XOR — know symbols, Boolean expressions, and truth tables.</p>
+      </div>
+      <div class="card green">
+        <h3>∧ Boolean Algebra</h3>
+        <p>Apply laws step-by-step and <strong>always name each law</strong>. Show all working for full marks.</p>
+      </div>
+      <div class="card amber">
+        <h3>⏱ D-Type Flip-Flop</h3>
+        <p>Q updates on <strong>RISING clock edge only</strong>. Holds value between pulses. Q̄ always opposite of Q.</p>
+      </div>
+      <div class="card purple">
+        <h3>➕ Adders</h3>
+        <p>Half adder: XOR for Sum, AND for Carry. Full adder adds Cin using two half adders + OR gate.</p>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:0.8rem;">
+      <span class="label">📝 Exam technique</span>
+      Show all working, use correct notation, read operator precedence carefully, trace each half adder separately in full adder questions.
+    </div>
+  </div>
+</div>
+
+</main>
+</body>
+</html>
