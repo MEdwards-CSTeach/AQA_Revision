@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assembly Language — AQA A-Level CS</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fb;
+    --card: #ffffff;
+    --text: #1a1d23;
+    --muted: #5a6070;
+    --border: #e2e6ed;
+
+    --c1: #e8f0fe; --c1b: #3b6fd4;
+    --c2: #e6f4ea; --c2b: #2e7d52;
+    --c3: #fce8e6; --c3b: #c5392a;
+    --c4: #fff3e0; --c4b: #e07b00;
+    --c5: #f3e8fd; --c5b: #7b3fb3;
+    --c6: #e0f7fa; --c6b: #00838f;
+    --c7: #e8f5e9; --c7b: #388e3c;
+    --c8: #fdf3e7; --c8b: #c06000;
+    --c9: #eef2ff; --c9b: #4051b5;
+
+    --warn-bg: #fff8e1; --warn-border: #f9a825;
+    --tip-bg: #e3f2fd; --tip-border: #1976d2;
+    --mono-bg: #f1f3f8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  header {
+    background: #1a3530;
+    color: #fff;
+    padding: 2.2rem 2rem 1.8rem;
+    border-bottom: 4px solid #2e7d52;
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    color: #a8d8b8;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 0.6rem;
+  }
+  header h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+  header p { color: #90c4a0; font-size: 14px; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  nav {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  nav h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.7rem; }
+  nav ol { padding-left: 1.3rem; }
+  nav li { margin: 0.25rem 0; }
+  nav a { color: #2e7d52; text-decoration: none; font-weight: 500; font-size: 14px; }
+  nav a:hover { text-decoration: underline; }
+
+  .section {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .section-header {
+    padding: 1rem 1.4rem;
+    border-left: 6px solid;
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+  .section-header .spec-ref {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.7;
+  }
+  .section-header h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.25rem; font-weight: 700; line-height: 1.25;
+  }
+  .section-body { background: var(--card); padding: 1.4rem 1.5rem; }
+
+  .s1 .section-header { background: var(--c1); border-color: var(--c1b); color: var(--c1b); }
+  .s2 .section-header { background: var(--c2); border-color: var(--c2b); color: var(--c2b); }
+  .s3 .section-header { background: var(--c3); border-color: var(--c3b); color: var(--c3b); }
+  .s4 .section-header { background: var(--c4); border-color: var(--c4b); color: var(--c4b); }
+  .s5 .section-header { background: var(--c5); border-color: var(--c5b); color: var(--c5b); }
+  .s6 .section-header { background: var(--c6); border-color: var(--c6b); color: var(--c6b); }
+  .s7 .section-header { background: var(--c7); border-color: var(--c7b); color: var(--c7b); }
+  .s8 .section-header { background: var(--c8); border-color: var(--c8b); color: var(--c8b); }
+  .s9 .section-header { background: var(--c9); border-color: var(--c9b); color: var(--c9b); }
+
+  p { margin-bottom: 0.8rem; }
+  p:last-child { margin-bottom: 0; }
+
+  h3 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.05rem; font-weight: 600; margin: 1.2rem 0 0.5rem; color: var(--text);
+  }
+  h3:first-child { margin-top: 0; }
+
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.8rem; }
+  li { margin-bottom: 0.3rem; }
+
+  .card-grid { display: grid; gap: 1rem; margin: 1rem 0; }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    background: var(--bg);
+  }
+  .card .card-title {
+    font-weight: 700; font-size: 14px; letter-spacing: 0.03em; margin-bottom: 0.5rem;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0.8rem 0; }
+  th {
+    background: var(--bg); text-align: left; padding: 8px 12px; font-weight: 600; font-size: 13px;
+    border-bottom: 2px solid var(--border); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  .tip, .warn, .error, .success {
+    border-radius: 7px; padding: 0.8rem 1rem; margin: 1rem 0; font-size: 14px; border-left: 4px solid;
+  }
+  .tip   { background: var(--tip-bg);  border-color: var(--tip-border); }
+  .warn  { background: var(--warn-bg); border-color: var(--warn-border); }
+  .error { background: #fce8e6; border-color: #c5392a; }
+  .success { background: #e6f4ea; border-color: #2e7d52; }
+  .tip strong, .warn strong, .error strong, .success strong { display: block; margin-bottom: 0.2rem; }
+
+  /* Code blocks */
+  pre {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13.5px;
+    background: #1e2a22;
+    color: #c8e6c0;
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    margin: 0.8rem 0;
+    overflow-x: auto;
+    line-height: 1.7;
+    border: 1px solid #2e4030;
+  }
+  pre .kw  { color: #80cbc4; font-weight: 600; }  /* instruction mnemonics */
+  pre .reg { color: #ffcc80; }                     /* registers */
+  pre .imm { color: #ef9a9a; }                     /* immediate values */
+  pre .lbl { color: #b39ddb; }                     /* labels */
+  pre .cmt { color: #6a9a72; font-style: italic; } /* comments */
+
+  code {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    background: var(--mono-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #1a6030;
+  }
+
+  /* Instruction set table — coloured by category */
+  .instr-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0.8rem 0; }
+  .instr-table th { background: #1a3530; color: #a8d8b8; padding: 8px 12px; text-align: left; font-size: 13px; letter-spacing: 0.04em; }
+  .instr-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .instr-table tr:last-child td { border-bottom: none; }
+  .instr-table code { font-size: 13px; background: var(--mono-bg); padding: 2px 6px; border-radius: 3px; color: #1a6030; }
+  .cat-header td { background: #f0f4f0; font-weight: 700; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 12px; border-bottom: 1px solid var(--border); }
+
+  /* Addressing mode comparison */
+  .addr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .addr-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .addr-card-header { padding: 0.65rem 1rem; font-weight: 700; font-size: 14px; }
+  .addr-imm  .addr-card-header { background: #e8f0fe; color: #3b6fd4; }
+  .addr-dir  .addr-card-header { background: #e6f4ea; color: #2e7d52; }
+  .addr-card-body { padding: 0.9rem 1rem; background: var(--card); font-size: 14px; }
+
+  /* Trace table */
+  .trace-table { border-collapse: collapse; font-family: 'Source Code Pro', monospace; font-size: 13.5px; margin: 0.8rem 0; width: auto; }
+  .trace-table th { background: #1a3530; color: #a8d8b8; padding: 7px 14px; text-align: center; border: 1px solid #2e4030; }
+  .trace-table td { padding: 6px 14px; border: 1px solid var(--border); text-align: center; min-width: 60px; }
+  .trace-table .changed { background: #e6f4ea; font-weight: 600; color: #2e7d52; }
+  .trace-table .initial { background: #f8f9fb; color: var(--muted); }
+
+  /* Misconception rows */
+  .misconception-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 0.7rem 0; }
+  .mc-wrong { background: #fce8e6; padding: 0.8rem 1rem; border-right: 1px solid #f5c6c2; font-size: 14px; }
+  .mc-right { background: #e6f4ea; padding: 0.8rem 1rem; font-size: 14px; }
+  .mc-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; display: block; }
+  .mc-wrong .mc-label { color: #c5392a; }
+  .mc-right .mc-label { color: #2e7d52; }
+
+  /* Steps */
+  .steps { list-style: none; padding: 0; margin: 0.8rem 0; }
+  .steps li { display: flex; gap: 0.9rem; align-items: flex-start; margin-bottom: 0.6rem; }
+  .step-num {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    background: #1a3530; color: #fff; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-content { padding-top: 3px; font-size: 14px; }
+  .step-content strong { display: block; font-size: 14px; }
+
+  /* Summary */
+  .summary-grid { display: grid; gap: 0.7rem; }
+  .summary-row { display: grid; grid-template-columns: 140px 1fr; gap: 1rem; align-items: center; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+  .summary-label { background: #1a3530; color: #90c4a0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.6rem 0.9rem; text-align: center; }
+  .summary-value { font-size: 14px; padding: 0.6rem 0.9rem; background: var(--card); }
+
+  /* Learning objectives */
+  .lo-grid { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0.5rem 0; }
+  .lo-grid li { display: flex; gap: 0.6rem; font-size: 14px; align-items: flex-start; }
+  .lo-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: #2e7d52; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+  @media (max-width: 680px) {
+    .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+    .addr-grid { grid-template-columns: 1fr; }
+    .misconception-row { grid-template-columns: 1fr; }
+    .summary-row { grid-template-columns: 1fr; }
+    .lo-grid { grid-template-columns: 1fr; }
+    .mc-wrong { border-right: none; border-bottom: 1px solid #f5c6c2; }
+  }
+
+  footer { text-align: center; font-size: 13px; color: var(--muted); padding: 1.5rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Paper 2 — Written Examination &nbsp;·&nbsp; Section 4.7.3</div>
+  <h1>Assembly Language</h1>
+  <p>Understanding, Tracing &amp; Writing Programs for AQA Paper 2 &nbsp;·&nbsp; AQA A-Level Computer Science 7517</p>
+</header>
+
+<div class="container">
+
+  <nav>
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1">What is Assembly Language?</a></li>
+      <li><a href="#s2">Addressing Modes: Immediate vs Direct</a></li>
+      <li><a href="#s3">Data Movement Instructions</a></li>
+      <li><a href="#s4">Arithmetic &amp; Comparison Instructions</a></li>
+      <li><a href="#s5">Logical &amp; Shift Instructions</a></li>
+      <li><a href="#s6">Tracing Assembly Programs</a></li>
+      <li><a href="#s7">Writing Assembly Programs</a></li>
+      <li><a href="#s8">Exam Technique &amp; Common Mistakes</a></li>
+      <li><a href="#s9">Summary &amp; Key Points</a></li>
+    </ol>
+  </nav>
+
+  <!-- Learning Objectives -->
+  <div class="section s2" id="lo">
+    <div class="section-header">
+      <span class="spec-ref">Lesson</span>
+      <h2>Learning Objectives</h2>
+    </div>
+    <div class="section-body">
+      <ul class="lo-grid">
+        <li><span class="lo-num">1</span>Explain the difference between immediate and direct addressing modes</li>
+        <li><span class="lo-num">2</span>Identify and describe each instruction in the AQA instruction set</li>
+        <li><span class="lo-num">3</span>Trace assembly programs using a register/memory trace table</li>
+        <li><span class="lo-num">4</span>Describe the purpose of an assembly language program</li>
+        <li><span class="lo-num">5</span>Write simple assembly programs using the AQA instruction set</li>
+        <li><span class="lo-num">6</span>Explain why a programmer might choose assembly over a HLL</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 1: What is Assembly Language -->
+  <div class="section s1" id="s1">
+    <div class="section-header">
+      <span class="spec-ref">Part 1</span>
+      <h2>What is Assembly Language?</h2>
+    </div>
+    <div class="section-body">
+      <div class="card-grid cols-2">
+        <div class="card">
+          <div class="card-title">Key Facts</div>
+          <ul>
+            <li><strong>Low-level language</strong> — close to machine code</li>
+            <li>One mnemonic ≈ one machine code instruction</li>
+            <li><strong>Processor-specific</strong> — not portable between architectures</li>
+            <li>Translated by an <strong>Assembler</strong> into machine code</li>
+            <li>Direct access to registers and memory</li>
+            <li>Faster execution and smaller code than a HLL</li>
+          </ul>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="card-title" style="padding:0.8rem 1rem 0.6rem;background:var(--bg);">Example — count down from 5:</div>
+<pre style="margin:0;border-radius:0;border:none;border-top:1px solid var(--border);"><span class="kw">MOV</span> <span class="reg">R0</span>, <span class="imm">#5</span>
+<span class="lbl">loop:</span>
+  <span class="kw">CMP</span> <span class="reg">R0</span>, <span class="imm">#0</span>
+  <span class="kw">BEQ</span> <span class="lbl">done</span>
+  <span class="kw">SUB</span> <span class="reg">R0</span>, <span class="reg">R0</span>, <span class="imm">#1</span>
+  <span class="kw">B</span>   <span class="lbl">loop</span>
+<span class="lbl">done:</span>
+  <span class="kw">HALT</span></pre>
+        </div>
+      </div>
+
+      <h3>The AQA Register Model</h3>
+      <p>The AQA model has <strong>general-purpose registers R0–R12</strong>, plus dedicated registers (PC, MAR, MBR, CIR, SR).</p>
+      <table>
+        <thead><tr><th>Memory Address</th><th>Contents</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>100</code></td><td>42</td><td><code>LDR R0, 100</code> puts 42 into R0 (direct addressing)</td></tr>
+          <tr><td><code>101</code></td><td>7</td><td><code>LDR R1, 101</code> puts 7 into R1</td></tr>
+          <tr><td><code>102</code></td><td>0</td><td><code>STR R2, 102</code> will write R2 here</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Addressing Modes -->
+  <div class="section s3" id="s2">
+    <div class="section-header">
+      <span class="spec-ref">Part 2</span>
+      <h2>Addressing Modes: Immediate vs Direct</h2>
+    </div>
+    <div class="section-body">
+      <p>How does the CPU interpret the operand in an instruction?</p>
+      <div class="addr-grid">
+        <div class="addr-card addr-imm">
+          <div class="addr-card-header">IMMEDIATE &nbsp;·&nbsp; uses # symbol</div>
+          <div class="addr-card-body">
+            <p>The <code>#</code> symbol means: use <strong>this value directly</strong>.</p>
+            <pre><span class="kw">MOV</span> <span class="reg">R0</span>, <span class="imm">#25</span>   <span class="cmt">; R0 = 25 (the number 25 itself)</span>
+<span class="kw">ADD</span> <span class="reg">R1</span>, <span class="reg">R1</span>, <span class="imm">#1</span>  <span class="cmt">; Add the literal value 1 to R1</span></pre>
+            <p style="font-size:13px;"><strong>Exam tip:</strong> always starts with <code>#</code></p>
+          </div>
+        </div>
+        <div class="addr-card addr-dir">
+          <div class="addr-card-header">DIRECT &nbsp;·&nbsp; register name or bare address</div>
+          <div class="addr-card-body">
+            <p>Use the value <strong>stored at</strong> a register or memory location.</p>
+            <pre><span class="kw">LDR</span> <span class="reg">R0</span>, 100         <span class="cmt">; R0 = value at address 100</span>
+<span class="kw">ADD</span> <span class="reg">R2</span>, <span class="reg">R0</span>, <span class="reg">R1</span>     <span class="cmt">; R2 = R0 + R1</span></pre>
+            <p style="font-size:13px;"><strong>Exam tip:</strong> register name or bare memory address</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Data Movement -->
+  <div class="section s4" id="s3">
+    <div class="section-header">
+      <span class="spec-ref">Part 3</span>
+      <h2>Data Movement Instructions</h2>
+    </div>
+    <div class="section-body">
+      <table class="instr-table">
+        <thead><tr><th>Instruction</th><th>Meaning</th><th>Example</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>LDR Rd, &lt;mem&gt;</code></td><td>Load from memory into register d</td><td><code>LDR R0, 100</code></td><td>R0 = value at address 100</td></tr>
+          <tr><td><code>STR Rd, &lt;mem&gt;</code></td><td>Store register d into memory</td><td><code>STR R1, 200</code></td><td>Mem[200] = R1</td></tr>
+          <tr><td><code>MOV Rd, &lt;op2&gt;</code></td><td>Copy value into register d</td><td><code>MOV R2, #10</code></td><td>R2 = 10</td></tr>
+        </tbody>
+      </table>
+      <div class="success">
+        <strong>Key Points to Remember</strong>
+        <ul style="margin:0.3rem 0 0;">
+          <li><code>LDR</code> and <code>STR</code> always use a <strong>bare memory address (no #)</strong> — they always use direct addressing</li>
+          <li><code>MOV</code> can use <code>#value</code> (immediate) or a register Rn (direct to register)</li>
+          <li><code>LDR</code>: Memory → Register &nbsp;·&nbsp; <code>STR</code>: Register → Memory</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Arithmetic & Comparison -->
+  <div class="section s5" id="s4">
+    <div class="section-header">
+      <span class="spec-ref">Part 3</span>
+      <h2>Arithmetic &amp; Comparison Instructions</h2>
+    </div>
+    <div class="section-body">
+      <table class="instr-table">
+        <thead><tr><th>Instruction</th><th>Operation</th><th>Example</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><code>ADD Rd, Rn, &lt;op2&gt;</code></td><td>Rd = Rn + operand2</td><td><code>ADD R0, R1, #3</code></td><td>R0 = R1 + 3</td></tr>
+          <tr><td><code>SUB Rd, Rn, &lt;op2&gt;</code></td><td>Rd = Rn − operand2</td><td><code>SUB R2, R2, R0</code></td><td>R2 = R2 − R0</td></tr>
+          <tr><td><code>CMP Rn, &lt;op2&gt;</code></td><td>Rn − operand2 (sets flags only)</td><td><code>CMP R0, #0</code></td><td>Sets Zero flag if R0 = 0</td></tr>
+        </tbody>
+      </table>
+      <h3>Branch Instructions — used with CMP</h3>
+      <div class="card-grid cols-2">
+        <div class="card">
+          <div class="card-title">How CMP works</div>
+          <p>CMP performs a subtraction and <strong>sets flags</strong> in the status register — it does <em>NOT</em> store the result. Branch instructions then test those flags.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Branch Conditions</div>
+          <table style="margin:0;font-size:13.5px;">
+            <tbody>
+              <tr><td><code>BEQ</code></td><td>Branch if equal (result zero)</td></tr>
+              <tr><td><code>BNE</code></td><td>Branch if not equal</td></tr>
+              <tr><td><code>BGT</code></td><td>Branch if greater than</td></tr>
+              <tr><td><code>BLT</code></td><td>Branch if less than</td></tr>
+              <tr><td><code>B</code></td><td>Always branch (unconditional)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Logical & Shift -->
+  <div class="section s6" id="s5">
+    <div class="section-header">
+      <span class="spec-ref">Part 3</span>
+      <h2>Logical &amp; Shift Instructions</h2>
+    </div>
+    <div class="section-body">
+      <table class="instr-table">
+        <thead><tr><th>Instruction</th><th>Operation</th><th>Example</th><th>Common Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>AND Rd, Rn, &lt;op2&gt;</code></td><td>Bitwise AND</td><td><code>AND R0, R0, #1</code></td><td>Isolate lowest bit</td></tr>
+          <tr><td><code>ORR Rd, Rn, &lt;op2&gt;</code></td><td>Bitwise OR</td><td><code>ORR R1, R1, #8</code></td><td>Set bit 3</td></tr>
+          <tr><td><code>EOR Rd, Rn, &lt;op2&gt;</code></td><td>Bitwise XOR</td><td><code>EOR R0, R0, R1</code></td><td>Toggle bits</td></tr>
+          <tr><td><code>MVN Rd, &lt;op2&gt;</code></td><td>Bitwise NOT</td><td><code>MVN R2, R0</code></td><td>Invert all bits</td></tr>
+          <tr><td><code>LSL Rd, Rn, &lt;op2&gt;</code></td><td>Logical Shift Left</td><td><code>LSL R0, R0, #1</code></td><td>R0 = R0 × 2</td></tr>
+          <tr><td><code>LSR Rd, Rn, &lt;op2&gt;</code></td><td>Logical Shift Right</td><td><code>LSR R0, R0, #1</code></td><td>R0 = R0 ÷ 2</td></tr>
+        </tbody>
+      </table>
+      <div class="tip">
+        <strong>💡 Shift Shortcuts</strong>
+        LSL by 1 = ×2 &nbsp;·&nbsp; LSL by 2 = ×4 &nbsp;·&nbsp; LSL by n = ×2<sup>n</sup><br>
+        LSR by 1 = ÷2 &nbsp;·&nbsp; LSR by 2 = ÷4 &nbsp;·&nbsp; LSR by n = ÷2<sup>n</sup> (integer division)
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Tracing -->
+  <div class="section s7" id="s6">
+    <div class="section-header">
+      <span class="spec-ref">Part 4</span>
+      <h2>Tracing Assembly Language Programs</h2>
+    </div>
+    <div class="section-body">
+      <h3>How to Complete a Trace Table</h3>
+      <ul class="steps">
+        <li><span class="step-num">1</span><div class="step-content"><strong>Set up columns</strong>One column per register mentioned + one per memory location used</div></li>
+        <li><span class="step-num">2</span><div class="step-content"><strong>Write initial values</strong>Fill in any starting values given in the question</div></li>
+        <li><span class="step-num">3</span><div class="step-content"><strong>Execute line by line</strong>Work through each instruction in order, top to bottom</div></li>
+        <li><span class="step-num">4</span><div class="step-content"><strong>Handle branches</strong>When you hit a CMP + branch: check the condition and jump to the label if true</div></li>
+        <li><span class="step-num">5</span><div class="step-content"><strong>Update only changed values</strong>Only write a new value in a cell when it changes</div></li>
+        <li><span class="step-num">6</span><div class="step-content"><strong>Stop at HALT</strong>Write the final register/memory values in the last row</div></li>
+      </ul>
+
+      <h3>Worked Example — From the 2017 Paper</h3>
+      <p style="font-size:14px;margin-bottom:0.5rem;"><strong>Given:</strong> Mem[100] = 10, Mem[101] = 50</p>
+      <div class="card-grid cols-2">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="card-title" style="padding:0.8rem 1rem 0.6rem;background:var(--bg);">Program</div>
+<pre style="margin:0;border-radius:0;border:none;border-top:1px solid var(--border);font-size:13px;">  <span class="kw">LDR</span> <span class="reg">R1</span>, 100
+  <span class="kw">LSL</span> <span class="reg">R2</span>, <span class="reg">R1</span>, <span class="imm">#2</span>
+  <span class="kw">ADD</span> <span class="reg">R1</span>, <span class="reg">R1</span>, <span class="reg">R2</span>
+  <span class="kw">LDR</span> <span class="reg">R3</span>, 101
+  <span class="kw">CMP</span> <span class="reg">R3</span>, <span class="reg">R1</span>
+  <span class="kw">BEQ</span> <span class="lbl">labela</span>
+  <span class="kw">MOV</span> <span class="reg">R4</span>, <span class="imm">#0</span>
+  <span class="kw">B</span>   <span class="lbl">labelb</span>
+<span class="lbl">labela:</span>
+  <span class="kw">MOV</span> <span class="reg">R4</span>, <span class="imm">#1</span>
+<span class="lbl">labelb:</span>
+  <span class="kw">STR</span> <span class="reg">R4</span>, 102
+  <span class="kw">HALT</span></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">Trace Table</div>
+          <div style="overflow-x:auto;">
+            <table class="trace-table">
+              <thead><tr><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Mem[102]</th></tr></thead>
+              <tbody>
+                <tr><td class="initial">—</td><td class="initial">—</td><td class="initial">—</td><td class="initial">—</td><td class="initial">—</td></tr>
+                <tr><td class="changed">10</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td class="changed">40</td><td></td><td></td><td></td></tr>
+                <tr><td class="changed">50</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td class="changed">50</td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td class="changed">1</td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td class="changed">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tip" style="margin-top:0.8rem;">
+            <strong>Walkthrough</strong>
+            R1 = Mem[100] = 10. R2 = R1 LSL 2 = 10×4 = 40. R1 = 10+40 = 50. R3 = Mem[101] = 50. CMP R3, R1 → 50=50 → BEQ taken → R4 = 1. Mem[102] = 1.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Writing Programs -->
+  <div class="section s8" id="s7">
+    <div class="section-header">
+      <span class="spec-ref">Part 5</span>
+      <h2>Writing Assembly Language Programs</h2>
+    </div>
+    <div class="section-body">
+      <div class="tip">
+        <strong>Writing Tip — Plan First</strong>
+        Pseudocode first → identify which registers hold which values → write instructions → add HALT last → add labels → test with a trace table.
+      </div>
+      <div class="card-grid cols-2">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="card-title" style="padding:0.8rem 1rem 0.6rem;background:var(--bg);">Pattern 1: IF / ELSE</div>
+<pre style="margin:0;border-radius:0;border:none;border-top:1px solid var(--border);font-size:13px;">  <span class="kw">CMP</span> <span class="reg">R0</span>, <span class="imm">#10</span>
+  <span class="kw">BGT</span> <span class="lbl">bigger</span>
+  <span class="kw">MOV</span> <span class="reg">R1</span>, <span class="imm">#0</span>   <span class="cmt">; small path</span>
+  <span class="kw">B</span>   <span class="lbl">done</span>
+<span class="lbl">bigger:</span>
+  <span class="kw">MOV</span> <span class="reg">R1</span>, <span class="imm">#1</span>   <span class="cmt">; big path</span>
+<span class="lbl">done:</span>
+  <span class="kw">HALT</span></pre>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="card-title" style="padding:0.8rem 1rem 0.6rem;background:var(--bg);">Pattern 2: COUNT LOOP</div>
+<pre style="margin:0;border-radius:0;border:none;border-top:1px solid var(--border);font-size:13px;">  <span class="kw">MOV</span> <span class="reg">R0</span>, <span class="imm">#0</span>    <span class="cmt">; counter = 0</span>
+  <span class="kw">MOV</span> <span class="reg">R1</span>, <span class="imm">#10</span>   <span class="cmt">; limit = 10</span>
+<span class="lbl">loop:</span>
+  <span class="kw">CMP</span> <span class="reg">R0</span>, <span class="reg">R1</span>
+  <span class="kw">BEQ</span> <span class="lbl">done</span>
+  <span class="kw">ADD</span> <span class="reg">R0</span>, <span class="reg">R0</span>, <span class="imm">#1</span>
+  <span class="kw">B</span>   <span class="lbl">loop</span>
+<span class="lbl">done:</span>
+  <span class="kw">HALT</span></pre>
+        </div>
+      </div>
+
+      <h3>Practice Task — AQA June 2021 Q6</h3>
+      <div class="card-grid cols-2">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="card-title" style="padding:0.8rem 1rem 0.6rem;background:var(--bg);">Program &nbsp; (R1 = 34, R2 = 6)</div>
+<pre style="margin:0;border-radius:0;border:none;border-top:1px solid var(--border);font-size:13px;">  <span class="kw">CMP</span> <span class="reg">R2</span>, <span class="imm">#0</span>
+  <span class="kw">BEQ</span> <span class="lbl">exit</span>
+  <span class="kw">MOV</span> <span class="reg">R0</span>, <span class="imm">#0</span>
+  <span class="kw">MOV</span> <span class="reg">R3</span>, <span class="imm">#1</span>
+<span class="lbl">moveleft:</span>
+  <span class="kw">LSL</span> <span class="reg">R2</span>, <span class="reg">R2</span>, <span class="imm">#1</span>
+  <span class="kw">LSL</span> <span class="reg">R3</span>, <span class="reg">R3</span>, <span class="imm">#1</span>
+  <span class="kw">CMP</span> <span class="reg">R2</span>, <span class="reg">R1</span>
+  <span class="kw">BLT</span> <span class="lbl">moveleft</span>
+  <span class="kw">BEQ</span> <span class="lbl">mainloop</span>
+  <span class="kw">LSR</span> <span class="reg">R2</span>, <span class="reg">R2</span>, <span class="imm">#1</span>
+  <span class="kw">LSR</span> <span class="reg">R3</span>, <span class="reg">R3</span>, <span class="imm">#1</span></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">Questions</div>
+          <ol style="font-size:14px;">
+            <li>What addressing mode is used in <code>CMP R2, #0</code>?</li>
+            <li>What addressing mode is used in <code>CMP R2, R1</code>?</li>
+            <li>Start the trace table with R0=0, R1=34, R2=6, R3=1</li>
+            <li>What does this program calculate?</li>
+          </ol>
+          <div class="tip" style="margin-top:0.8rem;">
+            <strong>💡 Hint</strong>
+            Think about what divides 34 by 6... this program performs <strong>integer division</strong> using shifts.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Exam Technique -->
+  <div class="section s3" id="s8">
+    <div class="section-header">
+      <span class="spec-ref">Exam</span>
+      <h2>Exam Technique &amp; Common Mistakes</h2>
+    </div>
+    <div class="section-body">
+      <div class="misconception-row">
+        <div class="mc-wrong"><span class="mc-label">❌ Mistake</span>Writing the address instead of the value in LDR</div>
+        <div class="mc-right"><span class="mc-label">✅ Correct</span><code>LDR R0, 100</code> puts the <strong>VALUE at address 100</strong> into R0, not the number 100</div>
+      </div>
+      <div class="misconception-row">
+        <div class="mc-wrong"><span class="mc-label">❌ Mistake</span>Forgetting CMP before a branch</div>
+        <div class="mc-right"><span class="mc-label">✅ Correct</span>You must always <strong>CMP first</strong> — branch instructions check the result of the last CMP</div>
+      </div>
+      <div class="misconception-row">
+        <div class="mc-wrong"><span class="mc-label">❌ Mistake</span>Confusing # and no # in the operand</div>
+        <div class="mc-right"><span class="mc-label">✅ Correct</span><code>#</code> = use this <strong>literal number</strong>. No # = use the <strong>register or memory value</strong></div>
+      </div>
+      <div class="misconception-row">
+        <div class="mc-wrong"><span class="mc-label">❌ Mistake</span>Not tracing loops carefully</div>
+        <div class="mc-right"><span class="mc-label">✅ Correct</span>Keep <strong>a new row</strong> in the trace table for every time you execute a line</div>
+      </div>
+      <div class="misconception-row">
+        <div class="mc-wrong"><span class="mc-label">❌ Mistake</span>Describing instructions not purpose</div>
+        <div class="mc-right"><span class="mc-label">✅ Correct</span>"Describe the purpose" = what the <strong>whole program does</strong>, not line-by-line narration</div>
+      </div>
+      <div class="misconception-row">
+        <div class="mc-wrong"><span class="mc-label">❌ Mistake</span>Forgetting HALT at the end</div>
+        <div class="mc-right"><span class="mc-label">✅ Correct</span>All AQA assembly programs <strong>must end with HALT</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: Summary -->
+  <div class="section s9" id="s9">
+    <div class="section-header">
+      <span class="spec-ref">Summary</span>
+      <h2>Summary &amp; Key Exam Points</h2>
+    </div>
+    <div class="section-body">
+      <div class="summary-grid">
+        <div class="summary-row">
+          <div class="summary-label">Addressing Modes</div>
+          <div class="summary-value"><code>#</code> = immediate (value itself) &nbsp;·&nbsp; Register name or bare address = direct (value at that location)</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">LDR / STR</div>
+          <div class="summary-value">LDR: memory → register &nbsp;·&nbsp; STR: register → memory &nbsp;·&nbsp; Both always use direct addressing</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">CMP + Branch</div>
+          <div class="summary-value">CMP sets flags; branch conditions: EQ · NE · GT · LT + unconditional B. Must CMP before branching.</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Shifts</div>
+          <div class="summary-value">LSL×1 = ×2, LSR×1 = ÷2. Used in past papers for multiply/divide algorithms.</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Tracing</div>
+          <div class="summary-value">One row per changed state. Track loops carefully. Stop at HALT.</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Purpose Questions</div>
+          <div class="summary-value">Describe the <em>overall task</em> the program performs — not individual instructions.</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Why Assembly?</div>
+          <div class="summary-value">Faster execution, smaller code, direct hardware access — but harder to write and maintain than a HLL.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  AQA A-Level Computer Science 7517 &nbsp;·&nbsp; Assembly Language (4.7.3) &nbsp;·&nbsp; Revision Resource
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.7 Computer Organisation & Architecture — AQA CS Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fb;
+    --card: #ffffff;
+    --navy: #1a3c6e;
+    --navy-light: #2a5298;
+    --text: #1e2a3a;
+    --muted: #5a6a7e;
+    --border: #d0d8e4;
+    --s1: #eef4fb;
+    --s2: #edfaf4;
+    --s3: #fff8ec;
+    --s4: #f3eeff;
+    --s5: #fdedf0;
+    --s6: #e8f8f8;
+    --s7: #fef9e8;
+    --warn-bg: #fff8e1;
+    --warn-border: #e6a817;
+    --tip-bg: #e8f5e9;
+    --tip-border: #388e3c;
+    --misconc-bg: #fce4ec;
+    --misconc-border: #c62828;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 2rem 2.5rem 1.5rem;
+    border-bottom: 4px solid #4a90d9;
+  }
+  header .tag {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8cb8e8;
+    margin-bottom: 0.4rem;
+  }
+  header h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  header p {
+    color: #b8d0ee;
+    font-size: 14px;
+  }
+
+  .toc {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .toc span { font-size: 12px; color: var(--muted); margin-right: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .toc a {
+    font-size: 13px;
+    color: var(--navy-light);
+    text-decoration: none;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid #c8d8ee;
+    background: #f0f5fb;
+    transition: background 0.15s;
+  }
+  .toc a:hover { background: #deeaf8; }
+
+  main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .section {
+    border-radius: 10px;
+    margin-bottom: 1.8rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    border: 1px solid var(--border);
+  }
+  .section-header {
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+  .section-header .spec-ref {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .section-header h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .section-body { padding: 1.2rem 1.5rem 1.5rem; background: white; }
+
+  .s1 .section-header { background: var(--s1); border-bottom: 2px solid #b8d4f0; }
+  .s2 .section-header { background: var(--s2); border-bottom: 2px solid #a0d8be; }
+  .s3 .section-header { background: var(--s3); border-bottom: 2px solid #f0c878; }
+  .s4 .section-header { background: var(--s4); border-bottom: 2px solid #c8a8f0; }
+  .s5 .section-header { background: var(--s5); border-bottom: 2px solid #f0a0b0; }
+  .s6 .section-header { background: var(--s6); border-bottom: 2px solid #80ccd0; }
+  .s7 .section-header { background: var(--s7); border-bottom: 2px solid #e0c840; }
+
+  /* Cards / comparison grids */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin: 1rem 0; }
+  .card {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    border-left: 4px solid var(--navy-light);
+  }
+  .card h3 { font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+  .card p, .card li { font-size: 14px; }
+  .card ul { padding-left: 1.2rem; }
+  .card li { margin-bottom: 0.2rem; }
+
+  .card.green { border-left-color: #388e3c; }
+  .card.amber { border-left-color: #e6a817; }
+  .card.purple { border-left-color: #7b3fa0; }
+  .card.teal  { border-left-color: #00838f; }
+  .card.rose  { border-left-color: #c62828; }
+
+  /* Register table */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+  th { background: var(--navy); color: white; padding: 0.6rem 0.8rem; text-align: left; }
+  td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #e0e8f0; }
+  tr:nth-child(even) td { background: #f5f8fc; }
+
+  /* Steps */
+  .steps { list-style: none; padding: 0; margin: 1rem 0; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 0.6rem 0; border-bottom: 1px solid #eef;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    width: 26px; height: 26px; min-width: 26px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { display: block; font-size: 14px; margin-bottom: 0.1rem; }
+  .step-body span { font-size: 13px; color: var(--muted); }
+
+  /* Call-out boxes */
+  .warn {
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn-border);
+    padding: 0.7rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.8rem 0;
+    font-size: 14px;
+  }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    padding: 0.7rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.8rem 0;
+    font-size: 14px;
+  }
+  .misconc {
+    background: var(--misconc-bg);
+    border-left: 4px solid var(--misconc-border);
+    padding: 0.7rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.8rem 0;
+    font-size: 14px;
+  }
+  .warn .label, .tip .label, .misconc .label {
+    font-weight: 700; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 0.3rem; display: block;
+  }
+  .warn .label { color: #b07800; }
+  .tip .label { color: #2a7a34; }
+  .misconc .label { color: #a01010; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #f0f3f8;
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #1a3c6e;
+  }
+
+  .compare-row { display: flex; gap: 1rem; margin: 1rem 0; }
+  .compare-row .half { flex: 1; }
+
+  p { margin-bottom: 0.6rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.6rem; }
+  li { margin-bottom: 0.25rem; font-size: 14px; }
+
+  h3 { font-family: 'Source Serif 4', serif; font-size: 1.05rem; font-weight: 700;
+       color: var(--navy); margin: 1rem 0 0.4rem; }
+
+  .mnemonic {
+    background: #f0f5fb;
+    border: 1px dashed #4a90d9;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    font-size: 14px;
+    margin: 0.8rem 0;
+  }
+  .mnemonic .label { font-weight: 700; color: var(--navy); }
+
+  @media(max-width:640px){
+    .grid-2,.grid-3,.compare-row { grid-template-columns:1fr; flex-direction:column; }
+    header h1 { font-size:1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">AQA A-Level Computer Science 7517 · Paper 2</div>
+  <h1>4.7 Computer Organisation &amp; Architecture</h1>
+  <p>Internal Hardware &nbsp;·&nbsp; Stored Program Concept &nbsp;·&nbsp; CPU Components &nbsp;·&nbsp; FDE Cycle</p>
+</header>
+
+<nav class="toc">
+  <span>Jump to:</span>
+  <a href="#s1">4.7.1 Hardware</a>
+  <a href="#s2">Buses</a>
+  <a href="#s3">Von Neumann vs Harvard</a>
+  <a href="#s4">4.7.2 Stored Program</a>
+  <a href="#s5">4.7.3 CPU Components</a>
+  <a href="#s6">Registers</a>
+  <a href="#s7">FDE Cycle</a>
+  <a href="#s8">Misconceptions</a>
+</nav>
+
+<main>
+
+<!-- SECTION 1 -->
+<div class="section s1" id="s1">
+  <div class="section-header">
+    <h2>🖥️ 4.7.1 — Internal Hardware Components</h2>
+    <span class="spec-ref">4.7.1</span>
+  </div>
+  <div class="section-body">
+    <p>The internal hardware components work together via buses to allow the CPU to communicate with memory and peripheral devices.</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3>CPU</h3>
+        <p>The processor — contains the ALU, Control Unit, clock and registers. Executes all instructions.</p>
+      </div>
+      <div class="card green">
+        <h3>Main Memory (RAM)</h3>
+        <p>Volatile temporary storage. Holds the currently running program and its data. Faster than secondary storage.</p>
+      </div>
+      <div class="card amber">
+        <h3>I/O Controllers</h3>
+        <p>Connect peripheral devices to the system bus. Allow CPU to communicate with devices running at different speeds.</p>
+      </div>
+    </div>
+
+    <h3>Addressable Memory</h3>
+    <ul>
+      <li>Each memory location has a unique binary address.</li>
+      <li>Width of the <strong>address bus</strong> determines how many locations can be addressed.</li>
+      <li>32-bit bus: 2<sup>32</sup> = ~4.3 billion locations (4 GiB max).</li>
+      <li>64-bit bus: 2<sup>64</sup> = enormous capacity (16 EiB theoretical max).</li>
+      <li>Each address typically refers to one byte in modern systems.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section s2" id="s2">
+  <div class="section-header">
+    <h2>🚌 The System Bus</h2>
+    <span class="spec-ref">4.7.1</span>
+  </div>
+  <div class="section-body">
+    <p>A bus is a shared set of wires connecting components to transfer data, addresses, or control signals.</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Address Bus</h3>
+        <ul>
+          <li>Carries memory <strong>addresses</strong> from CPU to memory/devices</li>
+          <li>Direction: <strong>One-way →</strong></li>
+          <li>Width determines how much memory can be addressed</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>Data Bus</h3>
+        <ul>
+          <li>Carries actual <strong>data or instructions</strong> between components</li>
+          <li>Direction: <strong>Two-way ↔</strong></li>
+          <li>Width determines how much data is transferred at once</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Control Bus</h3>
+        <ul>
+          <li>Carries <strong>control signals</strong>: read/write, clock, interrupt</li>
+          <li>Direction: <strong>Two-way ↔</strong></li>
+          <li>Coordinates and manages all component activities</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mnemonic"><span class="label">💡 Memory Jogger:</span> <strong>"A Dog Carries"</strong> — <u>A</u>ddress carries location, <u>D</u>ata carries content, <u>C</u>ontrol carries signals.</div>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section s3" id="s3">
+  <div class="section-header">
+    <h2>⚖️ Von Neumann vs Harvard Architecture</h2>
+    <span class="spec-ref">4.7.1</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Von Neumann</h3>
+        <ul>
+          <li>Instructions &amp; data <strong>share the same memory</strong></li>
+          <li>Single shared bus for code &amp; data</li>
+          <li>Can cause the <em>Von Neumann bottleneck</em></li>
+          <li>More flexible — memory is reusable</li>
+          <li>Used in: <strong>General-purpose computers, PCs</strong></li>
+        </ul>
+      </div>
+      <div class="card purple">
+        <h3>Harvard</h3>
+        <ul>
+          <li><strong>Separate memory</strong> for instructions and data</li>
+          <li>Separate buses for code and data</li>
+          <li>Can fetch instruction AND data simultaneously</li>
+          <li>More complex hardware, less flexible</li>
+          <li>Used in: <strong>Embedded systems, DSP, microcontrollers</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Misconception</span>
+      Harvard is NOT simply "better" — each suits different contexts. Von Neumann still dominates general computing today.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section s4" id="s4">
+  <div class="section-header">
+    <h2>💾 4.7.2 — The Stored Program Concept</h2>
+    <span class="spec-ref">4.7.2</span>
+  </div>
+  <div class="section-body">
+    <blockquote style="border-left:4px solid var(--navy); padding:0.6rem 1rem; background:#f0f5fb; border-radius:0 6px 6px 0; margin:0.5rem 0 1rem; font-style:italic; font-size:15px;">
+      "Machine code instructions stored in main memory are fetched and executed serially by a processor that performs arithmetic and logical operations."
+    </blockquote>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Machine code</h3>
+        <p>Programs must be in binary before the CPU can run them.</p>
+      </div>
+      <div class="card green">
+        <h3>Stored in main memory</h3>
+        <p>The program sits in RAM while it runs — not on disk, not hardwired.</p>
+      </div>
+      <div class="card amber">
+        <h3>Fetched and executed serially</h3>
+        <p>Instructions are retrieved and run <strong>one at a time</strong>, in sequence.</p>
+      </div>
+      <div class="card purple">
+        <h3>Arithmetic &amp; logical operations</h3>
+        <p>The CPU can add, subtract, compare, AND, OR, NOT, etc.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="label">💡 Historical note</span>
+      Before this concept, computers were reprogrammed by physically rewiring them (e.g. ENIAC). Von Neumann's insight: store the program <em>as data</em> in memory.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section s5" id="s5">
+  <div class="section-header">
+    <h2>⚙️ 4.7.3 — CPU Components</h2>
+    <span class="spec-ref">4.7.3</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-3">
+      <div class="card">
+        <h3>ALU — Arithmetic Logic Unit</h3>
+        <p>Performs <strong>all calculations</strong>:</p>
+        <ul>
+          <li>Arithmetic: + − × ÷</li>
+          <li>Logical: AND, OR, NOT, XOR</li>
+          <li>Comparisons: greater than, equal to</li>
+        </ul>
+        <p style="margin-top:0.4rem; font-size:13px; color:var(--muted);">💡 The Calculator</p>
+      </div>
+      <div class="card green">
+        <h3>Control Unit (CU)</h3>
+        <p>Controls and coordinates everything:</p>
+        <ul>
+          <li>Decodes instructions</li>
+          <li>Sends control signals to all components</li>
+          <li>Manages the FDE cycle</li>
+          <li>Saves processor state during interrupts</li>
+        </ul>
+        <p style="margin-top:0.4rem; font-size:13px; color:var(--muted);">💡 The Conductor</p>
+      </div>
+      <div class="card amber">
+        <h3>Clock</h3>
+        <p>Generates regular electrical pulses:</p>
+        <ul>
+          <li>Synchronises all CPU operations</li>
+          <li>Speed measured in Hz (GHz = billions/sec)</li>
+          <li>Each "tick" = one clock cycle</li>
+          <li>Faster clock = more cycles per second</li>
+        </ul>
+        <p style="margin-top:0.4rem; font-size:13px; color:var(--muted);">💡 The Heartbeat</p>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="label">⚠️ Key distinction</span>
+      The Control Unit does <strong>NOT</strong> calculate — that is the ALU's job. The CU controls and coordinates; the ALU computes.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6 -->
+<div class="section s6" id="s6">
+  <div class="section-header">
+    <h2>📝 CPU Registers</h2>
+    <span class="spec-ref">4.7.3</span>
+  </div>
+  <div class="section-body">
+    <p>Registers are fast temporary storage <em>inside</em> the CPU.</p>
+
+    <h3>Dedicated Registers</h3>
+    <table>
+      <tr><th>Register</th><th>Full Name</th><th>Purpose</th><th>Mnemonic</th></tr>
+      <tr><td><code>PC</code></td><td>Program Counter</td><td>Holds the address of the <strong>NEXT</strong> instruction to be fetched</td><td>📖 Bookmark</td></tr>
+      <tr><td><code>MAR</code></td><td>Memory Address Register</td><td>Holds the address of the memory location being accessed</td><td>✉️ Envelope address</td></tr>
+      <tr><td><code>MBR</code></td><td>Memory Buffer Register</td><td>Holds data just read from or about to be written to memory</td><td>📬 In transit</td></tr>
+      <tr><td><code>CIR</code></td><td>Current Instruction Register</td><td>Holds the instruction currently being decoded and executed</td><td>📋 Instruction on desk</td></tr>
+      <tr><td><code>SR</code></td><td>Status Register</td><td>Stores flags about result of last instruction: zero, carry, overflow, negative</td><td>🚦 Traffic light</td></tr>
+    </table>
+
+    <h3>General-Purpose Registers</h3>
+    <ul>
+      <li>Fast temporary storage inside the CPU — programmer decides what to store in each.</li>
+      <li>Store values that instructions use as operands (inputs to the ALU).</li>
+      <li>Store the results of executing instructions (outputs from the ALU).</li>
+      <li>Store intermediate results during calculations.</li>
+      <li>A processor has a fixed number (e.g. R0, R1, R2…).</li>
+    </ul>
+
+    <div class="misconc">
+      <span class="label">⚠️ Mark-scheme alert</span>
+      Do <strong>NOT</strong> say registers "store values inside the processor" — AQA mark schemes award NO marks for this. Say: "store values accessed quickly" or "store operands/results".
+    </div>
+
+    <div class="warn">
+      <span class="label">⚠️ Don't mix these up</span>
+      PC = address of <em>NEXT</em> instruction. CIR = <em>current</em> instruction. MAR = address. MBR = data.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7 -->
+<div class="section s7" id="s7">
+  <div class="section-header">
+    <h2>🔄 The Fetch-Decode-Execute Cycle</h2>
+    <span class="spec-ref">4.7.3</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-3">
+      <div class="card">
+        <h3>1 — FETCH</h3>
+        <ol style="padding-left:1.2rem;">
+          <li>PC → MAR</li>
+          <li>MAR → Address Bus → Memory</li>
+          <li>PC increments (PC = PC + 1)</li>
+          <li>Data Bus → MBR</li>
+          <li>MBR → CIR</li>
+        </ol>
+      </div>
+      <div class="card green">
+        <h3>2 — DECODE</h3>
+        <ol style="padding-left:1.2rem;">
+          <li>CU reads CIR</li>
+          <li>Splits into opcode + operand</li>
+          <li>Opcode = WHAT to do</li>
+          <li>Operand = data/address</li>
+          <li>CU sends control signals</li>
+        </ol>
+      </div>
+      <div class="card amber">
+        <h3>3 — EXECUTE</h3>
+        <ol style="padding-left:1.2rem;">
+          <li>ALU performs operation</li>
+          <li>Memory read (if needed)</li>
+          <li>Memory write (if needed)</li>
+          <li>Result stored in register</li>
+          <li>Status register updated</li>
+        </ol>
+      </div>
+    </div>
+
+    <h3>Fetch Stage — Detailed</h3>
+    <ol class="steps">
+      <li><span class="step-num">1</span><div class="step-body"><strong>PC → MAR</strong><span>Contents of Program Counter copied to Memory Address Register. PC tells CPU where next instruction is stored.</span></div></li>
+      <li><span class="step-num">2</span><div class="step-body"><strong>MAR → Address Bus → Main Memory</strong><span>Address bus carries this address — it is read-only (one-way).</span></div></li>
+      <li><span class="step-num">3</span><div class="step-body"><strong>PC = PC + 1</strong><span>Program Counter incremented to point to the next instruction. Can happen simultaneously with steps 2 &amp; 4.</span></div></li>
+      <li><span class="step-num">4</span><div class="step-body"><strong>Memory → MBR</strong><span>Instruction at addressed memory location fetched into MBR via data bus.</span></div></li>
+      <li><span class="step-num">5</span><div class="step-body"><strong>MBR → CIR</strong><span>Contents of MBR copied into Current Instruction Register. Now ready to decode.</span></div></li>
+    </ol>
+
+    <h3>Execute Stage — Special Cases</h3>
+    <ul>
+      <li>If <strong>arithmetic/logical</strong>: ALU performs the operation; result stored in register.</li>
+      <li>If <strong>memory READ</strong>: address → MAR; data fetched via data bus → MBR; MBR → register.</li>
+      <li>If <strong>memory WRITE</strong>: data → MBR; address → MAR; write control signal sent.</li>
+      <li>If <strong>BRANCH</strong> (and condition is met): PC is updated to the branch address (not sequential).</li>
+    </ul>
+
+    <div class="mnemonic"><span class="label">💡 Analogy:</span> Like reading a recipe — <strong>FETCH</strong> (find the step), <strong>DECODE</strong> (understand it), <strong>EXECUTE</strong> (do it!). Then repeat with the next step.</div>
+  </div>
+</div>
+
+<!-- SECTION 8 -->
+<div class="section s1" id="s8">
+  <div class="section-header">
+    <h2>❌ Common Misconceptions — Don't Lose Marks!</h2>
+    <span class="spec-ref">Exam Technique</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div class="misconc" style="margin:0;">
+        <span class="label">❌ Wrong: "The PC holds the current instruction"</span>
+        <span class="tip" style="margin:0.4rem 0 0; display:block;">✅ The PC holds the <strong>ADDRESS of the NEXT instruction</strong>. The CIR holds the current instruction.</span>
+      </div>
+      <div class="misconc" style="margin:0;">
+        <span class="label">❌ Wrong: "MAR and MBR do the same thing"</span>
+        <span class="tip" style="margin:0.4rem 0 0; display:block;">✅ MAR = address (where in memory). MBR = actual data (what is in that location).</span>
+      </div>
+      <div class="misconc" style="margin:0;">
+        <span class="label">❌ Wrong: "The Control Unit does the calculations"</span>
+        <span class="tip" style="margin:0.4rem 0 0; display:block;">✅ The ALU performs all calculations. The CU controls and coordinates — it does NOT compute.</span>
+      </div>
+      <div class="misconc" style="margin:0;">
+        <span class="label">❌ Wrong: "Registers store values inside the processor"</span>
+        <span class="tip" style="margin:0.4rem 0 0; display:block;">✅ AQA mark scheme: NO marks for this. Say: "store values accessed quickly" or "store operands/results".</span>
+      </div>
+      <div class="misconc" style="margin:0;">
+        <span class="label">❌ Wrong: "Harvard is always better than Von Neumann"</span>
+        <span class="tip" style="margin:0.4rem 0 0; display:block;">✅ Each suits different purposes. Von Neumann still dominates general computing.</span>
+      </div>
+    </div>
+
+    <h3 style="margin-top:1.2rem;">Summary — Key Points</h3>
+    <table>
+      <tr><th>Topic</th><th>Key fact</th></tr>
+      <tr><td>Buses</td><td>Address (one-way, carries locations), Data (two-way, carries content), Control (two-way, carries signals)</td></tr>
+      <tr><td>Von Neumann</td><td>Instructions &amp; data share memory and bus. Bottleneck possible. General-purpose computers.</td></tr>
+      <tr><td>Harvard</td><td>Separate memory and buses for code vs data. Faster for some tasks. Embedded/DSP systems.</td></tr>
+      <tr><td>Stored Program</td><td>Machine code in main memory, fetched and executed serially, processor does arithmetic &amp; logical ops.</td></tr>
+      <tr><td>CPU Components</td><td>ALU (calculates), Control Unit (controls), Clock (synchronises), Registers (fast temp storage)</td></tr>
+      <tr><td>Key Registers</td><td>PC (next address), MAR (address accessed), MBR (data in transit), CIR (current instruction), SR (flags)</td></tr>
+      <tr><td>FDE Cycle</td><td>Fetch (PC→MAR, memory→MBR, MBR→CIR, PC++), Decode (CU reads CIR), Execute (ALU/memory/branch)</td></tr>
+    </table>
+  </div>
+</div>
+
+</main>
+</body>
+</html>
