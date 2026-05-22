@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trees & Tree Traversals – AQA A-level CS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Lato:wght@400;700;900&family=Merriweather:wght@400;700&display=swap');
+
+  :root {
+    --bg: #f8f9fb;
+    --text: #1a1d23;
+    --muted: #5a6070;
+    --border: #d8dce6;
+
+    /* Section colours – light but distinct */
+    --c1-bg: #eaf2ff; --c1-border: #4a90d9; --c1-head: #1a5ca0;
+    --c2-bg: #edfaf3; --c2-border: #34a86e; --c2-head: #1a6e45;
+    --c3-bg: #fff8ea; --c3-border: #e0a030; --c3-head: #8a5c00;
+    --c4-bg: #f5eeff; --c4-border: #8a55d9; --c4-head: #5422a0;
+    --c5-bg: #fff0f0; --c5-border: #d94a4a; --c5-head: #9c1a1a;
+
+    --code-bg: #1e2230;
+    --code-text: #cdd6f4;
+    --mono: 'Source Code Pro', monospace;
+    --body-font: 'Lato', sans-serif;
+    --head-font: 'Merriweather', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body-font);
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    background: linear-gradient(135deg, #1a2744 0%, #2c4880 100%);
+    color: #fff;
+    padding: 36px 40px 30px;
+    border-bottom: 4px solid #4a90d9;
+  }
+  .page-header .label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #9ab4e0;
+    margin-bottom: 8px;
+  }
+  .page-header h1 {
+    font-family: var(--head-font);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .page-header .subtitle { color: #b8cce8; font-size: 14px; }
+
+  /* ── Navigation pills ── */
+  .toc {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .toc a {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    transition: background .15s, color .15s;
+  }
+  .toc a:nth-child(1) { background: #dceeff; color: var(--c1-head); }
+  .toc a:nth-child(2) { background: #d8f7e8; color: var(--c2-head); }
+  .toc a:nth-child(3) { background: #fff2d0; color: var(--c3-head); }
+  .toc a:nth-child(4) { background: #ece0ff; color: var(--c4-head); }
+  .toc a:nth-child(5) { background: #ffdede; color: var(--c5-head); }
+  .toc a:hover { filter: brightness(.92); }
+
+  /* ── Main layout ── */
+  .main { max-width: 1080px; margin: 0 auto; padding: 32px 32px 0; }
+
+  /* ── Section card ── */
+  .section {
+    border-radius: 10px;
+    border-left: 5px solid;
+    margin-bottom: 32px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  }
+  .section-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+  .section-header .sec-num {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: .65;
+    margin-bottom: 4px;
+  }
+  .section-header h2 {
+    font-family: var(--head-font);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .section-body { padding: 20px 24px; }
+
+  /* colour variants */
+  .sec-1 { background: var(--c1-bg); border-color: var(--c1-border); }
+  .sec-1 .section-header { background: rgba(74,144,217,.1); }
+  .sec-1 .section-header h2, .sec-1 .section-header .sec-num { color: var(--c1-head); }
+
+  .sec-2 { background: var(--c2-bg); border-color: var(--c2-border); }
+  .sec-2 .section-header { background: rgba(52,168,110,.1); }
+  .sec-2 .section-header h2, .sec-2 .section-header .sec-num { color: var(--c2-head); }
+
+  .sec-3 { background: var(--c3-bg); border-color: var(--c3-border); }
+  .sec-3 .section-header { background: rgba(224,160,48,.1); }
+  .sec-3 .section-header h2, .sec-3 .section-header .sec-num { color: var(--c3-head); }
+
+  .sec-4 { background: var(--c4-bg); border-color: var(--c4-border); }
+  .sec-4 .section-header { background: rgba(138,85,217,.1); }
+  .sec-4 .section-header h2, .sec-4 .section-header .sec-num { color: var(--c4-head); }
+
+  .sec-5 { background: var(--c5-bg); border-color: var(--c5-border); }
+  .sec-5 .section-header { background: rgba(217,74,74,.1); }
+  .sec-5 .section-header h2, .sec-5 .section-header .sec-num { color: var(--c5-head); }
+
+  /* ── Typography within sections ── */
+  h3 {
+    font-family: var(--head-font);
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 20px 0 8px;
+    color: inherit;
+  }
+  h3:first-child { margin-top: 0; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+
+  /* ── Two-column grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 10px; }
+
+  @media (max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .toc { padding: 10px 16px; }
+    .main { padding: 16px 12px 0; }
+    .page-header { padding: 24px 20px; }
+  }
+
+  /* ── Info box ── */
+  .box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,.7);
+    border: 1px solid rgba(0,0,0,.1);
+  }
+  .box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 8px;
+    color: inherit;
+  }
+  .box ul { margin: 0; }
+
+  /* ── Tree diagram ── */
+  .tree-wrap {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tree-svg { display: block; margin: 0 auto; }
+
+  /* ── Code / monospace ── */
+  .code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: var(--mono);
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.6;
+    margin: 10px 0;
+  }
+  code { font-family: var(--mono); font-size: 13px; background: rgba(0,0,0,.08); padding: 1px 5px; border-radius: 3px; }
+
+  /* ── Comparison table ── */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 10px 0;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .comp-table th {
+    background: #2c4880;
+    color: #fff;
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+  .comp-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:nth-child(even) td { background: #f4f6fb; }
+
+  /* ── Traversal step table ── */
+  .step-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--mono); margin: 8px 0; }
+  .step-table th { background: #2c4880; color: #fff; padding: 7px 10px; text-align: left; }
+  .step-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); background: #fff; }
+  .step-table tr:nth-child(even) td { background: #f7f8fc; }
+
+  /* ── Key fact pill ── */
+  .key-fact {
+    display: inline-block;
+    background: #1a2744;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin: 2px 3px 6px 0;
+  }
+
+  /* ── Highlight callout ── */
+  .callout {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 14px;
+    border-left: 4px solid;
+    background: #fff;
+  }
+  .callout.blue { border-color: #4a90d9; }
+  .callout.green { border-color: #34a86e; }
+  .callout.amber { border-color: #e0a030; }
+  .callout.purple { border-color: #8a55d9; }
+  .callout.red { border-color: #d94a4a; }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  /* ── Summary pills ── */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .summary-item {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    font-size: 13.5px;
+  }
+  .summary-item .s-label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="label">AQA A-level Computer Science · Section 4.2 &amp; 4.3</div>
+  <h1>Trees &amp; Tree Traversals</h1>
+  <div class="subtitle">Graphs · Binary Search Trees · Traversal Algorithms · Infix/Prefix/Postfix · Reverse Polish Notation</div>
+</header>
+
+<nav class="toc">
+  <a href="#sec1">1 · Trees vs Graphs</a>
+  <a href="#sec2">2 · Binary Search Trees</a>
+  <a href="#sec3">3 · Traversal Algorithms</a>
+  <a href="#sec4">4 · Infix / Prefix / Postfix</a>
+  <a href="#sec5">5 · RPN &amp; Expression Trees</a>
+</nav>
+
+<div class="main">
+
+<!-- ═══════════════ SECTION 1 ═══════════════ -->
+<section class="section sec-1" id="sec1">
+  <div class="section-header">
+    <div class="sec-num">Section 1</div>
+    <h2>Trees, Graphs &amp; How They Differ</h2>
+  </div>
+  <div class="section-body">
+
+    <div class="grid-2">
+      <div>
+        <h3>What is a Graph?</h3>
+        <ul>
+          <li>A data structure of <strong>vertices (nodes)</strong> connected by <strong>edges (arcs)</strong></li>
+          <li>Can be <strong>directed</strong> (arrows) or <strong>undirected</strong></li>
+          <li>Can be <strong>weighted</strong> (edges have costs/distances)</li>
+          <li>May contain <strong>cycles</strong> – paths that loop back to the start</li>
+          <li>Can be <strong>disconnected</strong> – not all nodes need to be reachable</li>
+        </ul>
+        <div class="box" style="margin-top:12px">
+          <h4>Graph Types &amp; Representations</h4>
+          <ul>
+            <li>Undirected: Facebook friends</li>
+            <li>Directed: Twitter follows</li>
+            <li>Weighted: Road map distances</li>
+            <li>Unweighted: Network topology</li>
+          </ul>
+          <p style="margin-top:8px;margin-bottom:0"><strong>Represented as:</strong> Adjacency matrix · Adjacency list</p>
+        </div>
+      </div>
+      <div>
+        <h3>What is a Tree?</h3>
+        <ul>
+          <li>A tree is a <strong>connected, undirected graph with NO cycles</strong></li>
+          <li><strong>N nodes → exactly N−1 edges</strong></li>
+          <li>Any two nodes are connected by exactly <strong>one path</strong></li>
+          <li>A tree does <em>not</em> have to have a root node</li>
+          <li><strong>Rooted tree:</strong> one node designated as root; parent-child relationships exist</li>
+          <li>All nodes except the root have exactly one parent</li>
+        </ul>
+        <div class="box" style="margin-top:12px">
+          <h4>Key Tree Terms</h4>
+          <ul>
+            <li><strong>Root</strong> – topmost node</li>
+            <li><strong>Leaf</strong> – node with no children</li>
+            <li><strong>Height</strong> – longest root-to-leaf path</li>
+            <li><strong>Depth</strong> – distance from root</li>
+            <li><strong>Subtree</strong> – any node + descendants</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Tree vs Graph – Key Differences</h3>
+    <table class="comp-table">
+      <thead>
+        <tr><th>Feature</th><th>Graph</th><th>Tree</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cycles</td><td>Allowed</td><td>Never</td></tr>
+        <tr><td>Connectivity</td><td>Can be disconnected</td><td>Always connected</td></tr>
+        <tr><td>Edges (N nodes)</td><td>0 to N(N−1)/2</td><td>Exactly N−1</td></tr>
+        <tr><td>Direction</td><td>Directed or undirected</td><td>Undirected (usually)</td></tr>
+        <tr><td>Root</td><td>No concept of root</td><td>Can have a root</td></tr>
+        <tr><td>Relationship</td><td>Peer nodes</td><td>Hierarchical parent-child</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Rooted Trees – Typical Uses</h3>
+    <div class="grid-3">
+      <div class="box"><h4>File Systems</h4><p>Directories &amp; files form a rooted tree (C:\ is root)</p></div>
+      <div class="box"><h4>HTML/XML DOM</h4><p>Document Object Model is a rooted tree of elements</p></div>
+      <div class="box"><h4>Decision Trees</h4><p>AI &amp; ML classification; each leaf is a decision outcome</p></div>
+      <div class="box"><h4>Syntax Trees</h4><p>Compilers parse programs into Abstract Syntax Trees (AST)</p></div>
+      <div class="box"><h4>Organisation Charts</h4><p>CEO → Directors → Managers → Employees</p></div>
+      <div class="box"><h4>Binary Search Trees</h4><p>Efficient searching &amp; sorting of ordered data</p></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 2 ═══════════════ -->
+<section class="section sec-2" id="sec2">
+  <div class="section-header">
+    <div class="sec-num">Section 2</div>
+    <h2>Binary Search Trees</h2>
+  </div>
+  <div class="section-body">
+
+    <div class="grid-2">
+      <div>
+        <h3>Binary Trees</h3>
+        <ul>
+          <li>Each node has <strong>at most two children</strong> (left &amp; right)</li>
+          <li><strong>Full binary tree:</strong> every node has 0 or 2 children</li>
+          <li><strong>Complete binary tree:</strong> all levels full except possibly the last</li>
+          <li>Maximum nodes at depth d = <code>2<sup>d</sup></code></li>
+          <li>Binary tree with height h has at most <code>2<sup>(h+1)</sup> − 1</code> nodes</li>
+        </ul>
+        <div class="tree-wrap" style="margin-top:14px">
+          <svg class="tree-svg" viewBox="0 0 280 150" width="280" height="150" xmlns="http://www.w3.org/2000/svg">
+            <!-- edges -->
+            <line x1="140" y1="30" x2="80" y2="80" stroke="#34a86e" stroke-width="2"/>
+            <line x1="140" y1="30" x2="200" y2="80" stroke="#34a86e" stroke-width="2"/>
+            <line x1="80" y1="80" x2="50" y2="128" stroke="#34a86e" stroke-width="2"/>
+            <line x1="80" y1="80" x2="110" y2="128" stroke="#34a86e" stroke-width="2"/>
+            <line x1="200" y1="80" x2="170" y2="128" stroke="#34a86e" stroke-width="2"/>
+            <line x1="200" y1="80" x2="230" y2="128" stroke="#34a86e" stroke-width="2"/>
+            <!-- nodes -->
+            <circle cx="140" cy="30" r="18" fill="#1a6e45" stroke="none"/>
+            <text x="140" y="35" text-anchor="middle" fill="#fff" font-size="13" font-family="Source Code Pro,monospace" font-weight="600">root</text>
+            <circle cx="80" cy="80" r="16" fill="#34a86e"/>
+            <text x="80" y="85" text-anchor="middle" fill="#fff" font-size="12" font-family="Source Code Pro,monospace">L</text>
+            <circle cx="200" cy="80" r="16" fill="#34a86e"/>
+            <text x="200" y="85" text-anchor="middle" fill="#fff" font-size="12" font-family="Source Code Pro,monospace">R</text>
+            <circle cx="50" cy="128" r="14" fill="#6fcba0"/>
+            <text x="50" y="133" text-anchor="middle" fill="#fff" font-size="10" font-family="Source Code Pro,monospace">LL</text>
+            <circle cx="110" cy="128" r="14" fill="#6fcba0"/>
+            <text x="110" y="133" text-anchor="middle" fill="#fff" font-size="10" font-family="Source Code Pro,monospace">LR</text>
+            <circle cx="170" cy="128" r="14" fill="#6fcba0"/>
+            <text x="170" y="133" text-anchor="middle" fill="#fff" font-size="10" font-family="Source Code Pro,monospace">RL</text>
+            <circle cx="230" cy="128" r="14" fill="#6fcba0"/>
+            <text x="230" y="133" text-anchor="middle" fill="#fff" font-size="10" font-family="Source Code Pro,monospace">RR</text>
+          </svg>
+          <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px">Binary tree structure. Each node stores: data value · left pointer · right pointer</p>
+        </div>
+      </div>
+
+      <div>
+        <h3>BST Ordering Rule</h3>
+        <div class="callout green">
+          <strong>The Golden Rule (applies recursively):</strong>
+          LEFT subtree values &lt; node value &lt; RIGHT subtree values
+        </div>
+        <ul>
+          <li>No duplicate values (typically)</li>
+          <li>Enables efficient <code>O(log n)</code> search, insert, delete</li>
+          <li><strong>In-order traversal gives values in ascending sorted order</strong></li>
+        </ul>
+        <h3>BST Example – Insert: 15, 9, 22, 5, 12, 19, 27</h3>
+        <div class="tree-wrap">
+          <svg class="tree-svg" viewBox="0 0 300 190" width="300" height="190" xmlns="http://www.w3.org/2000/svg">
+            <line x1="150" y1="30" x2="80" y2="85" stroke="#34a86e" stroke-width="2"/>
+            <line x1="150" y1="30" x2="220" y2="85" stroke="#34a86e" stroke-width="2"/>
+            <line x1="80" y1="85" x2="44" y2="145" stroke="#34a86e" stroke-width="2"/>
+            <line x1="80" y1="85" x2="116" y2="145" stroke="#34a86e" stroke-width="2"/>
+            <line x1="220" y1="85" x2="186" y2="145" stroke="#34a86e" stroke-width="2"/>
+            <line x1="220" y1="85" x2="256" y2="145" stroke="#34a86e" stroke-width="2"/>
+            <circle cx="150" cy="30" r="22" fill="#1a6e45"/>
+            <text x="150" y="35" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">15</text>
+            <circle cx="80" cy="85" r="20" fill="#34a86e"/>
+            <text x="80" y="91" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">9</text>
+            <circle cx="220" cy="85" r="20" fill="#34a86e"/>
+            <text x="220" y="91" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">22</text>
+            <circle cx="44" cy="145" r="18" fill="#6fcba0"/>
+            <text x="44" y="151" text-anchor="middle" fill="#fff" font-size="13" font-family="Source Code Pro,monospace" font-weight="600">5</text>
+            <circle cx="116" cy="145" r="18" fill="#6fcba0"/>
+            <text x="116" y="151" text-anchor="middle" fill="#fff" font-size="13" font-family="Source Code Pro,monospace" font-weight="600">12</text>
+            <circle cx="186" cy="145" r="18" fill="#6fcba0"/>
+            <text x="186" y="151" text-anchor="middle" fill="#fff" font-size="13" font-family="Source Code Pro,monospace" font-weight="600">19</text>
+            <circle cx="256" cy="145" r="18" fill="#6fcba0"/>
+            <text x="256" y="151" text-anchor="middle" fill="#fff" font-size="13" font-family="Source Code Pro,monospace" font-weight="600">27</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">BST Operations</h3>
+    <div class="grid-2">
+      <div class="box">
+        <h4>Search Algorithm</h4>
+        <ol>
+          <li>Start at root</li>
+          <li>If value = node → <strong>FOUND</strong></li>
+          <li>If value &lt; node → go <strong>LEFT</strong></li>
+          <li>If value &gt; node → go <strong>RIGHT</strong></li>
+          <li>If null pointer → <strong>NOT FOUND</strong></li>
+        </ol>
+        <p style="margin-top:8px">Time complexity: <code>O(log n)</code> average · <code>O(n)</code> worst case (unbalanced)</p>
+      </div>
+      <div class="box">
+        <h4>Insert Algorithm</h4>
+        <ol>
+          <li>Search for insertion point</li>
+          <li>When null pointer reached, create new node there</li>
+          <li>If value &lt; parent → <strong>left child</strong></li>
+          <li>If value &gt; parent → <strong>right child</strong></li>
+          <li>Duplicates: typically rejected or go right</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="callout green" style="margin-top:14px">
+      <strong>⚡ BST vs Linear Search</strong>
+      For 1 million items: BST ≈ <strong>20 comparisons</strong> vs Linear ≈ <strong>500,000 comparisons</strong>.
+      Worst case: a BST built from already-sorted data degenerates to a linked list → <code>O(n)</code>.
+      Self-balancing trees (AVL, Red-Black) prevent this.
+    </div>
+
+    <h3 style="margin-top:22px">Graph vs Tree vs BST – Full Comparison</h3>
+    <table class="comp-table">
+      <thead>
+        <tr><th>Property</th><th>Graph</th><th>Tree</th><th>BST</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cycles</td><td>Yes</td><td>No</td><td>No</td></tr>
+        <tr><td>Root</td><td>No</td><td>Optional</td><td>Yes</td></tr>
+        <tr><td>Max children</td><td>Any</td><td>Any</td><td>Max 2</td></tr>
+        <tr><td>Ordering rule</td><td>None</td><td>None</td><td>Left &lt; Node &lt; Right</td></tr>
+        <tr><td>Search time</td><td>O(V+E)</td><td>O(n)</td><td>O(log n) avg</td></tr>
+        <tr><td>Traversal order</td><td>BFS / DFS</td><td>Pre / In / Post</td><td>In-order = sorted</td></tr>
+        <tr><td>Use case</td><td>Networks, maps</td><td>File systems, XML</td><td>Searching, sorting</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 3 ═══════════════ -->
+<section class="section sec-3" id="sec3">
+  <div class="section-header">
+    <div class="sec-num">Section 3</div>
+    <h2>Tree Traversal Algorithms</h2>
+  </div>
+  <div class="section-body">
+
+    <div class="grid-3">
+      <div class="box">
+        <h4>Pre-order (NLR)</h4>
+        <p>Visit <strong>Node FIRST</strong>, then Left subtree, then Right subtree.</p>
+        <p><em>Root → Left → Right</em></p>
+        <p>Output (example tree): <code>17, 9, 5, 13, 22, 19, 27</code></p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
+        <p><strong>Uses:</strong> Copying a tree · Prefix notation · Serialising a tree</p>
+      </div>
+      <div class="box">
+        <h4>In-order (LNR)</h4>
+        <p>Visit Left subtree, then <strong>Node</strong>, then Right subtree.</p>
+        <p><em>Left → Root → Right</em></p>
+        <p>Output (example tree): <code>5, 9, 13, 17, 19, 22, 27</code> ← sorted!</p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
+        <p><strong>Uses:</strong> BST sorted output · Infix notation from expression tree</p>
+      </div>
+      <div class="box">
+        <h4>Post-order (LRN)</h4>
+        <p>Visit Left subtree, then Right subtree, then <strong>Node LAST</strong>.</p>
+        <p><em>Left → Right → Root</em></p>
+        <p>Output (example tree): <code>5, 13, 9, 19, 27, 22, 17</code></p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
+        <p><strong>Uses:</strong> Deleting a tree · Postfix/RPN notation · Evaluating expressions</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Traversal Worked Example – Insert: 17, 9, 22, 5, 13, 19, 27</h3>
+    <div class="grid-2">
+      <div class="tree-wrap">
+        <svg class="tree-svg" viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg">
+          <line x1="160" y1="32" x2="88" y2="90" stroke="#e0a030" stroke-width="2"/>
+          <line x1="160" y1="32" x2="232" y2="90" stroke="#e0a030" stroke-width="2"/>
+          <line x1="88" y1="90" x2="48" y2="155" stroke="#e0a030" stroke-width="2"/>
+          <line x1="88" y1="90" x2="128" y2="155" stroke="#e0a030" stroke-width="2"/>
+          <line x1="232" y1="90" x2="192" y2="155" stroke="#e0a030" stroke-width="2"/>
+          <line x1="232" y1="90" x2="272" y2="155" stroke="#e0a030" stroke-width="2"/>
+          <circle cx="160" cy="32" r="24" fill="#8a5c00"/>
+          <text x="160" y="38" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="700">17</text>
+          <circle cx="88" cy="90" r="22" fill="#e0a030"/>
+          <text x="88" y="96" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">9</text>
+          <circle cx="232" cy="90" r="22" fill="#e0a030"/>
+          <text x="232" y="96" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">22</text>
+          <circle cx="48" cy="155" r="20" fill="#f0c060"/>
+          <text x="48" y="161" text-anchor="middle" fill="#3a2000" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">5</text>
+          <circle cx="128" cy="155" r="20" fill="#f0c060"/>
+          <text x="128" y="161" text-anchor="middle" fill="#3a2000" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">13</text>
+          <circle cx="192" cy="155" r="20" fill="#f0c060"/>
+          <text x="192" y="161" text-anchor="middle" fill="#3a2000" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">19</text>
+          <circle cx="272" cy="155" r="20" fill="#f0c060"/>
+          <text x="272" y="161" text-anchor="middle" fill="#3a2000" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">27</text>
+        </svg>
+      </div>
+      <div>
+        <div class="box">
+          <h4>Traversal Results</h4>
+          <p><strong>Pre-order (NLR):</strong><br><code>17, 9, 5, 13, 22, 19, 27</code></p>
+          <p style="margin-top:10px"><strong>In-order (LNR) – sorted! ✓</strong><br><code>5, 9, 13, 17, 19, 22, 27</code></p>
+          <p style="margin-top:10px"><strong>Post-order (LRN):</strong><br><code>5, 13, 9, 19, 27, 22, 17</code></p>
+        </div>
+        <div class="callout amber" style="margin-top:14px">
+          <strong>Memory Aid</strong>
+          <strong>Pre</strong> = Node first ("preview the root before you go anywhere")<br>
+          <strong>In</strong> = Node between left and right ("in the middle")<br>
+          <strong>Post</strong> = Node last ("post = after everything else")
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Traversal Uses – AQA Specification</h3>
+    <div class="grid-3">
+      <div class="box">
+        <h4>Pre-order</h4>
+        <ul>
+          <li>Copying/cloning a tree</li>
+          <li>Serialising tree to file/database</li>
+          <li>Producing prefix (Polish) notation from expression tree</li>
+          <li>Tree comparison algorithms</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h4>In-order</h4>
+        <ul>
+          <li>Printing BST values in ascending sorted order</li>
+          <li>Producing infix notation from expression tree</li>
+          <li>Verifying BST ordering property</li>
+          <li>Foundation of BST iterator</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h4>Post-order</h4>
+        <ul>
+          <li>Converting infix → Reverse Polish Notation (RPN)</li>
+          <li>Producing postfix expression from expression tree</li>
+          <li>Safely deleting a tree (children before parents)</li>
+          <li>Evaluating expression trees using a stack</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 4 ═══════════════ -->
+<section class="section sec-4" id="sec4">
+  <div class="section-header">
+    <div class="sec-num">Section 4</div>
+    <h2>Infix, Prefix &amp; Postfix Notation</h2>
+  </div>
+  <div class="section-body">
+
+    <div class="grid-3">
+      <div class="box">
+        <h4>Infix Notation</h4>
+        <p>Operator is <strong>BETWEEN</strong> operands</p>
+        <p><em>What humans use!</em></p>
+        <div class="code-block">A + B
+(A + B) * C
+3 + 4 * 2</div>
+        <p>Needs brackets to show precedence. Ambiguous without brackets or rules.</p>
+      </div>
+      <div class="box">
+        <h4>Prefix (Polish) Notation</h4>
+        <p>Operator comes <strong>BEFORE</strong> operands</p>
+        <p><em>Invented by Jan Łukasiewicz (1924)</em></p>
+        <div class="code-block">+ A B
+* + A B C
++ 3 * 4 2</div>
+        <p>No brackets needed! Unambiguous. Tree <strong>pre-order</strong> gives prefix.</p>
+      </div>
+      <div class="box">
+        <h4>Postfix (RPN) Notation</h4>
+        <p>Operator comes <strong>AFTER</strong> operands</p>
+        <p><em>Reverse Polish Notation (RPN)</em></p>
+        <div class="code-block">A B +
+A B + C *
+3 4 2 * +</div>
+        <p>No brackets needed! Evaluated with a stack. Tree <strong>post-order</strong> gives postfix.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Converting Between Notations – Expression: (A + B) * (C − D)</h3>
+    <div class="grid-2">
+      <div>
+        <h4 style="font-size:14px;margin-bottom:10px">Step 1 – Build Expression Tree</h4>
+        <div class="tree-wrap">
+          <svg class="tree-svg" viewBox="0 0 300 175" width="300" height="175" xmlns="http://www.w3.org/2000/svg">
+            <line x1="150" y1="32" x2="85" y2="90" stroke="#8a55d9" stroke-width="2"/>
+            <line x1="150" y1="32" x2="215" y2="90" stroke="#8a55d9" stroke-width="2"/>
+            <line x1="85" y1="90" x2="52" y2="150" stroke="#8a55d9" stroke-width="2"/>
+            <line x1="85" y1="90" x2="118" y2="150" stroke="#8a55d9" stroke-width="2"/>
+            <line x1="215" y1="90" x2="182" y2="150" stroke="#8a55d9" stroke-width="2"/>
+            <line x1="215" y1="90" x2="248" y2="150" stroke="#8a55d9" stroke-width="2"/>
+            <circle cx="150" cy="32" r="22" fill="#5422a0"/>
+            <text x="150" y="38" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="700">*</text>
+            <circle cx="85" cy="90" r="20" fill="#8a55d9"/>
+            <text x="85" y="96" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="600">+</text>
+            <circle cx="215" cy="90" r="20" fill="#8a55d9"/>
+            <text x="215" y="96" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="600">−</text>
+            <circle cx="52" cy="150" r="18" fill="#b48ae0"/>
+            <text x="52" y="156" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">A</text>
+            <circle cx="118" cy="150" r="18" fill="#b48ae0"/>
+            <text x="118" y="156" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">B</text>
+            <circle cx="182" cy="150" r="18" fill="#b48ae0"/>
+            <text x="182" y="156" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">C</text>
+            <circle cx="248" cy="150" r="18" fill="#b48ae0"/>
+            <text x="248" y="156" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">D</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:14px;margin-bottom:10px">Step 2 – Read the Tree Three Ways</h4>
+        <div class="box">
+          <p><strong>Pre-order → PREFIX:</strong><br><code>* + A B - C D</code></p>
+          <p style="margin-top:10px"><strong>In-order → INFIX:</strong><br><code>A + B * C - D</code></p>
+          <p style="margin-top:10px"><strong>Post-order → POSTFIX:</strong><br><code>A B + C D - *</code></p>
+        </div>
+        <div class="callout purple" style="margin-top:12px">
+          <strong>Why Postfix for Computers?</strong>
+          Stack-based evaluation: scan left to right, push operands, pop and apply operators when seen. No brackets or precedence rules needed at evaluation time. Used in: PostScript, Java bytecode, HP calculators, many interpreters.
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Infix → Postfix: Shunting-Yard Algorithm (Dijkstra)</h3>
+    <div class="callout purple">
+      <strong>Algorithm Rules (scan left to right):</strong>
+      Operand (A,B,3…) → output immediately · Operator → pop higher/equal precedence from stack to output, then push · <code>(</code> → push to stack · <code>)</code> → pop to output until <code>(</code> found
+    </div>
+
+    <div class="grid-2" style="margin-top:12px">
+      <div>
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px">Example: A + B * C</p>
+        <table class="step-table">
+          <thead><tr><th>Token</th><th>Stack</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>[ ]</td><td>A</td></tr>
+            <tr><td>+</td><td>[+]</td><td>A</td></tr>
+            <tr><td>B</td><td>[+]</td><td>A B</td></tr>
+            <tr><td>*</td><td>[+ *]</td><td>A B</td></tr>
+            <tr><td>C</td><td>[+ *]</td><td>A B C</td></tr>
+            <tr><td>END</td><td>[ ]</td><td><strong>A B C * +</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px">Example: (A + B) * C</p>
+        <table class="step-table">
+          <thead><tr><th>Token</th><th>Stack</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>(</td><td>[(]</td><td></td></tr>
+            <tr><td>A</td><td>[(]</td><td>A</td></tr>
+            <tr><td>+</td><td>[(+]</td><td>A</td></tr>
+            <tr><td>B</td><td>[(+]</td><td>A B</td></tr>
+            <tr><td>)</td><td>[ ]</td><td>A B +</td></tr>
+            <tr><td>*</td><td>[*]</td><td>A B +</td></tr>
+            <tr><td>C</td><td>[*]</td><td>A B + C</td></tr>
+            <tr><td>END</td><td>[ ]</td><td><strong>A B + C *</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Evaluating Postfix with a Stack</h3>
+    <div class="grid-2">
+      <div>
+        <p style="margin-bottom:8px"><strong>Evaluate:</strong> <code>3 4 2 * +</code> (= 3 + 4×2 = <strong>11</strong>)</p>
+        <table class="step-table">
+          <thead><tr><th>Token</th><th>Stack</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>3</td><td>[3]</td><td>Push 3</td></tr>
+            <tr><td>4</td><td>[3, 4]</td><td>Push 4</td></tr>
+            <tr><td>2</td><td>[3, 4, 2]</td><td>Push 2</td></tr>
+            <tr><td>*</td><td>[3, 8]</td><td>Pop 2,4 → 4×2=8 → Push 8</td></tr>
+            <tr><td>+</td><td>[11]</td><td>Pop 8,3 → 3+8=11 → Push 11</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:8px"><strong>Result: 11 ✓</strong></p>
+      </div>
+      <div class="box">
+        <h4>Operator Rule</h4>
+        <p>When you see an operator:</p>
+        <ol>
+          <li>Pop <strong>RIGHT</strong> operand</li>
+          <li>Pop <strong>LEFT</strong> operand</li>
+          <li>Apply operator</li>
+          <li>Push result</li>
+        </ol>
+        <p style="margin-top:10px">Final value on stack = answer</p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:10px 0">
+        <p><strong>Prefix evaluation:</strong> scan <em>right to left</em> (push operands, pop two operands when operator found, apply, push result)</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 5 ═══════════════ -->
+<section class="section sec-5" id="sec5">
+  <div class="section-header">
+    <div class="sec-num">Section 5</div>
+    <h2>RPN &amp; Expression Trees</h2>
+  </div>
+  <div class="section-body">
+
+    <div class="grid-2">
+      <div>
+        <h3>Expression Trees</h3>
+        <ul>
+          <li>A binary tree representing a mathematical expression</li>
+          <li><strong>Internal nodes (non-leaf)</strong> hold operators (+, −, *, /)</li>
+          <li><strong>Leaf nodes</strong> hold operands (numbers or variables)</li>
+          <li>Tree structure encodes operator precedence <em>without brackets</em></li>
+          <li>The three traversals give the three notations directly</li>
+          <li>Used in compilers for Abstract Syntax Trees (AST)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Example: (3 + 4) * (5 − 2)</h3>
+        <div class="tree-wrap">
+          <svg class="tree-svg" viewBox="0 0 300 175" width="300" height="175" xmlns="http://www.w3.org/2000/svg">
+            <line x1="150" y1="32" x2="85" y2="90" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="150" y1="32" x2="215" y2="90" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="85" y1="90" x2="52" y2="150" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="85" y1="90" x2="118" y2="150" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="215" y1="90" x2="182" y2="150" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="215" y1="90" x2="248" y2="150" stroke="#d94a4a" stroke-width="2"/>
+            <circle cx="150" cy="32" r="22" fill="#9c1a1a"/>
+            <text x="150" y="38" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="700">*</text>
+            <circle cx="85" cy="90" r="20" fill="#d94a4a"/>
+            <text x="85" y="96" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="600">+</text>
+            <circle cx="215" cy="90" r="20" fill="#d94a4a"/>
+            <text x="215" y="96" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="600">−</text>
+            <circle cx="52" cy="150" r="18" fill="#e88888"/>
+            <text x="52" y="156" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">3</text>
+            <circle cx="118" cy="150" r="18" fill="#e88888"/>
+            <text x="118" y="156" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">4</text>
+            <circle cx="182" cy="150" r="18" fill="#e88888"/>
+            <text x="182" y="156" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">5</text>
+            <circle cx="248" cy="150" r="18" fill="#e88888"/>
+            <text x="248" y="156" text-anchor="middle" fill="#fff" font-size="14" font-family="Source Code Pro,monospace" font-weight="600">2</text>
+          </svg>
+        </div>
+        <div class="box" style="margin-top:10px">
+          <p><strong>Pre-order:</strong> <code>* + 3 4 - 5 2</code></p>
+          <p style="margin-top:6px"><strong>In-order:</strong> <code>3 + 4 * 5 - 2</code></p>
+          <p style="margin-top:6px"><strong>Post-order:</strong> <code>3 4 + 5 2 - *</code></p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Infix to RPN – Full Worked Example</h3>
+    <div class="callout red">Convert: <strong>(5 + 3) * 2 − 8 / 4</strong></div>
+
+    <div class="grid-2" style="margin-top:12px">
+      <div>
+        <p style="font-size:13px;font-weight:700;margin-bottom:8px">Expression Tree</p>
+        <div class="tree-wrap">
+          <svg class="tree-svg" viewBox="0 0 300 220" width="300" height="220" xmlns="http://www.w3.org/2000/svg">
+            <line x1="150" y1="28" x2="88" y2="88" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="150" y1="28" x2="212" y2="88" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="88" y1="88" x2="56" y2="148" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="88" y1="88" x2="120" y2="148" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="212" y1="88" x2="180" y2="148" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="212" y1="88" x2="244" y2="148" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="56" y1="148" x2="32" y2="200" stroke="#d94a4a" stroke-width="2"/>
+            <line x1="56" y1="148" x2="80" y2="200" stroke="#d94a4a" stroke-width="2"/>
+            <circle cx="150" cy="28" r="22" fill="#9c1a1a"/>
+            <text x="150" y="34" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="700">−</text>
+            <circle cx="88" cy="88" r="20" fill="#d94a4a"/>
+            <text x="88" y="94" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="600">*</text>
+            <circle cx="212" cy="88" r="20" fill="#d94a4a"/>
+            <text x="212" y="94" text-anchor="middle" fill="#fff" font-size="16" font-family="Source Code Pro,monospace" font-weight="600">/</text>
+            <circle cx="56" cy="148" r="18" fill="#e88888"/>
+            <text x="56" y="154" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">+</text>
+            <circle cx="120" cy="148" r="18" fill="#e88888"/>
+            <text x="120" y="154" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">2</text>
+            <circle cx="180" cy="148" r="18" fill="#e88888"/>
+            <text x="180" y="154" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">8</text>
+            <circle cx="244" cy="148" r="18" fill="#e88888"/>
+            <text x="244" y="154" text-anchor="middle" fill="#fff" font-size="15" font-family="Source Code Pro,monospace" font-weight="600">4</text>
+            <circle cx="32" cy="200" r="16" fill="#f0aaaa"/>
+            <text x="32" y="206" text-anchor="middle" fill="#9c1a1a" font-size="14" font-family="Source Code Pro,monospace" font-weight="700">5</text>
+            <circle cx="80" cy="200" r="16" fill="#f0aaaa"/>
+            <text x="80" y="206" text-anchor="middle" fill="#9c1a1a" font-size="14" font-family="Source Code Pro,monospace" font-weight="700">3</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="box">
+          <h4>Post-order Traversal → RPN</h4>
+          <p>Visit left subtree of −:<br>&nbsp;&nbsp;Post-order of *: <code>5 3 + 2 *</code></p>
+          <p style="margin-top:8px">Visit right subtree of −:<br>&nbsp;&nbsp;Post-order of /: <code>8 4 /</code></p>
+          <p style="margin-top:8px">Visit root: <code>−</code></p>
+          <p style="margin-top:12px"><strong>RPN: <code>5 3 + 2 * 8 4 / −</code></strong></p>
+          <p style="margin-top:8px;font-size:13px;color:var(--muted)">Verify: (5+3)×2 − 8/4 = 16−2 = <strong>14</strong> ✓</p>
+        </div>
+        <h3 style="margin-top:18px">Why Use RPN / Postfix?</h3>
+        <div class="box">
+          <ul>
+            <li><strong>No brackets needed</strong> – operator position uniquely determines evaluation order</li>
+            <li><strong>No precedence rules</strong> at evaluation time; just use a stack</li>
+            <li><strong>Stack-based CPUs</strong> – RPN maps naturally to push/pop instructions</li>
+            <li><strong>Real-world uses:</strong> PostScript (laser printers), Forth language, HP calculators, Java bytecode, compiler intermediate representations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Exam Summary -->
+    <h3 style="margin-top:26px">⭐ Key Exam Points – Summary</h3>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="s-label" style="color:var(--c1-head)">Graph vs Tree</div>
+        Graph = vertices + edges; may have cycles. Tree = connected, undirected, NO cycles. N nodes → N−1 edges.
+      </div>
+      <div class="summary-item">
+        <div class="s-label" style="color:var(--c2-head)">BST Property</div>
+        Left &lt; node &lt; right (recursive). In-order traversal gives sorted output. O(log n) average search.
+      </div>
+      <div class="summary-item">
+        <div class="s-label" style="color:var(--c3-head)">Traversal Orders</div>
+        Pre-order (NLR): copy tree, prefix. In-order (LNR): sorted output, infix. Post-order (LRN): delete tree, RPN.
+      </div>
+      <div class="summary-item">
+        <div class="s-label" style="color:var(--c4-head)">Notations</div>
+        Infix: operator between (needs brackets). Prefix: operator first. Postfix/RPN: operator last, stack-evaluated.
+      </div>
+      <div class="summary-item">
+        <div class="s-label" style="color:var(--c5-head)">RPN Advantages</div>
+        No brackets, no precedence ambiguity, stack-based evaluation, used in compilers &amp; PostScript.
+      </div>
+      <div class="summary-item">
+        <div class="s-label" style="color:var(--c5-head)">Expression Trees</div>
+        Pre-order = prefix, in-order = infix, post-order = postfix (RPN). Internal nodes = operators, leaves = operands.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /main -->
+
+</body>
+</html>

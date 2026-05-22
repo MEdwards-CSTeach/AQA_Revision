@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphs – AQA A-level CS Revision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg:       #070d1a;
+    --bg2:      #0e1829;
+    --bg3:      #162035;
+    --panel:    #0a1220;
+    --border:   #1e3050;
+    --teal:     #00d4aa;
+    --teal2:    #00a882;
+    --purple:   #b57bff;
+    --pink:     #ff6eb4;
+    --amber:    #ffb347;
+    --green:    #4ade80;
+    --blue:     #60a5fa;
+    --text:     #e2eaf8;
+    --muted:    #7a96b8;
+    --code-bg:  #040810;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #070d1a 0%, #0a1528 50%, #060e20 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 32px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,212,170,.12), transparent);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(0,212,170,.15);
+    border: 1px solid rgba(0,212,170,.4);
+    color: var(--teal);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    background: linear-gradient(120deg, #fff 30%, var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+  .hero-chips {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+  }
+  .chip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .chip:hover, .chip.active {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: rgba(0,212,170,.08);
+  }
+
+  /* ── NAV ── */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,13,26,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sticky-nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin-bottom: 10px;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-size: .95rem;
+    margin-bottom: 36px;
+    max-width: 680px;
+  }
+
+  /* ── CARDS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media(max-width:700px) { .grid-2,.grid-3 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    transition: border-color .2s, transform .2s;
+  }
+  .card:hover { border-color: rgba(0,212,170,.35); transform: translateY(-2px); }
+  .card-accent { border-left: 3px solid var(--teal); }
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--teal);
+  }
+  .card p, .card li { color: var(--muted); font-size: .9rem; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 4px; }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight {
+    background: rgba(0,212,170,.07);
+    border: 1px solid rgba(0,212,170,.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .highlight.purple { background: rgba(181,123,255,.07); border-color: rgba(181,123,255,.25); }
+  .highlight.amber  { background: rgba(255,179,71,.07);  border-color: rgba(255,179,71,.25); }
+  .highlight.pink   { background: rgba(255,110,180,.07); border-color: rgba(255,110,180,.25); }
+  .highlight strong { color: var(--teal); }
+  .highlight.purple strong { color: var(--purple); }
+  .highlight.amber  strong { color: var(--amber); }
+  .highlight.pink   strong { color: var(--pink); }
+
+  /* ── DEFINITION TERM ── */
+  .def-grid { display: grid; gap: 10px; }
+  .def-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  @media(max-width:600px) { .def-row { grid-template-columns: 1fr; } }
+  .def-term {
+    background: var(--bg3);
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+  }
+  .def-body {
+    padding: 12px 16px;
+    font-size: .88rem;
+    color: var(--muted);
+    background: var(--bg2);
+  }
+
+  /* ── CODE ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c8e0ff;
+    margin: 16px 0;
+  }
+  .kw  { color: #c77dff; }
+  .fn  { color: #00d4aa; }
+  .cm  { color: #4a6a8a; font-style: italic; }
+  .st  { color: #ffb347; }
+  .nm  { color: #ff9f7a; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+  .tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .tab-content { display: none; padding-top: 20px; }
+  .tab-content.active { display: block; }
+
+  /* ── GRAPH CANVAS ── */
+  .canvas-wrap {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  canvas { display: block; margin: 0 auto; }
+
+  /* ── TRAVERSAL DEMO ── */
+  .traversal-controls {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin: 16px 0;
+    align-items: center;
+  }
+  .btn {
+    padding: 9px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn:hover { border-color: var(--teal); color: var(--teal); }
+  .btn.primary { background: var(--teal); color: #000; border-color: var(--teal); font-weight: 600; }
+  .btn.primary:hover { background: var(--teal2); }
+  .btn:disabled { opacity: .4; cursor: default; }
+
+  .traversal-log {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    min-height: 60px;
+    color: var(--green);
+    margin-top: 10px;
+  }
+  .step-row {
+    display: flex; gap: 12px; align-items: baseline;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .step-n { color: var(--muted); min-width: 26px; }
+  .step-action { color: var(--green); }
+  .step-queue { color: var(--amber); }
+  .step-visited { color: var(--purple); }
+
+  /* ── MATRIX TABLE ── */
+  .matrix-wrap { overflow-x: auto; margin: 16px 0; }
+  .mtable {
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    margin: 0 auto;
+  }
+  .mtable th, .mtable td {
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    text-align: center;
+  }
+  .mtable th { background: var(--bg3); color: var(--teal); font-weight: 600; }
+  .mtable td { background: var(--bg2); color: var(--text); }
+  .mtable td.has-edge { color: var(--green); font-weight: 600; background: rgba(74,222,128,.08); }
+  .mtable td.diag    { background: var(--bg3); color: var(--muted); }
+
+  /* ── COMPARISON TABLE ── */
+  .comp-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  .comp-table th, .comp-table td {
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    font-size: .88rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .comp-table th { background: var(--bg3); color: var(--teal); font-weight: 600; }
+  .comp-table tr:nth-child(odd) td { background: var(--bg2); }
+  .comp-table tr:nth-child(even) td { background: var(--panel); }
+  .comp-table td:first-child { font-weight: 600; color: var(--text); }
+  .yes { color: var(--green); font-weight: 600; }
+  .no  { color: var(--pink);  font-weight: 600; }
+
+  /* ── ADJACENCY LIST VISUAL ── */
+  .adj-list {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    line-height: 2;
+  }
+  .adj-node { color: var(--teal); font-weight: 600; }
+  .adj-arrow { color: var(--muted); }
+  .adj-neighbour {
+    display: inline-block;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1px 10px;
+    margin: 0 3px;
+    color: var(--purple);
+    font-size: 12px;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-q {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+  .quiz-q p { margin-bottom: 14px; font-size: .95rem; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg3);
+    cursor: pointer;
+    font-size: .88rem;
+    color: var(--muted);
+    transition: all .2s;
+    font-family: inherit;
+    text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--teal); color: var(--text); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(74,222,128,.1); color: var(--green); }
+  .quiz-opt.wrong   { border-color: var(--pink);  background: rgba(255,110,180,.1); color: var(--pink); }
+  .quiz-opt.reveal  { border-color: var(--green); background: rgba(74,222,128,.06); color: var(--green); }
+  .quiz-feedback {
+    margin-top: 10px;
+    font-size: .85rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok  { background: rgba(74,222,128,.1);  color: var(--green); }
+  .quiz-feedback.bad { background: rgba(255,110,180,.1); color: var(--pink); }
+
+  .score-bar {
+    text-align: center;
+    padding: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: none;
+  }
+  .score-bar h3 { font-size: 1.4rem; margin-bottom: 6px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-size: .82rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* animations */
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .section { animation: fadeIn .4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-tag">AQA A-level CS · Section 4.2.4 &amp; 4.3.1</div>
+  <h1>Graphs</h1>
+  <p>Interactive revision guide — vertices, edges, directed &amp; weighted graphs, adjacency representations, BFS, DFS, and the difference from trees.</p>
+  <div class="hero-chips">
+    <span class="chip" onclick="scrollTo('what')">What is a Graph?</span>
+    <span class="chip" onclick="scrollTo('types')">Types</span>
+    <span class="chip" onclick="scrollTo('represent')">Adjacency Matrix &amp; List</span>
+    <span class="chip" onclick="scrollTo('traversal')">BFS &amp; DFS</span>
+    <span class="chip" onclick="scrollTo('vstree')">Graph vs Tree</span>
+    <span class="chip" onclick="scrollTo('quiz')">Quick Quiz</span>
+  </div>
+</div>
+
+<!-- ══ STICKY NAV ══ -->
+<nav class="sticky-nav" id="stickyNav">
+  <button class="nav-btn active" onclick="scrollTo('what')">Definition</button>
+  <button class="nav-btn" onclick="scrollTo('types')">Types</button>
+  <button class="nav-btn" onclick="scrollTo('represent')">Representation</button>
+  <button class="nav-btn" onclick="scrollTo('traversal')">Traversals</button>
+  <button class="nav-btn" onclick="scrollTo('vstree')">vs Tree</button>
+  <button class="nav-btn" onclick="scrollTo('uses')">Uses</button>
+  <button class="nav-btn" onclick="scrollTo('quiz')">Quiz</button>
+</nav>
+
+<!-- ══ SECTION 1: WHAT IS A GRAPH ══ -->
+<section class="section" id="what">
+<div class="container">
+  <div class="section-label">Section 1</div>
+  <h2 class="section-title">What is a Graph?</h2>
+  <p class="section-sub">A graph is a fundamental data structure for modelling complex relationships between objects.</p>
+
+  <div class="highlight">
+    <strong>AQA Definition:</strong> A graph is a data structure consisting of a set of <strong>vertices</strong> (nodes) connected by a set of <strong>edges</strong> (arcs). Graphs are used to represent more complex relationships than trees can model.
+  </div>
+
+  <div class="def-grid" style="margin-top:24px">
+    <div class="def-row"><div class="def-term">Vertex / Node</div><div class="def-body">A point in the graph representing an object, place, state or entity</div></div>
+    <div class="def-row"><div class="def-term">Edge / Arc</div><div class="def-body">A connection (line) between two vertices representing a relationship</div></div>
+    <div class="def-row"><div class="def-term">Degree</div><div class="def-body">The number of edges connected to a vertex. In a directed graph: in-degree (arriving) and out-degree (leaving)</div></div>
+    <div class="def-row"><div class="def-term">Path</div><div class="def-body">A sequence of vertices connected by edges, with no vertex repeated</div></div>
+    <div class="def-row"><div class="def-term">Cycle</div><div class="def-body">A path that starts and ends at the same vertex — graphs CAN have cycles; trees cannot</div></div>
+    <div class="def-row"><div class="def-term">Connected</div><div class="def-body">A graph is connected if every vertex can be reached from every other vertex</div></div>
+  </div>
+
+  <!-- Interactive canvas: simple graph diagram -->
+  <h3 style="margin-top:32px; margin-bottom:10px; font-size:1rem; color:var(--teal)">Interactive Graph — hover over vertices</h3>
+  <div class="canvas-wrap">
+    <canvas id="graphDemo" width="700" height="300"></canvas>
+  </div>
+  <p style="color:var(--muted); font-size:.82rem; text-align:center; margin-top:4px">An undirected graph with 6 vertices and 7 edges. Hover a vertex to highlight its neighbours.</p>
+</div>
+</section>
+
+<!-- ══ SECTION 2: TYPES ══ -->
+<section class="section" id="types">
+<div class="container">
+  <div class="section-label">Section 2</div>
+  <h2 class="section-title">Types of Graph</h2>
+  <p class="section-sub">Graphs come in several varieties — knowing which type applies in a given scenario is essential.</p>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('types','undirected')">Undirected</button>
+    <button class="tab" onclick="showTab('types','directed')">Directed</button>
+    <button class="tab" onclick="showTab('types','weighted')">Weighted</button>
+    <button class="tab" onclick="showTab('types','compare')">Comparison</button>
+  </div>
+
+  <div class="tab-content active" id="types-undirected">
+    <div class="grid-2">
+      <div>
+        <div class="highlight">
+          <strong>Undirected Graph:</strong> Edges have <em>no direction</em>. If vertex A is connected to B, then B is also connected to A. The relationship is symmetric.
+        </div>
+        <ul style="color:var(--muted); font-size:.9rem; padding-left:20px; margin-top:16px; line-height:2">
+          <li>Edges drawn as plain lines (no arrows)</li>
+          <li>Adjacency matrix is <strong style="color:var(--teal)">always symmetric</strong> — matrix[i][j] = matrix[j][i]</li>
+          <li>Each edge adds 1 to both endpoints' degree</li>
+          <li>Examples: Facebook friendships, peer-to-peer networks, undirected road maps</li>
+        </ul>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="undirectedCanvas" width="340" height="240"></canvas>
+        <p style="color:var(--muted);font-size:.8rem;text-align:center;margin-top:6px">A─B, A─D, B─C, B─E, C─D, D─E (undirected)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="types-directed">
+    <div class="grid-2">
+      <div>
+        <div class="highlight purple">
+          <strong>Directed Graph (Digraph):</strong> Edges have a <em>direction</em> shown by an arrow. A→B does NOT mean B→A.
+        </div>
+        <ul style="color:var(--muted); font-size:.9rem; padding-left:20px; margin-top:16px; line-height:2">
+          <li>Edges drawn as <strong style="color:var(--purple)">arrows</strong></li>
+          <li>In-degree: edges <em>arriving</em> at a vertex</li>
+          <li>Out-degree: edges <em>leaving</em> a vertex</li>
+          <li>Adjacency matrix is <strong style="color:var(--pink)">NOT necessarily symmetric</strong></li>
+          <li>Examples: Twitter follows, web hyperlinks, one-way streets, task dependencies</li>
+          <li>Can still contain directed cycles (A→B→C→A)</li>
+        </ul>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="directedCanvas" width="340" height="240"></canvas>
+        <p style="color:var(--muted);font-size:.8rem;text-align:center;margin-top:6px">A→B, A→C, B→D, C→B, D→A (directed)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="types-weighted">
+    <div class="grid-2">
+      <div>
+        <div class="highlight amber">
+          <strong>Weighted Graph:</strong> Each edge has an associated <em>weight</em> — a number representing cost, distance, time or capacity.
+        </div>
+        <ul style="color:var(--muted); font-size:.9rem; padding-left:20px; margin-top:16px; line-height:2">
+          <li>Can be directed OR undirected</li>
+          <li>Adjacency matrix stores the <strong style="color:var(--amber)">weight value</strong> instead of 0/1</li>
+          <li>No edge represented as ∞ (infinity) or 0</li>
+          <li>Used in shortest-path algorithms: <strong style="color:var(--amber)">Dijkstra's</strong>, Bellman-Ford, A*</li>
+          <li>Unweighted graphs treat all edges as weight = 1</li>
+          <li>Examples: road distances, airline costs, network bandwidth</li>
+        </ul>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="weightedCanvas" width="340" height="240"></canvas>
+        <p style="color:var(--muted);font-size:.8rem;text-align:center;margin-top:6px">Weighted undirected graph — edge weights shown</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="types-compare">
+    <table class="comp-table">
+      <tr><th>Type</th><th>Directed?</th><th>Weighted?</th><th>Matrix Symmetric?</th><th>Key Example</th></tr>
+      <tr><td>Undirected unweighted</td><td class="no">No</td><td class="no">No</td><td class="yes">Always</td><td>Facebook friends, Ethernet LAN</td></tr>
+      <tr><td>Undirected weighted</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Always</td><td>Road map with distances</td></tr>
+      <tr><td>Directed unweighted</td><td class="yes">Yes</td><td class="no">No</td><td class="no">Not necessarily</td><td>Web page hyperlinks, Twitter</td></tr>
+      <tr><td>Directed weighted</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">Not necessarily</td><td>Airline routes with costs, GPS</td></tr>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- ══ SECTION 3: REPRESENTATION ══ -->
+<section class="section" id="represent">
+<div class="container">
+  <div class="section-label">Section 3</div>
+  <h2 class="section-title">Representing Graphs</h2>
+  <p class="section-sub">Two standard ways to store a graph in memory — each with distinct trade-offs.</p>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('rep','matrix')">Adjacency Matrix</button>
+    <button class="tab" onclick="showTab('rep','list')">Adjacency List</button>
+    <button class="tab" onclick="showTab('rep','compare')">When to Use Which?</button>
+    <button class="tab" onclick="showTab('rep','code')">Code Examples</button>
+  </div>
+
+  <div class="tab-content active" id="rep-matrix">
+    <div class="highlight">
+      A <strong>2D array of size V × V</strong>. Entry [i][j] = 1 (or weight) if there is an edge from vertex i to vertex j; 0 (or ∞) otherwise.
+    </div>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <h4 style="color:var(--teal);margin-bottom:10px">Graph: A─B, A─C, B─D, C─D</h4>
+        <div class="matrix-wrap">
+          <table class="mtable" id="matrixTable">
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+            <tr><th>A</th><td class="diag">0</td><td class="has-edge">1</td><td class="has-edge">1</td><td>0</td></tr>
+            <tr><th>B</th><td class="has-edge">1</td><td class="diag">0</td><td>0</td><td class="has-edge">1</td></tr>
+            <tr><th>C</th><td class="has-edge">1</td><td>0</td><td class="diag">0</td><td class="has-edge">1</td></tr>
+            <tr><th>D</th><td>0</td><td class="has-edge">1</td><td class="has-edge">1</td><td class="diag">0</td></tr>
+          </table>
+        </div>
+        <p style="color:var(--muted);font-size:.82rem;margin-top:8px">Green = edge exists. Matrix is symmetric (undirected graph).</p>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Properties</h3>
+          <ul>
+            <li><strong>Space:</strong> O(V²) — always allocates V² entries regardless of actual edges</li>
+            <li><strong>Edge lookup:</strong> O(1) — direct array index</li>
+            <li><strong>Find all neighbours:</strong> O(V) — must scan entire row</li>
+            <li><strong>Best for:</strong> Dense graphs where most edges exist</li>
+            <li><strong>Symmetry:</strong> Undirected → matrix[i][j] = matrix[j][i]</li>
+            <li><strong>Weighted:</strong> Store weight instead of 1; ∞ for no edge</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="rep-list">
+    <div class="highlight purple">
+      Each vertex stores a <strong>list of its directly connected neighbours</strong>. Only existing edges consume memory.
+    </div>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <h4 style="color:var(--purple);margin-bottom:12px">Graph: A─B, A─C, B─D, C─D</h4>
+        <div class="adj-list">
+          <div><span class="adj-node">A</span> <span class="adj-arrow">→</span> <span class="adj-neighbour">B</span> <span class="adj-neighbour">C</span></div>
+          <div><span class="adj-node">B</span> <span class="adj-arrow">→</span> <span class="adj-neighbour">A</span> <span class="adj-neighbour">D</span></div>
+          <div><span class="adj-node">C</span> <span class="adj-arrow">→</span> <span class="adj-neighbour">A</span> <span class="adj-neighbour">D</span></div>
+          <div><span class="adj-node">D</span> <span class="adj-arrow">→</span> <span class="adj-neighbour">B</span> <span class="adj-neighbour">C</span></div>
+        </div>
+        <p style="color:var(--muted);font-size:.82rem;margin-top:8px">Only 8 neighbour entries for 4 edges (undirected).</p>
+      </div>
+      <div>
+        <div class="card" style="border-left:3px solid var(--purple)">
+          <h3 style="color:var(--purple)">Properties</h3>
+          <ul>
+            <li><strong>Space:</strong> O(V + E) — efficient for sparse graphs</li>
+            <li><strong>Edge lookup:</strong> O(degree of vertex) — must scan list</li>
+            <li><strong>Find all neighbours:</strong> O(degree) — just iterate list</li>
+            <li><strong>Best for:</strong> Sparse graphs (few edges per vertex)</li>
+            <li><strong>Weighted:</strong> Store (neighbour, weight) pairs</li>
+            <li><strong>BFS/DFS:</strong> More efficient — only visits real edges</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="rep-compare">
+    <table class="comp-table">
+      <tr><th>Feature</th><th>Adjacency Matrix</th><th>Adjacency List</th></tr>
+      <tr><td>Space complexity</td><td>O(V²) — always</td><td>O(V + E) — varies</td></tr>
+      <tr><td>Check edge A→B exists</td><td class="yes">O(1) direct lookup</td><td>O(degree of A)</td></tr>
+      <tr><td>Find all neighbours of A</td><td>O(V) — scan whole row</td><td class="yes">O(degree of A)</td></tr>
+      <tr><td>Add an edge</td><td class="yes">O(1)</td><td class="yes">O(1) append</td></tr>
+      <tr><td>Memory: 1000 vertices, few edges</td><td>1,000,000 entries</td><td class="yes">Only actual edges</td></tr>
+      <tr><td>Memory: 1000 vertices, dense</td><td>Same 1,000,000</td><td>Similar to matrix</td></tr>
+      <tr><td>BFS / DFS efficiency</td><td>O(V²)</td><td class="yes">O(V + E)</td></tr>
+      <tr><td>Dijkstra's algorithm</td><td>O(V²)</td><td class="yes">O((V+E) log V) with priority queue</td></tr>
+      <tr><td>Best scenario</td><td>Dense graphs; frequent edge queries</td><td class="yes">Sparse graphs; traversal-heavy algorithms</td></tr>
+      <tr><td>AQA exam tip</td><td>Used when V is small or graph is dense</td><td>Used when V is large or E ≪ V²</td></tr>
+    </table>
+  </div>
+
+  <div class="tab-content" id="rep-code">
+    <div class="grid-2">
+      <div>
+        <p style="color:var(--teal);font-weight:600;margin-bottom:8px">Adjacency Matrix – Python</p>
+<pre><span class="kw">class</span> <span class="fn">GraphMatrix</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vertices):
+        self.v = vertices
+        self.m = [[<span class="nm">0</span>]*vertices
+                   <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(vertices)]
+
+    <span class="kw">def</span> <span class="fn">add_edge</span>(self, u, w, weight=<span class="nm">1</span>):
+        self.m[u][w] = weight
+        self.m[w][u] = weight  <span class="cm"># undirected</span>
+
+    <span class="kw">def</span> <span class="fn">has_edge</span>(self, u, w):
+        <span class="kw">return</span> self.m[u][w] != <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">neighbours</span>(self, u):
+        <span class="kw">return</span> [i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(self.v)
+                <span class="kw">if</span> self.m[u][i] != <span class="nm">0</span>]
+
+g = <span class="fn">GraphMatrix</span>(<span class="nm">4</span>)
+g.<span class="fn">add_edge</span>(<span class="nm">0</span>, <span class="nm">1</span>)  <span class="cm"># A-B</span>
+g.<span class="fn">add_edge</span>(<span class="nm">0</span>, <span class="nm">2</span>)  <span class="cm"># A-C</span>
+g.<span class="fn">add_edge</span>(<span class="nm">1</span>, <span class="nm">3</span>)  <span class="cm"># B-D</span>
+g.<span class="fn">add_edge</span>(<span class="nm">2</span>, <span class="nm">3</span>)  <span class="cm"># C-D</span></pre>
+      </div>
+      <div>
+        <p style="color:var(--purple);font-weight:600;margin-bottom:8px">Adjacency List – Python</p>
+<pre><span class="kw">class</span> <span class="fn">GraphList</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.adj = {}
+
+    <span class="kw">def</span> <span class="fn">add_vertex</span>(self, v):
+        <span class="kw">if</span> v <span class="kw">not in</span> self.adj:
+            self.adj[v] = []
+
+    <span class="kw">def</span> <span class="fn">add_edge</span>(self, u, v, wt=<span class="nm">1</span>):
+        self.adj[u].<span class="fn">append</span>((v, wt))
+        self.adj[v].<span class="fn">append</span>((u, wt))
+
+    <span class="kw">def</span> <span class="fn">neighbours</span>(self, v):
+        <span class="kw">return</span> [n <span class="kw">for</span> n, w <span class="kw">in</span> self.adj[v]]
+
+g = <span class="fn">GraphList</span>()
+<span class="kw">for</span> v <span class="kw">in</span> [<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>,<span class="st">'D'</span>]:
+    g.<span class="fn">add_vertex</span>(v)
+g.<span class="fn">add_edge</span>(<span class="st">'A'</span>, <span class="st">'B'</span>)
+g.<span class="fn">add_edge</span>(<span class="st">'A'</span>, <span class="st">'C'</span>)
+g.<span class="fn">add_edge</span>(<span class="st">'B'</span>, <span class="st">'D'</span>)
+g.<span class="fn">add_edge</span>(<span class="st">'C'</span>, <span class="st">'D'</span>)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══ SECTION 4: TRAVERSALS ══ -->
+<section class="section" id="traversal">
+<div class="container">
+  <div class="section-label">Section 4</div>
+  <h2 class="section-title">Graph Traversals</h2>
+  <p class="section-sub">Two fundamental algorithms for visiting every vertex in a graph. Use the interactive demo below to see them step by step.</p>
+
+  <!-- Interactive Traversal Demo -->
+  <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:32px">
+    <h3 style="font-size:1rem; color:var(--teal); margin-bottom:16px">⚡ Interactive Traversal Demo</h3>
+    <div class="canvas-wrap" style="margin-top:0">
+      <canvas id="travCanvas" width="640" height="260"></canvas>
+    </div>
+    <div class="traversal-controls">
+      <select id="travAlgo" style="padding:9px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font-family:inherit; font-size:13px">
+        <option value="bfs">Breadth-First Search (BFS)</option>
+        <option value="dfs">Depth-First Search (DFS)</option>
+      </select>
+      <select id="travStart" style="padding:9px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font-family:inherit; font-size:13px">
+        <option value="0">Start: A</option>
+        <option value="1">Start: B</option>
+        <option value="2">Start: C</option>
+        <option value="3">Start: D</option>
+        <option value="4">Start: E</option>
+        <option value="5">Start: F</option>
+      </select>
+      <button class="btn primary" onclick="startTraversal()">▶ Run</button>
+      <button class="btn" onclick="stepTraversal()" id="stepBtn" disabled>⏭ Step</button>
+      <button class="btn" onclick="resetTraversal()">↺ Reset</button>
+    </div>
+    <div class="traversal-log" id="travLog">
+      <span style="color:var(--muted)">Select an algorithm and click Run to begin the traversal step by step.</span>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('trav','bfs')">BFS Detail</button>
+    <button class="tab" onclick="showTab('trav','dfs')">DFS Detail</button>
+    <button class="tab" onclick="showTab('trav','compare')">BFS vs DFS</button>
+    <button class="tab" onclick="showTab('trav','code')">Code</button>
+  </div>
+
+  <div class="tab-content active" id="trav-bfs">
+    <div class="grid-2">
+      <div>
+        <div class="highlight">
+          <strong>BFS — Breadth-First Search</strong><br>
+          Visits all neighbours of a vertex <em>before</em> moving deeper. Explores the graph level by level.
+        </div>
+        <ul style="color:var(--muted); font-size:.9rem; padding-left:20px; margin-top:16px; line-height:2.1">
+          <li>Uses a <strong style="color:var(--teal)">QUEUE (FIFO)</strong> to track vertices</li>
+          <li>Marks vertices <em>visited when enqueued</em></li>
+          <li><strong style="color:var(--teal)">Guarantees shortest path</strong> in an unweighted graph</li>
+          <li>Time: O(V + E) &nbsp;|&nbsp; Space: O(V)</li>
+          <li>AQA use: shortest path, social network distances</li>
+        </ul>
+      </div>
+      <div>
+        <p style="color:var(--teal);font-weight:600;margin-bottom:8px">BFS Pseudocode</p>
+<pre>BFS(graph, start):
+  queue   ← [start]
+  visited ← {start}
+  WHILE queue is not empty:
+    v ← dequeue from front
+    OUTPUT v
+    FOR EACH neighbour n of v:
+      IF n not in visited:
+        visited.add(n)
+        enqueue(n)
+
+<span class="cm">Uses QUEUE → level by level
+→ shortest path guaranteed</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="trav-dfs">
+    <div class="grid-2">
+      <div>
+        <div class="highlight purple">
+          <strong>DFS — Depth-First Search</strong><br>
+          Explores as <em>far as possible</em> along each branch before backtracking. Goes deep before going wide.
+        </div>
+        <ul style="color:var(--muted); font-size:.9rem; padding-left:20px; margin-top:16px; line-height:2.1">
+          <li>Uses a <strong style="color:var(--purple)">STACK (LIFO)</strong> — or recursion (call stack)</li>
+          <li>Does <strong style="color:var(--pink)">NOT guarantee shortest path</strong></li>
+          <li>Memory: O(V) — stack holds one path at a time</li>
+          <li>Time: O(V + E)</li>
+          <li>AQA use: <strong style="color:var(--purple)">maze solving</strong>, cycle detection, topological sort</li>
+        </ul>
+      </div>
+      <div>
+        <p style="color:var(--purple);font-weight:600;margin-bottom:8px">DFS Pseudocode</p>
+<pre>DFS(graph, start):
+  stack   ← [start]
+  visited ← {}
+  WHILE stack is not empty:
+    v ← pop from top
+    IF v not in visited:
+      visited.add(v)
+      OUTPUT v
+      FOR EACH neighbour n of v:
+        IF n not in visited:
+          push(n)
+
+<span class="cm">Uses STACK → deep first
+→ maze solving, backtracking</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="trav-compare">
+    <table class="comp-table">
+      <tr><th>Feature</th><th>BFS</th><th>DFS</th></tr>
+      <tr><td>Data structure</td><td>Queue (FIFO)</td><td>Stack (LIFO) / Recursion</td></tr>
+      <tr><td>Exploration order</td><td>Level by level (wide)</td><td>Branch by branch (deep)</td></tr>
+      <tr><td>Shortest path?</td><td class="yes">✓ YES (unweighted)</td><td class="no">✗ Not guaranteed</td></tr>
+      <tr><td>Memory usage</td><td>More — holds whole frontier level</td><td>Less — holds one path</td></tr>
+      <tr><td>Time complexity</td><td>O(V + E)</td><td>O(V + E)</td></tr>
+      <tr><td>AQA typical use</td><td>Shortest path, network broadcast</td><td>Maze solving, cycle detection</td></tr>
+      <tr><td>Implementation</td><td>Iterative with queue</td><td>Iterative with stack, or recursive</td></tr>
+      <tr><td>Completeness</td><td>Finds all reachable vertices</td><td>Finds all reachable vertices</td></tr>
+    </table>
+    <div class="highlight amber" style="margin-top:16px">
+      <strong>AQA Exam Tip:</strong> The spec explicitly states BFS for <em>shortest path in unweighted graphs</em> and DFS for <em>navigating a maze</em>. Know which algorithm uses which data structure — this is regularly examined.
+    </div>
+  </div>
+
+  <div class="tab-content" id="trav-code">
+    <div class="grid-2">
+      <div>
+        <p style="color:var(--teal);font-weight:600;margin-bottom:8px">BFS – Python</p>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(graph, start):
+    visited = <span class="fn">set</span>()
+    queue   = <span class="fn">deque</span>([start])
+    visited.<span class="fn">add</span>(start)
+    order   = []
+    <span class="kw">while</span> queue:
+        v = queue.<span class="fn">popleft</span>()  <span class="cm"># FIFO</span>
+        order.<span class="fn">append</span>(v)
+        <span class="kw">for</span> n <span class="kw">in</span> graph[v]:
+            <span class="kw">if</span> n <span class="kw">not in</span> visited:
+                visited.<span class="fn">add</span>(n)
+                queue.<span class="fn">append</span>(n)
+    <span class="kw">return</span> order
+
+<span class="cm"># graph = {'A':['B','C'],
+#           'B':['A','D','E'],
+#           'C':['A','F'], ...}
+# bfs(graph, 'A') → ['A','B','C',...]</span></pre>
+      </div>
+      <div>
+        <p style="color:var(--purple);font-weight:600;margin-bottom:8px">DFS – Python (iterative &amp; recursive)</p>
+<pre><span class="kw">def</span> <span class="fn">dfs</span>(graph, start):
+    visited = <span class="fn">set</span>()
+    stack   = [start]
+    order   = []
+    <span class="kw">while</span> stack:
+        v = stack.<span class="fn">pop</span>()  <span class="cm"># LIFO</span>
+        <span class="kw">if</span> v <span class="kw">not in</span> visited:
+            visited.<span class="fn">add</span>(v)
+            order.<span class="fn">append</span>(v)
+            <span class="kw">for</span> n <span class="kw">in</span> <span class="fn">reversed</span>(graph[v]):
+                <span class="kw">if</span> n <span class="kw">not in</span> visited:
+                    stack.<span class="fn">append</span>(n)
+    <span class="kw">return</span> order
+
+<span class="cm"># Recursive version:</span>
+<span class="kw">def</span> <span class="fn">dfs_rec</span>(graph, v, vis=<span class="kw">None</span>):
+    <span class="kw">if</span> vis <span class="kw">is None</span>: vis = <span class="fn">set</span>()
+    vis.<span class="fn">add</span>(v); <span class="fn">print</span>(v)
+    <span class="kw">for</span> n <span class="kw">in</span> graph[v]:
+        <span class="kw">if</span> n <span class="kw">not in</span> vis:
+            <span class="fn">dfs_rec</span>(graph, n, vis)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══ SECTION 5: GRAPH VS TREE ══ -->
+<section class="section" id="vstree">
+<div class="container">
+  <div class="section-label">Section 5</div>
+  <h2 class="section-title">Graph vs Tree</h2>
+  <p class="section-sub">A tree IS a graph — but with strict additional constraints. This distinction is frequently examined.</p>
+
+  <div class="highlight pink">
+    <strong>AQA Specification definition:</strong> "A tree is a <em>connected, undirected graph with no cycles</em>." — All trees are graphs, but not all graphs are trees.
+  </div>
+
+  <div class="grid-2" style="margin-top:24px">
+    <div>
+      <div class="canvas-wrap">
+        <canvas id="treeCanvas" width="340" height="220"></canvas>
+        <p style="color:var(--green);font-size:.82rem;text-align:center;margin-top:6px">✓ This IS a tree — connected, no cycles, N−1 edges</p>
+      </div>
+    </div>
+    <div>
+      <div class="canvas-wrap">
+        <canvas id="notTreeCanvas" width="340" height="220"></canvas>
+        <p style="color:var(--pink);font-size:.82rem;text-align:center;margin-top:6px">✗ This is NOT a tree — it contains a cycle</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;margin-bottom:16px;font-size:1.1rem;color:var(--teal)">Three constraints that make a graph a tree</h3>
+  <div class="grid-3">
+    <div class="card card-accent">
+      <h3>1. Connected</h3>
+      <p>Every vertex must be reachable from every other vertex. A disconnected graph — even with no cycles — is NOT a tree.</p>
+    </div>
+    <div class="card card-accent">
+      <h3>2. No Cycles (Acyclic)</h3>
+      <p>There must be absolutely no cycles. Adding even one extra edge to a tree immediately creates a cycle → no longer a tree.</p>
+    </div>
+    <div class="card card-accent">
+      <h3>3. N−1 Edges</h3>
+      <p>For N vertices, a tree has exactly N−1 edges. This follows automatically from being connected and acyclic.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:24px">
+    <table class="comp-table">
+      <tr><th>Property</th><th>General Graph</th><th>Tree</th></tr>
+      <tr><td>Is it a graph?</td><td class="yes">YES</td><td class="yes">YES (trees are special graphs)</td></tr>
+      <tr><td>Cycles allowed?</td><td class="yes">YES</td><td class="no">NO — never</td></tr>
+      <tr><td>Must be connected?</td><td class="no">NO</td><td class="yes">YES — always</td></tr>
+      <tr><td>Number of edges</td><td>0 to N(N−1)/2</td><td>Exactly N−1</td></tr>
+      <tr><td>Paths between any two vertices</td><td>0, 1, or many</td><td>Exactly 1</td></tr>
+      <tr><td>Direction</td><td>Directed or undirected</td><td>Undirected (typically)</td></tr>
+      <tr><td>Root node?</td><td class="no">No concept</td><td>Optional (rooted tree)</td></tr>
+      <tr><td>Parent-child hierarchy?</td><td class="no">No</td><td class="yes">Yes (in rooted trees)</td></tr>
+      <tr><td>Traversal algorithms</td><td>BFS, DFS</td><td>BFS, DFS + Pre/In/Post-order</td></tr>
+    </table>
+  </div>
+
+  <div class="highlight amber" style="margin-top:20px">
+    <strong>Exam trap:</strong> If an exam question shows a graph and asks "state two properties that make this a tree", the expected answers are: <strong>(1) it is connected</strong> and <strong>(2) it contains no cycles</strong>. Do NOT say "it has no loops" — be precise about cycles. Do NOT give BST properties.
+  </div>
+</div>
+</section>
+
+<!-- ══ SECTION 6: USES ══ -->
+<section class="section" id="uses">
+<div class="container">
+  <div class="section-label">Section 6</div>
+  <h2 class="section-title">Real-World Applications</h2>
+  <p class="section-sub">Graphs model almost any networked system. Here are the most exam-relevant applications.</p>
+  <div class="grid-3">
+    <div class="card"><h3>GPS Navigation</h3><p>Road network as a weighted directed graph. Dijkstra's or A* finds the shortest/fastest route. Edge weights = distance or time.</p></div>
+    <div class="card"><h3>Social Networks</h3><p>Users = vertices, friendships/follows = edges. BFS finds "degrees of separation". Graph clustering finds communities.</p></div>
+    <div class="card"><h3>Internet Routing</h3><p>Routers = vertices, cables = weighted edges. OSPF and BGP routing protocols use graph algorithms to find optimal paths.</p></div>
+    <div class="card"><h3>Maze Solving</h3><p>Cells = vertices, open passages = edges. DFS naturally solves mazes by exploring one path fully before backtracking.</p></div>
+    <div class="card"><h3>Compiler / Build Tools</h3><p>Task dependency graphs detect circular imports. Topological sort orders compilation steps. Used in Make, Gradle, npm.</p></div>
+    <div class="card"><h3>Game AI</h3><p>Game map as a graph. BFS finds shortest escape route. A* (heuristic BFS) used in pathfinding for NPCs in real games.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ══ SECTION 7: QUIZ ══ -->
+<section class="section" id="quiz">
+<div class="container">
+  <div class="section-label">Section 7</div>
+  <h2 class="section-title">Quick Quiz</h2>
+  <p class="section-sub">Test your knowledge — AQA-style questions on graphs.</p>
+  <div id="quizContainer"></div>
+  <div id="scoreBar" class="score-bar">
+    <h3 id="scoreText"></h3>
+    <p style="color:var(--muted)">Review any incorrect answers above, then try again.</p>
+    <button class="btn primary" onclick="resetQuiz()" style="margin-top:12px">Try Again</button>
+  </div>
+</div>
+</section>
+
+<footer>
+  AQA A-level Computer Science 7517 · Section 4.2.4 Graphs &amp; 4.3.1 Graph Traversal · Revision Resource
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+function scrollTo(id){ document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}); }
+
+function showTab(group, name){
+  document.querySelectorAll(`[id^="${group}-"]`).forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll(`.tab`).forEach(btn=>{
+    // crude: match by text in parent
+  });
+  const target = document.getElementById(`${group}-${name}`);
+  if(target){ target.classList.add('active'); }
+  // activate button
+  const bar = target.closest('.section, div').querySelector('.tab-bar');
+  if(bar){
+    bar.querySelectorAll('.tab').forEach(t=>{
+      t.classList.toggle('active', t.getAttribute('onclick').includes(`'${name}'`));
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COLOUR PALETTE
+// ═══════════════════════════════════════════════════════════
+const C = {
+  bg:'#040810', node:'#0e1829', border:'#1e3050',
+  teal:'#00d4aa', purple:'#b57bff', amber:'#ffb347',
+  pink:'#ff6eb4', green:'#4ade80', blue:'#60a5fa',
+  text:'#e2eaf8', muted:'#7a96b8'
+};
+
+// ═══════════════════════════════════════════════════════════
+// GRAPH DEMO (section 1)
+// ═══════════════════════════════════════════════════════════
+const demoVerts = [
+  {x:100,y:80,  label:'A'},
+  {x:240,y:50,  label:'B'},
+  {x:380,y:90,  label:'C'},
+  {x:60, y:200, label:'D'},
+  {x:220,y:210, label:'E'},
+  {x:400,y:210, label:'F'},
+];
+const demoEdges = [[0,1],[0,3],[1,2],[1,4],[2,5],[3,4],[4,5]];
+
+let hoverVertex = -1;
+
+function drawDemo(cv, verts, edges, hv=-1, visitedSet=new Set(), queueSet=new Set(), nodeColFn=null){
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // edges
+  edges.forEach(([a,b])=>{
+    const va=verts[a], vb=verts[b];
+    const highlight = hv>=0 && (a===hv||b===hv);
+    ctx.beginPath();
+    ctx.moveTo(va.x,va.y); ctx.lineTo(vb.x,vb.y);
+    ctx.strokeStyle = highlight ? C.teal : C.border;
+    ctx.lineWidth = highlight ? 2.5 : 1.5;
+    ctx.stroke();
+  });
+  // nodes
+  verts.forEach((v,i)=>{
+    let fill = C.node;
+    if(nodeColFn) fill = nodeColFn(i);
+    else if(visitedSet.has(i)) fill = '#003d2e';
+    else if(queueSet.has(i)) fill = '#2a1a00';
+    const isHov = i===hv;
+    ctx.beginPath();
+    ctx.arc(v.x,v.y,isHov?26:22,0,Math.PI*2);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = isHov ? C.teal : (visitedSet.has(i) ? C.teal : (queueSet.has(i) ? C.amber : C.border));
+    ctx.lineWidth = isHov ? 2.5 : 1.5;
+    ctx.stroke();
+    ctx.fillStyle = isHov ? C.teal : (visitedSet.has(i) ? C.teal : (queueSet.has(i) ? C.amber : C.muted));
+    ctx.font = `${isHov?'700':'500'} 14px "Space Grotesk"`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(v.label, v.x, v.y);
+  });
+}
+
+const demoCanvas = document.getElementById('graphDemo');
+drawDemo(demoCanvas, demoVerts, demoEdges);
+demoCanvas.addEventListener('mousemove', e=>{
+  const r=demoCanvas.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  hoverVertex = demoVerts.findIndex(v=>Math.hypot(v.x-mx,v.y-my)<26);
+  drawDemo(demoCanvas, demoVerts, demoEdges, hoverVertex);
+});
+demoCanvas.addEventListener('mouseleave',()=>{ hoverVertex=-1; drawDemo(demoCanvas,demoVerts,demoEdges); });
+
+// ═══════════════════════════════════════════════════════════
+// TYPE CANVASES
+// ═══════════════════════════════════════════════════════════
+function drawUndirected(){
+  const cv=document.getElementById('undirectedCanvas');
+  const ctx=cv.getContext('2d');
+  const v=[{x:90,y:80,l:'A'},{x:250,y:60,l:'B'},{x:310,y:170,l:'C'},{x:90,y:170,l:'D'},{x:200,y:180,l:'E'}];
+  const e=[[0,1],[0,3],[1,2],[1,4],[2,3],[3,4]];
+  ctx.clearRect(0,0,cv.width,cv.height);
+  e.forEach(([a,b])=>{
+    ctx.beginPath(); ctx.moveTo(v[a].x,v[a].y); ctx.lineTo(v[b].x,v[b].y);
+    ctx.strokeStyle=C.border; ctx.lineWidth=1.5; ctx.stroke();
+  });
+  v.forEach(n=>{
+    ctx.beginPath(); ctx.arc(n.x,n.y,22,0,Math.PI*2);
+    ctx.fillStyle=C.node; ctx.fill();
+    ctx.strokeStyle=C.teal; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle=C.teal; ctx.font='600 13px "Space Grotesk"';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(n.l,n.x,n.y);
+  });
+}
+
+function drawDirected(){
+  const cv=document.getElementById('directedCanvas');
+  const ctx=cv.getContext('2d');
+  const v=[{x:90,y:80,l:'A'},{x:250,y:80,l:'B'},{x:170,y:170,l:'C'},{x:90,y:170,l:'D'}];
+  const e=[[0,1],[0,2],[1,3],[2,1],[3,0]]; // directed
+  ctx.clearRect(0,0,cv.width,cv.height);
+  function arrow(x1,y1,x2,y2){
+    const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+    const ux=dx/len,uy=dy/len;
+    const sx=x1+ux*24, sy=y1+uy*24;
+    const ex=x2-ux*26, ey=y2-uy*26;
+    ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey);
+    ctx.strokeStyle=C.purple; ctx.lineWidth=1.8; ctx.stroke();
+    // arrowhead
+    const angle=Math.atan2(ey-sy,ex-sx);
+    ctx.beginPath();
+    ctx.moveTo(ex,ey);
+    ctx.lineTo(ex-10*Math.cos(angle-0.4),ey-10*Math.sin(angle-0.4));
+    ctx.lineTo(ex-10*Math.cos(angle+0.4),ey-10*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fillStyle=C.purple; ctx.fill();
+  }
+  e.forEach(([a,b])=>arrow(v[a].x,v[a].y,v[b].x,v[b].y));
+  v.forEach(n=>{
+    ctx.beginPath(); ctx.arc(n.x,n.y,22,0,Math.PI*2);
+    ctx.fillStyle=C.node; ctx.fill();
+    ctx.strokeStyle=C.purple; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle=C.purple; ctx.font='600 13px "Space Grotesk"';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(n.l,n.x,n.y);
+  });
+}
+
+function drawWeighted(){
+  const cv=document.getElementById('weightedCanvas');
+  const ctx=cv.getContext('2d');
+  const v=[{x:80,y:80,l:'A'},{x:260,y:60,l:'B'},{x:310,y:180,l:'C'},{x:80,y:180,l:'D'},{x:185,y:140,l:'E'}];
+  const e=[[0,1,4],[0,3,2],[1,2,7],[1,4,3],[2,4,5],[3,4,6]];
+  ctx.clearRect(0,0,cv.width,cv.height);
+  e.forEach(([a,b,w])=>{
+    const mx=(v[a].x+v[b].x)/2, my=(v[a].y+v[b].y)/2;
+    ctx.beginPath(); ctx.moveTo(v[a].x,v[a].y); ctx.lineTo(v[b].x,v[b].y);
+    ctx.strokeStyle=C.border; ctx.lineWidth=1.5; ctx.stroke();
+    // weight label
+    ctx.fillStyle=C.amber; ctx.font='600 12px "JetBrains Mono"';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillRect(mx-10,my-9,20,16);
+    ctx.fillStyle=C.amber;
+    ctx.fillText(w,mx,my);
+  });
+  v.forEach(n=>{
+    ctx.beginPath(); ctx.arc(n.x,n.y,22,0,Math.PI*2);
+    ctx.fillStyle=C.node; ctx.fill();
+    ctx.strokeStyle=C.amber; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle=C.amber; ctx.font='600 13px "Space Grotesk"';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(n.l,n.x,n.y);
+  });
+}
+
+drawUndirected(); drawDirected(); drawWeighted();
+
+// ═══════════════════════════════════════════════════════════
+// TRAVERSAL DEMO
+// ═══════════════════════════════════════════════════════════
+const travVerts = [
+  {x:80, y:130, label:'A'},
+  {x:200,y:60,  label:'B'},
+  {x:200,y:200, label:'C'},
+  {x:340,y:60,  label:'D'},
+  {x:340,y:200, label:'E'},
+  {x:460,y:130, label:'F'},
+];
+const travEdges = [[0,1],[0,2],[1,3],[1,4],[2,4],[3,5],[4,5]];
+const travAdj = travVerts.map((_,i)=>travEdges.filter(e=>e[0]===i||e[1]===i).map(e=>e[0]===i?e[1]:e[0]));
+
+let travSteps = [], travStep = 0, travVisited = new Set(), travQueue = new Set();
+
+function renderTravCanvas(){
+  const cv = document.getElementById('travCanvas');
+  drawDemo(cv, travVerts, travEdges, -1, travVisited, travQueue);
+}
+
+function startTraversal(){
+  const algo = document.getElementById('travAlgo').value;
+  const start = parseInt(document.getElementById('travStart').value);
+  travSteps = [];
+  travVisited = new Set(); travQueue = new Set();
+
+  if(algo === 'bfs'){
+    const queue=[start], visited=new Set([start]);
+    travSteps.push({action:`Enqueue start vertex ${travVerts[start].label}`, queue:[...queue], visited:new Set(visited), queueSet:new Set(queue)});
+    while(queue.length){
+      const v=queue.shift();
+      visited.add(v);
+      travSteps.push({action:`Visit ${travVerts[v].label} (dequeued)`, visit:v, queue:[...queue], visited:new Set(visited), queueSet:new Set(queue)});
+      for(const n of travAdj[v]){
+        if(!visited.has(n) && !queue.includes(n)){
+          queue.push(n);
+          visited.add(n);
+          travSteps.push({action:`Enqueue neighbour ${travVerts[n].label}`, queue:[...queue], visited:new Set(visited), queueSet:new Set(queue)});
+        }
+      }
+    }
+  } else {
+    const stack=[start], visited=new Set();
+    travSteps.push({action:`Push start vertex ${travVerts[start].label}`, queue:[...stack], visited:new Set(visited), queueSet:new Set(stack)});
+    while(stack.length){
+      const v=stack.pop();
+      if(!visited.has(v)){
+        visited.add(v);
+        travSteps.push({action:`Visit ${travVerts[v].label} (popped)`, visit:v, queue:[...stack], visited:new Set(visited), queueSet:new Set(stack)});
+        for(const n of [...travAdj[v]].reverse()){
+          if(!visited.has(n)){
+            stack.push(n);
+            travSteps.push({action:`Push neighbour ${travVerts[n].label}`, queue:[...stack], visited:new Set(visited), queueSet:new Set(stack)});
+          }
+        }
+      }
+    }
+  }
+  travStep=0;
+  travVisited=new Set(); travQueue=new Set();
+  document.getElementById('travLog').innerHTML='<span style="color:var(--muted)">Click "Step" to advance one step at a time.</span>';
+  document.getElementById('stepBtn').disabled=false;
+  renderTravCanvas();
+}
+
+function stepTraversal(){
+  if(travStep>=travSteps.length){ document.getElementById('stepBtn').disabled=true; return; }
+  const st=travSteps[travStep++];
+  travVisited = st.visited;
+  travQueue = st.queueSet;
+  renderTravCanvas();
+  const algo = document.getElementById('travAlgo').value;
+  const log = document.getElementById('travLog');
+  const isStack = algo==='dfs';
+  const row=document.createElement('div');
+  row.className='step-row';
+  const vis=[...st.visited].map(i=>travVerts[i].label).join(',');
+  const q=[...st.queueSet].map(i=>travVerts[i].label).join(',');
+  row.innerHTML=`<span class="step-n">${travStep}</span><span class="step-action">${st.action}</span><span class="step-queue">${isStack?'Stack':'Queue'}:[${q}]</span><span class="step-visited">Visited:{${vis}}</span>`;
+  if(log.querySelector('span')) log.innerHTML='';
+  log.appendChild(row);
+  log.scrollTop=log.scrollHeight;
+  if(travStep>=travSteps.length) document.getElementById('stepBtn').disabled=true;
+}
+
+function resetTraversal(){
+  travSteps=[]; travStep=0; travVisited=new Set(); travQueue=new Set();
+  document.getElementById('travLog').innerHTML='<span style="color:var(--muted)">Select an algorithm and click Run to begin.</span>';
+  document.getElementById('stepBtn').disabled=true;
+  renderTravCanvas();
+}
+
+renderTravCanvas();
+
+// ═══════════════════════════════════════════════════════════
+// TREE vs NOT-TREE CANVASES
+// ═══════════════════════════════════════════════════════════
+function drawTreeCanvas(){
+  const cv=document.getElementById('treeCanvas'); const ctx=cv.getContext('2d');
+  const v=[{x:170,y:40,l:'A'},{x:80,y:110,l:'B'},{x:260,y:110,l:'C'},{x:40,y:180,l:'D'},{x:130,y:180,l:'E'},{x:220,y:180,l:'F'}];
+  const e=[[0,1],[0,2],[1,3],[1,4],[2,5]];
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.font='600 10px "Space Grotesk"'; ctx.textAlign='left'; ctx.fillStyle=C.green;
+  ctx.fillText('✓ Connected  ✓ No cycles  ✓ 5 edges for 6 nodes',10,cv.height-10);
+  e.forEach(([a,b])=>{ ctx.beginPath(); ctx.moveTo(v[a].x,v[a].y); ctx.lineTo(v[b].x,v[b].y); ctx.strokeStyle=C.border; ctx.lineWidth=1.5; ctx.stroke(); });
+  v.forEach(n=>{ ctx.beginPath(); ctx.arc(n.x,n.y,20,0,Math.PI*2); ctx.fillStyle=C.node; ctx.fill(); ctx.strokeStyle=C.green; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=C.green; ctx.font='600 13px "Space Grotesk"'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(n.l,n.x,n.y); });
+}
+
+function drawNotTreeCanvas(){
+  const cv=document.getElementById('notTreeCanvas'); const ctx=cv.getContext('2d');
+  const v=[{x:80,y:80,l:'A'},{x:260,y:80,l:'B'},{x:260,y:180,l:'C'},{x:80,y:180,l:'D'}];
+  const e=[[0,1],[1,2],[2,3],[3,0],[0,2]]; // has cycles
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.font='600 10px "Space Grotesk"'; ctx.textAlign='left'; ctx.fillStyle=C.pink;
+  ctx.fillText('✗ Cycle: A─B─C─D─A  ✗ Extra edge A─C',10,cv.height-10);
+  e.forEach(([a,b],i)=>{ ctx.beginPath(); ctx.moveTo(v[a].x,v[a].y); ctx.lineTo(v[b].x,v[b].y); ctx.strokeStyle=i>=3?C.pink:C.border; ctx.lineWidth=i>=3?2.5:1.5; if(i>=3){ctx.setLineDash([6,3]);} ctx.stroke(); ctx.setLineDash([]); });
+  v.forEach(n=>{ ctx.beginPath(); ctx.arc(n.x,n.y,20,0,Math.PI*2); ctx.fillStyle=C.node; ctx.fill(); ctx.strokeStyle=C.pink; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=C.pink; ctx.font='600 13px "Space Grotesk"'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(n.l,n.x,n.y); });
+}
+
+drawTreeCanvas(); drawNotTreeCanvas();
+
+// ═══════════════════════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════════════════════
+const questions = [
+  { q:"Which data structure does Breadth-First Search (BFS) use to track vertices to visit?",
+    opts:["Stack (LIFO)","Queue (FIFO)","Linked list","Priority queue"],
+    ans:1, exp:"BFS uses a Queue (FIFO). The first vertex enqueued is the first visited — ensuring level-by-level exploration." },
+  { q:"A graph has 7 vertices and 6 edges. It is connected and contains no cycles. What type of data structure is it?",
+    opts:["A general graph","A directed graph","A tree","A weighted graph"],
+    ans:2, exp:"Connected + no cycles + N-1 edges (6 = 7-1) → this is a tree by definition." },
+  { q:"Which graph traversal guarantees finding the shortest path in an unweighted graph?",
+    opts:["Depth-First Search","Dijkstra's algorithm","Breadth-First Search","In-order traversal"],
+    ans:2, exp:"BFS explores level by level, so the first time it reaches a vertex it has found the shortest path (unweighted). Dijkstra's is needed for weighted graphs." },
+  { q:"An adjacency matrix for an undirected graph is always:",
+    opts:["Upper triangular","Symmetric","Diagonal","Sparse"],
+    ans:1, exp:"For an undirected graph, if there is an edge from A to B there is also one from B to A, so matrix[i][j] = matrix[j][i] — symmetric." },
+  { q:"Which representation is more memory-efficient for a sparse graph with 1000 vertices but only 50 edges?",
+    opts:["Adjacency matrix","Adjacency list","Both are equal","Neither — use an array"],
+    ans:1, exp:"Adjacency list uses O(V+E) = 1050 entries. Adjacency matrix uses O(V²) = 1,000,000 entries. List is far more efficient for sparse graphs." },
+  { q:"Depth-First Search is described by the AQA spec as being suitable for which task?",
+    opts:["Finding shortest path","Navigating a maze","Network broadcast","Level-order traversal"],
+    ans:1, exp:"AQA spec explicitly states DFS is used for navigating a maze (explore deep, backtrack). BFS is for shortest path." },
+  { q:"What is the time complexity of BFS and DFS on a graph with V vertices and E edges?",
+    opts:["O(V²)","O(V × E)","O(V + E)","O(log V)"],
+    ans:2, exp:"Both BFS and DFS visit each vertex once and each edge once: O(V + E)." },
+  { q:"Which of the following is NOT necessarily true of a directed graph?",
+    opts:["Edges have direction","The adjacency matrix may be asymmetric","All vertices have equal in-degree and out-degree","Cycles may exist"],
+    ans:2, exp:"In a directed graph, different vertices can have different in-degrees and out-degrees. The others are all valid properties of directed graphs." },
+];
+
+let answered = [];
+
+function buildQuiz(){
+  answered = new Array(questions.length).fill(null);
+  const cont = document.getElementById('quizContainer');
+  cont.innerHTML = '';
+  document.getElementById('scoreBar').style.display='none';
+  questions.forEach((q, qi)=>{
+    const div=document.createElement('div'); div.className='quiz-q'; div.id=`qq${qi}`;
+    div.innerHTML=`<p><strong>Q${qi+1}.</strong> ${q.q}</p><div class="quiz-opts">${
+      q.opts.map((o,oi)=>`<button class="quiz-opt" onclick="answer(${qi},${oi})">${o}</button>`).join('')
+    }</div><div class="quiz-feedback" id="qf${qi}"></div>`;
+    cont.appendChild(div);
+  });
+}
+
+function answer(qi, oi){
+  if(answered[qi] !== null) return;
+  answered[qi] = oi;
+  const q = questions[qi];
+  const btns = document.querySelectorAll(`#qq${qi} .quiz-opt`);
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans) b.classList.add(oi===q.ans?'correct':'reveal');
+    else if(i===oi && oi!==q.ans) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(`qf${qi}`);
+  fb.className = `quiz-feedback show ${oi===q.ans?'ok':'bad'}`;
+  fb.textContent = (oi===q.ans?'✓ Correct! ':'✗ Incorrect. ') + q.exp;
+
+  if(answered.every(a=>a!==null)){
+    const score = answered.filter((a,i)=>a===questions[i].ans).length;
+    const bar = document.getElementById('scoreBar');
+    document.getElementById('scoreText').textContent=`Score: ${score} / ${questions.length}`;
+    document.getElementById('scoreText').style.color = score>=6 ? 'var(--green)' : score>=4 ? 'var(--amber)' : 'var(--pink)';
+    bar.style.display='block';
+    bar.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+}
+
+function resetQuiz(){ buildQuiz(); }
+
+buildQuiz();
+
+// ═══════════════════════════════════════════════════════════
+// STICKY NAV HIGHLIGHT
+// ═══════════════════════════════════════════════════════════
+const sections = ['what','types','represent','traversal','vstree','uses','quiz'];
+const navBtns  = document.querySelectorAll('.nav-btn');
+window.addEventListener('scroll',()=>{
+  let cur=0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top < 120) cur=i;
+  });
+  navBtns.forEach((b,i)=>b.classList.toggle('active',i===cur));
+},{ passive:true });
+</script>
+</body>
+</html>
